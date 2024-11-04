@@ -16,6 +16,7 @@ void UHomingStrikeAbility::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 		const FRotator CurrentRotation = Character->GetActorRotation();
 		const FActorSpawnParameters SpawnParameters;
 		GetWorld()->SpawnActor<AActor>(OrbProjectile, SpawnProjectileLocation, CurrentRotation, SpawnParameters);
+		CommitAbilityCooldown(Handle, ActorInfo, ActivationInfo, true, nullptr);
 	}
 	
 	// End the ability
