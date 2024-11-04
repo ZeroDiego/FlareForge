@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "HomingStrikeProjectile.h"
 #include "Abilities/GameplayAbility.h"
 #include "HomingStrikeAbility.generated.h"
 
@@ -22,7 +23,7 @@ public:
 private:
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> OrbProjectile;
+	TSubclassOf<AHomingStrikeProjectile> OrbProjectile;
 
 	UPROPERTY(EditAnywhere)
 	FVector SpawnOffset;
