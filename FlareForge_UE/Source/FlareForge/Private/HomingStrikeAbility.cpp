@@ -9,13 +9,13 @@
 void UHomingStrikeAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	
-	// Make the Character Teleport
+	// Make the Projectile Spawn
 	if (const ACharacter* Character = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))
 	{
 		const FVector SpawnProjectileLocation = Character->GetActorLocation() + SpawnOffset;
 		const FRotator CurrentRotation = Character->GetActorRotation();
 		const FActorSpawnParameters SpawnParameters;
-		GetWorld()->SpawnActor<AActor>(OrbProjectile, Character->GetActorLocation() + SpawnProjectileLocation, CurrentRotation, SpawnParameters);
+		GetWorld()->SpawnActor<AActor>(OrbProjectile, SpawnProjectileLocation, CurrentRotation, SpawnParameters);
 	}
 	
 	// End the ability
