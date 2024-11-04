@@ -23,22 +23,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> OrbProjectile;
-	
-	UPROPERTY(EditAnywhere)
-	float CooldownTime;
-	
-	UPROPERTY(EditAnywhere)
-	float DetectionRange;
 
 	UPROPERTY(EditAnywhere)
 	FVector SpawnOffset;
-
-	UPROPERTY(EditAnywhere)
-	float TravelSpeed;
-
-	UPROPERTY(EditAnywhere)
-	float TurnRate;
-
-	UPROPERTY(EditAnywhere)
-	float Width;
 };
