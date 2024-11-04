@@ -72,6 +72,11 @@ void AFlareForgePlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Completed, this, &AFlareForgePlayerController::OnTouchReleased);
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Canceled, this, &AFlareForgePlayerController::OnTouchReleased);
 
+		// Setup Movement
+		/*EnhancedInputComponent->BindAction(HorizontalMovementAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::HorizontalMovement);
+		EnhancedInputComponent->BindAction(VerticalMovementAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::VerticalMovement);*/
+		EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::Movement);
+
 		// Ensure MyAbilitySystemComponent is valid and bind it to the input
 		if (MyAbilitySystemComponent && InputComponent)
 		{
@@ -88,6 +93,59 @@ void AFlareForgePlayerController::SetupInputComponent()
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
 }
+
+/*void AFlareForgePlayerController::HorizontalMovement(const FInputActionValue& Value)
+{
+	if(Value == 0.0f)
+	{
+		return;
+	}
+
+	// find out which way is forward
+	const FRotator Rotation = GetControlRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+	// get forward vector
+	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	if(GetCharacter())
+	{
+		GetCharacter()->AddMovementInput(Direction, Value);
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Horizontal"));
+	FVector2D MovementVector = Value.Get<FVector2D>();
+	if(GetPawn())
+	{
+		GetPawn()->AddMovementInput(GetCharacter()->GetActorForwardVector(), MovementVector.Y);
+	}
+}
+
+void AFlareForgePlayerController::VerticalMovement(const FInputActionValue& Value)
+{
+	if(Value == 0.0f)
+	{
+		return;
+	}
+
+	// find out which way is forward
+	const FRotator Rotation = GetControlRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+	// get forward vector
+	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	if(GetCharacter())
+	{
+		GetCharacter()->AddMovementInput(Direction, Value);
+	}
+}*/
+
+void AFlareForgePlayerController::Movement(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Move"));
+
+	GetPawn()->AddMovementInput(GetPawn()->GetActorRightVector(), 1);
+}
+
+
 
 void AFlareForgePlayerController::OnInputStarted()
 {
