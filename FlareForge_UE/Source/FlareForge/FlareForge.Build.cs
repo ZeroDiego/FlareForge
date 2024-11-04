@@ -8,6 +8,8 @@ public class FlareForge : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "GameplayTags", "GameplayAbilities", "GameplayTasks", "NavigationSystem", "AIModule", "Niagara", "EnhancedInput" });
-    }
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "GameplayTags", "GameplayAbilities", "GameplayTasks", "NavigationSystem", "AIModule", "Niagara", "EnhancedInput" });
+		
+		PrivateDependencyModuleNames.AddRange(new string[] { "GameplayAbilities"} );
+	}
 }
