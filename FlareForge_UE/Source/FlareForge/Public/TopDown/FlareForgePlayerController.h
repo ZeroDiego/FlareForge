@@ -52,14 +52,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SetDestinationTouchAction;
 
-	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* HorizontalMovementAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* MovementVerticalAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* VerticalMovementAction;*/
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* MovementAction;
+	UInputAction* MovementHorizontalAction;
 	
 	/** Define MyAbilitySystemComponent **/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")
@@ -74,6 +71,8 @@ protected:
 	uint32 bMoveToMouseCursor : 1;
 
 	virtual void SetupInputComponent() override;
+
+	virtual void Tick(float DeltaSeconds) override;
 	
 	// To add mapping context
 	virtual void BeginPlay();
@@ -85,9 +84,12 @@ protected:
 	void OnTouchTriggered();
 	void OnTouchReleased();
 
-	/*void HorizontalMovement(const FInputActionValue& Value);
-	void VerticalMovement(const FInputActionValue& Value);*/
-	void Movement(const FInputActionValue& Value);
+	// movement functions
+	void MovementVertical(const FInputActionValue& Value);
+	void MovementHorizontal(const FInputActionValue& Value);
+
+	// rotate character with mouse
+	void RotatePlayerTowardsMouse();
 	
 
 private:

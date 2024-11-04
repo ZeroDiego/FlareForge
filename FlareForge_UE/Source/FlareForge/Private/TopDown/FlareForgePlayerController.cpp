@@ -6,6 +6,8 @@
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "TopDown/FlareForgeCharacter.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
@@ -46,6 +48,14 @@ void AFlareForgePlayerController::BeginPlay()
 	}
 }
 
+void AFlareForgePlayerController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	
+	RotatePlayerTowardsMouse();
+}
+
+
 void AFlareForgePlayerController::SetupInputComponent()
 {
 	// set up gameplay key bindings
@@ -73,9 +83,8 @@ void AFlareForgePlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Canceled, this, &AFlareForgePlayerController::OnTouchReleased);
 
 		// Setup Movement
-		/*EnhancedInputComponent->BindAction(HorizontalMovementAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::HorizontalMovement);
-		EnhancedInputComponent->BindAction(VerticalMovementAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::VerticalMovement);*/
-		EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::Movement);
+		EnhancedInputComponent->BindAction(MovementHorizontalAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::MovementHorizontal);
+		EnhancedInputComponent->BindAction(MovementVerticalAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::MovementVertical);
 
 		// Ensure MyAbilitySystemComponent is valid and bind it to the input
 		if (MyAbilitySystemComponent && InputComponent)
@@ -94,55 +103,69 @@ void AFlareForgePlayerController::SetupInputComponent()
 	}
 }
 
-/*void AFlareForgePlayerController::HorizontalMovement(const FInputActionValue& Value)
-{
-	if(Value == 0.0f)
-	{
-		return;
-	}
 
-	// find out which way is forward
+
+void AFlareForgePlayerController::MovementHorizontal(const FInputActionValue& Value)
+{
+	
+	//GetPawn()->AddMovementInput(GetPawn()->GetActorRightVector(), Value.Get<FVector2D>().X);
 	const FRotator Rotation = GetControlRotation();
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-	// get forward vector
-	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	if(GetCharacter())
-	{
-		GetCharacter()->AddMovementInput(Direction, Value);
-	}
-	UE_LOG(LogTemp, Warning, TEXT("Horizontal"));
-	FVector2D MovementVector = Value.Get<FVector2D>();
-	if(GetPawn())
-	{
-		GetPawn()->AddMovementInput(GetCharacter()->GetActorForwardVector(), MovementVector.Y);
-	}
+	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	GetCharacter()->AddMovementInput(Direction, Value.Get<FVector2D>().X);
 }
 
-void AFlareForgePlayerController::VerticalMovement(const FInputActionValue& Value)
+void AFlareForgePlayerController::MovementVertical(const FInputActionValue& Value)
 {
-	if(Value == 0.0f)
-	{
-		return;
-	}
-
-	// find out which way is forward
+	
+	//GetPawn()->AddMovementInput(GetPawn()->GetActorRightVector(), Value.Get<FVector2D>().X);
 	const FRotator Rotation = GetControlRotation();
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
+	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	GetCharacter()->AddMovementInput(Direction, Value.Get<FVector2D>().X);
+}
 
-	// get forward vector
-	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-	if(GetCharacter())
-	{
-		GetCharacter()->AddMovementInput(Direction, Value);
-	}
-}*/
-
-void AFlareForgePlayerController::Movement(const FInputActionValue& Value)
+void AFlareForgePlayerController::RotatePlayerTowardsMouse()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Move"));
+	FVector MouseLocation, MouseDirection;
+	if (this->DeprojectMousePositionToWorld(MouseLocation, MouseDirection))
+	{
+		// Get local reference to the controller's character
+		ACharacter *CurrentChar = this->GetCharacter();
+		if (!CurrentChar) return;
 
-	GetPawn()->AddMovementInput(GetPawn()->GetActorRightVector(), 1);
+		FVector CharacterLocation = CurrentChar->GetActorLocation();
+
+		// Ray trace to find the intersection with the plane the character is on
+		FVector Start = MouseLocation;
+		FVector End = MouseLocation + MouseDirection * 10000.0f;  // Extend the ray
+
+		FHitResult HitResult;
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor(CurrentChar);
+        
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
+		{
+			FVector TargetLocation = HitResult.Location;
+			FVector Direction = TargetLocation - CharacterLocation;
+
+			// Calculate the new rotation
+			FRotator TargetRotation = Direction.Rotation();
+			FRotator CharRotation = CurrentChar->GetActorRotation();
+			FRotator NewRot = FRotator(CharRotation.Pitch, TargetRotation.Yaw, CharRotation.Roll);
+
+			// Set the new rotation
+			CurrentChar->SetActorRotation(NewRot);
+		}
+		else
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("No hit detected"));
+		}
+	}
+	else
+	{
+		//UE_LOG(LogTemp, Error, TEXT("Deprojection failed"));
+	}
 }
 
 

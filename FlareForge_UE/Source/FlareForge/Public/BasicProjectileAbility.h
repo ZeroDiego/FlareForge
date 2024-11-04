@@ -20,6 +20,13 @@ public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 private:
+
+	UPROPERTY(EditDefaultsOnly, Category = "Parameters")
+	TSubclassOf<AActor> BasicProjectile;
+	
 	UPROPERTY(EditAnywhere)
 	FVector BasicProjectileVelocity;
+
+	UPROPERTY(EditAnywhere)
+	FVector SpawnOffset;
 };
