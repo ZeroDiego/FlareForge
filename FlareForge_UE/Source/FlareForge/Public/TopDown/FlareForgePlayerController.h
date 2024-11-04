@@ -71,6 +71,8 @@ protected:
 	uint32 bMoveToMouseCursor : 1;
 
 	virtual void SetupInputComponent() override;
+
+	virtual void Tick(float DeltaSeconds) override;
 	
 	// To add mapping context
 	virtual void BeginPlay();
@@ -82,10 +84,12 @@ protected:
 	void OnTouchTriggered();
 	void OnTouchReleased();
 
-	/*void HorizontalMovement(const FInputActionValue& Value);
-	void VerticalMovement(const FInputActionValue& Value);*/
+	// movement functions
 	void MovementVertical(const FInputActionValue& Value);
 	void MovementHorizontal(const FInputActionValue& Value);
+
+	// rotate character with mouse
+	void RotatePlayerTowardsMouse();
 	
 
 private:
