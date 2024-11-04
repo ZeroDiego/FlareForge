@@ -12,7 +12,11 @@ void UBasicProjectileAbility::ActivateAbility(const FGameplayAbilitySpecHandle H
 	// Make the Character Teleport
 	if (ACharacter* Character = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))
 	{
-		Character->SetActorLocation(Character->GetActorLocation() + BasicProjectileVelocity, 1.0, nullptr, ETeleportType::ResetPhysics);
+		const FVector SpawnProjectileLocation = Character->GetActorLocation() + SpawnOffset;
+		const FRotator CurrentRotation = Character->GetActorRotation();
+		const FActorSpawnParameters SpawnParameters;
+        GetWorld()->SpawnActor<AActor>(BasicProjectile, SpawnProjectileLocation, CurrentRotation, SpawnParameters);
+		CommitAbilityCooldown(Handle, ActorInfo, ActivationInfo, true, nullptr);
 	}
 	
 	// End the ability
