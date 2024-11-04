@@ -1,8 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "FlareForgeGameMode.h"
-#include "FlareForgePlayerController.h"
-#include "FlareForgeCharacter.h"
+#include "TopDown/FlareForgeGameMode.h"
+#include "TopDown/FlareForgePlayerController.h"
+#include "TopDown/FlareForgeCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 AFlareForgeGameMode::AFlareForgeGameMode()

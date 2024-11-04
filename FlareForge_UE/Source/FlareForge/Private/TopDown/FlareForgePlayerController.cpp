@@ -1,16 +1,18 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "FlareForgePlayerController.h"
+#include "TopDown/FlareForgePlayerController.h"
 #include "GameFramework/Pawn.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
-#include "FlareForgeCharacter.h"
+#include "TopDown/FlareForgeCharacter.h"
 #include "Engine/World.h"
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
+#include "MyAbilitySystemComponent.h"
+#include "TeleportAbility.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -20,12 +22,28 @@ AFlareForgePlayerController::AFlareForgePlayerController()
 	DefaultMouseCursor = EMouseCursor::Default;
 	CachedDestination = FVector::ZeroVector;
 	FollowTime = 0.f;
+
+	// Initialize MyAbilitySystemComponent
+	MyAbilitySystemComponent = CreateDefaultSubobject<UMyAbilitySystemComponent>(TEXT("MyAbilitySystemComponent"));
 }
 
 void AFlareForgePlayerController::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
+	// Ensure MyAbilitySystemComponent is valid
+	if (MyAbilitySystemComponent)
+	{
+		// Grant each ability in the DefaultAbilities array
+		for (TSubclassOf<UGameplayAbility>& Ability : DefaultAbilities)
+		{
+			if (Ability)
+			{
+				MyAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability, 1, static_cast<int32>(EFlareForgeAbilityInputID::Confirm), this));
+			}
+		}
+	}
 }
 
 void AFlareForgePlayerController::SetupInputComponent()
@@ -53,6 +71,17 @@ void AFlareForgePlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::OnTouchTriggered);
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Completed, this, &AFlareForgePlayerController::OnTouchReleased);
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Canceled, this, &AFlareForgePlayerController::OnTouchReleased);
+
+		// Ensure MyAbilitySystemComponent is valid and bind it to the input
+		if (MyAbilitySystemComponent && InputComponent)
+		{
+			MyAbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, FGameplayAbilityInputBinds(
+				"Confirm",
+				"Cancel",
+				FTopLevelAssetPath(TEXT("/Script/FlareForge"), TEXT("EFlareForgeAbilityInputID")),
+				static_cast<int32>(EFlareForgeAbilityInputID::Confirm),
+				static_cast<int32>(EFlareForgeAbilityInputID::Cancel)));
+		}
 	}
 	else
 	{

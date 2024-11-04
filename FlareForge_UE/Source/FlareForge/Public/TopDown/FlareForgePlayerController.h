@@ -14,6 +14,15 @@ class UInputAction;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
+// Define the FlareForgeAbilityInputID enum here in the header file
+UENUM(BlueprintType)
+enum class EFlareForgeAbilityInputID : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Confirm UMETA(DisplayName = "Confirm"),
+	Cancel UMETA(DisplayName = "Cancel")
+};
+
 UCLASS()
 class AFlareForgePlayerController : public APlayerController
 {
@@ -41,6 +50,14 @@ public:
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SetDestinationTouchAction;
+	
+	/** Define MyAbilitySystemComponent **/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")
+	class UMyAbilitySystemComponent* MyAbilitySystemComponent;
+
+	// Array to store default abilities to be granted to the character
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
+	TArray<TSubclassOf<class UGameplayAbility>> DefaultAbilities;
 
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
