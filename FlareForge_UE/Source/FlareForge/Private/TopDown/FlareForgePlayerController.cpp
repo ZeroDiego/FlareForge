@@ -6,6 +6,8 @@
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "TopDown/FlareForgeCharacter.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
@@ -45,6 +47,14 @@ void AFlareForgePlayerController::BeginPlay()
 		}
 	}
 }
+
+void AFlareForgePlayerController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	
+	RotatePlayerTowardsMouse();
+}
+
 
 void AFlareForgePlayerController::SetupInputComponent()
 {
@@ -113,6 +123,49 @@ void AFlareForgePlayerController::MovementVertical(const FInputActionValue& Valu
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
 	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	GetCharacter()->AddMovementInput(Direction, Value.Get<FVector2D>().X);
+}
+
+void AFlareForgePlayerController::RotatePlayerTowardsMouse()
+{
+	FVector MouseLocation, MouseDirection;
+	if (this->DeprojectMousePositionToWorld(MouseLocation, MouseDirection))
+	{
+		// Get local reference to the controller's character
+		ACharacter *CurrentChar = this->GetCharacter();
+		if (!CurrentChar) return;
+
+		FVector CharacterLocation = CurrentChar->GetActorLocation();
+
+		// Ray trace to find the intersection with the plane the character is on
+		FVector Start = MouseLocation;
+		FVector End = MouseLocation + MouseDirection * 10000.0f;  // Extend the ray
+
+		FHitResult HitResult;
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor(CurrentChar);
+        
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
+		{
+			FVector TargetLocation = HitResult.Location;
+			FVector Direction = TargetLocation - CharacterLocation;
+
+			// Calculate the new rotation
+			FRotator TargetRotation = Direction.Rotation();
+			FRotator CharRotation = CurrentChar->GetActorRotation();
+			FRotator NewRot = FRotator(CharRotation.Pitch, TargetRotation.Yaw, CharRotation.Roll);
+
+			// Set the new rotation
+			CurrentChar->SetActorRotation(NewRot);
+		}
+		else
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("No hit detected"));
+		}
+	}
+	else
+	{
+		//UE_LOG(LogTemp, Error, TEXT("Deprojection failed"));
+	}
 }
 
 
