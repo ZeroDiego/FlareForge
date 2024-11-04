@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputActionValue.h"
 #include "Templates/SubclassOf.h"
 #include "GameFramework/PlayerController.h"
 #include "FlareForgePlayerController.generated.h"
@@ -50,6 +51,15 @@ public:
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SetDestinationTouchAction;
+
+	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* HorizontalMovementAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* VerticalMovementAction;*/
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* MovementAction;
 	
 	/** Define MyAbilitySystemComponent **/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")
@@ -74,6 +84,11 @@ protected:
 	void OnSetDestinationReleased();
 	void OnTouchTriggered();
 	void OnTouchReleased();
+
+	/*void HorizontalMovement(const FInputActionValue& Value);
+	void VerticalMovement(const FInputActionValue& Value);*/
+	void Movement(const FInputActionValue& Value);
+	
 
 private:
 	FVector CachedDestination;
