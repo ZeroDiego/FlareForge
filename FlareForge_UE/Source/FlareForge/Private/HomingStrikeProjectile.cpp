@@ -30,26 +30,19 @@ void AHomingStrikeProjectile::Tick(float DeltaTime)
 
 USceneComponent* AHomingStrikeProjectile::FindHomingStrikeTarget() const
 {
-	AActor* HomingStrikeTarget = nullptr;
+	const AActor* HomingStrikeTarget = nullptr;
 	double ClosestDistance = 5000.0f;
 	
 	TArray<AActor*> FoundTargets;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), "HomingStrikeTarget", FoundTargets);
 
-	for (AActor* FoundTarget : FoundTargets)
+	for (const AActor* FoundTarget : FoundTargets)
 	{
-		double VectorLength = UKismetMathLibrary::VSize(FoundTarget->GetActorLocation() - GetActorLocation());
-		UE_LOG(LogTemp, Warning, TEXT("VectorLength: %f"), VectorLength);
-		UE_LOG(LogTemp, Warning, TEXT("ClosestDistance: %f"), ClosestDistance);
-		
-		if (VectorLength < ClosestDistance)
+		if (const double VectorLength = UKismetMathLibrary::VSize(FoundTarget->GetActorLocation() - GetActorLocation()); VectorLength < ClosestDistance)
 		{
 			HomingStrikeTarget = FoundTarget;
 			ClosestDistance = VectorLength;
 		}
-
-		UE_LOG(LogTemp, Warning, TEXT("VectorLength: %f"), VectorLength);
-		UE_LOG(LogTemp, Warning, TEXT("ClosestDistance: %f"), ClosestDistance);
 	}
 	
 	if (HomingStrikeTarget)
