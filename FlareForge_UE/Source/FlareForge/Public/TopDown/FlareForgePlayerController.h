@@ -52,14 +52,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SetDestinationTouchAction;
 
-	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* HorizontalMovementAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* MovementVerticalAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* VerticalMovementAction;*/
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* MovementAction;
+	UInputAction* MovementHorizontalAction;
 	
 	/** Define MyAbilitySystemComponent **/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")
@@ -87,7 +84,8 @@ protected:
 
 	/*void HorizontalMovement(const FInputActionValue& Value);
 	void VerticalMovement(const FInputActionValue& Value);*/
-	void Movement(const FInputActionValue& Value);
+	void MovementVertical(const FInputActionValue& Value);
+	void MovementHorizontal(const FInputActionValue& Value);
 	
 
 private:
