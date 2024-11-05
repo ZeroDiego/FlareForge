@@ -21,6 +21,9 @@ public:
 	//Override the ActivateAbility method
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+	UFUNCTION(Server, Reliable)
+	void HomingStrikeAbility(const FVector SpawnProjectileLocation, const FRotator CurrentRotation);
+
 private:
 
 	UPROPERTY(EditAnywhere)
