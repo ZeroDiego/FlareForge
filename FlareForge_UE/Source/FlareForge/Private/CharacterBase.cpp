@@ -3,9 +3,12 @@
 
 #include "CharacterBase.h"
 
+#include "NavigationSystemTypes.h"
+
 ACharacterBase::ACharacterBase()
 {
 	AbilitySystemComponent = CreateDefaultSubobject<UMyAbilitySystemComponent>("AbilitySystemComponent");
+	AttributeSet = CreateDefaultSubobject<UMyCharacterAttributeSet>("AttributeSet");
 }
 
 UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
