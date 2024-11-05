@@ -12,7 +12,7 @@ void UHomingStrikeAbility::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	// Make the Projectile Spawn
 	if (const ACharacter* Character = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))
 	{
-		const FVector SpawnProjectileLocation = Character->GetActorLocation() + SpawnOffset;
+		const FVector SpawnProjectileLocation = Character->GetComponentByClass<UFiringOffset>()->GetComponentLocation();
 		const FRotator CurrentRotation = Character->GetActorRotation();
 		const FActorSpawnParameters SpawnParameters;
 		GetWorld()->SpawnActor<AHomingStrikeProjectile>(OrbProjectile, SpawnProjectileLocation, CurrentRotation, SpawnParameters);
