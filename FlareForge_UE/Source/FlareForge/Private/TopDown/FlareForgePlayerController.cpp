@@ -127,46 +127,51 @@ void AFlareForgePlayerController::MovementVertical(const FInputActionValue& Valu
 
 void AFlareForgePlayerController::RotatePlayerTowardsMouse()
 {
-	FVector MouseLocation, MouseDirection;
-	if (this->DeprojectMousePositionToWorld(MouseLocation, MouseDirection))
-	{
-		// Get local reference to the controller's character
-		ACharacter *CurrentChar = this->GetCharacter();
-		if (!CurrentChar) return;
+    FVector MouseLocation, MouseDirection;
+    if (this->DeprojectMousePositionToWorld(MouseLocation, MouseDirection))
+    {
+        // Get local reference to the controller's character
+        ACharacter* CurrentChar = this->GetCharacter();
+        if (!CurrentChar) return;
 
-		FVector CharacterLocation = CurrentChar->GetActorLocation();
+        FVector CharacterLocation = CurrentChar->GetActorLocation();
 
-		// Ray trace to find the intersection with the plane the character is on
-		FVector Start = MouseLocation;
-		FVector End = MouseLocation + MouseDirection * 10000.0f;  // Extend the ray
+        // Ray trace to find the intersection with the plane the character is on
+        FVector Start = MouseLocation;
+        FVector End = MouseLocation + MouseDirection * 10000.0f;  // Extend the ray
 
-		FHitResult HitResult;
-		FCollisionQueryParams Params;
-		Params.AddIgnoredActor(CurrentChar);
+        FHitResult HitResult;
+        FCollisionQueryParams Params;
+        Params.AddIgnoredActor(CurrentChar);
         
-		if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
-		{
-			FVector TargetLocation = HitResult.Location;
-			FVector Direction = TargetLocation - CharacterLocation;
+        if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
+        {
+            // Ensure the hit location is on the same plane as the character
+            FVector HitLocation = HitResult.Location;
+            FVector CharacterPlaneLocation = FVector(HitLocation.X, HitLocation.Y, CharacterLocation.Z);
 
-			// Calculate the new rotation
-			FRotator TargetRotation = Direction.Rotation();
-			FRotator CharRotation = CurrentChar->GetActorRotation();
-			FRotator NewRot = FRotator(CharRotation.Pitch, TargetRotation.Yaw, CharRotation.Roll);
+            FVector Direction = CharacterPlaneLocation - CharacterLocation;
 
-			// Set the new rotation
-			CurrentChar->SetActorRotation(NewRot);
-		}
-		else
-		{
-			//UE_LOG(LogTemp, Warning, TEXT("No hit detected"));
-		}
-	}
-	else
-	{
-		//UE_LOG(LogTemp, Error, TEXT("Deprojection failed"));
-	}
+            // Calculate the new rotation
+            FRotator TargetRotation = Direction.Rotation();
+            FRotator CharRotation = CurrentChar->GetActorRotation();
+            FRotator NewRot = FRotator(CharRotation.Pitch, TargetRotation.Yaw, CharRotation.Roll);
+
+            // Set the new rotation
+            //DrawDebugLine(GetWorld(), Start, End, FColor(255,0,0),false,1);
+            CurrentChar->SetActorRotation(NewRot);
+        }
+        else
+        {
+            //UE_LOG(LogTemp, Warning, TEXT("No hit detected"));
+        }
+    }
+    else
+    {
+        //UE_LOG(LogTemp, Error, TEXT("Deprojection failed"));
+    }
 }
+
 
 
 
