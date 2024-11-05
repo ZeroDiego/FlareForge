@@ -6,6 +6,4 @@
 UMyCharacterAttributeSet::UMyCharacterAttributeSet()
 {
 
-	InitHealth(100.f);
-	InitMaxHealth(100.f);
 }

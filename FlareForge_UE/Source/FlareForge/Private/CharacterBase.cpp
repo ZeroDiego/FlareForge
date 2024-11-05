@@ -2,23 +2,22 @@
 
 
 #include "CharacterBase.h"
-
-#include "NavigationSystemTypes.h"
+#include "MyAbilitySystemComponent.h"
+#include "MyCharacterAttributeSet.h"
 
 ACharacterBase::ACharacterBase()
 {
 	AbilitySystemComponent = CreateDefaultSubobject<UMyAbilitySystemComponent>("AbilitySystemComponent");
-	AttributeSet = CreateDefaultSubobject<UMyCharacterAttributeSet>("AttributeSet");
-}
-
-UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
-{
-	return AbilitySystemComponent;
 }
 
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//Give an attribute set to character
+	if(IsValid(AbilitySystemComponent))
+	{
+		CharacterAttributeSet = AbilitySystemComponent->GetSet<UMyCharacterAttributeSet>();
+	}
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 }

@@ -21,15 +21,17 @@ class FLAREFORGE_API UMyCharacterAttributeSet : public UAttributeSet
 public:
 
 	UMyCharacterAttributeSet();
-
-	UPROPERTY(BlueprintReadOnly, Category = "Stats")
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Attributes")
 	FGameplayAttributeData Health;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Stats")
-	FGameplayAttributeData MaxHealth;
-
 	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, Health);
+
+	UPROPERTY(BlueprintReadOnly, Category = "Attributes")
+	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, MaxHealth);
 
+	UPROPERTY(BlueprintReadOnly, Category = "Attributes")
+	FGameplayAttributeData Power;
+	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, Power);
 	
 };

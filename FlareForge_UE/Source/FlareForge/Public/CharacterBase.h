@@ -4,14 +4,10 @@
 #include "CoreMinimal.h"
 #include "TopDown/FlareForgeCharacter.h"
 #include "AbilitySystemInterface.h"
-#include "MyCharacterAttributeSet.h"
-#include "MyAbilitySystemComponent.h"
 #include "CharacterBase.generated.h"
 /**
  * 
  */
-class UMyCharacterAttributeSet;
-class UMyAbilitySystemComponent;
 
 UCLASS()
 class FLAREFORGE_API ACharacterBase : public AFlareForgeCharacter, public IAbilitySystemInterface
@@ -23,18 +19,19 @@ public:
 	//Set default values for this character's properties
 	ACharacterBase();
 
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-
-	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
-
 protected:
 
-	virtual void BeginPlay() override;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GAS", meta = (AllowPrivateAccess = true))
+	class UAbilitySystemComponent* AbilitySystemComponent;
 	
-	UPROPERTY()
-	TObjectPtr<UMyAbilitySystemComponent> AbilitySystemComponent;
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override
+	{
+		return AbilitySystemComponent;
+	}
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "GAS", meta = (AllowPrivateAccess = true))
+    const class UMyCharacterAttributeSet* CharacterAttributeSet;
 
-	UPROPERTY()
-	TObjectPtr<UMyCharacterAttributeSet> AttributeSet;
+	virtual void BeginPlay() override;
 	
 };

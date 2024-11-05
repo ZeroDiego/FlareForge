@@ -21,7 +21,7 @@ public:
 
 private:
 
-	UPROPERTY(EditDefaultsOnly, Category = "Parameters")
+	UPROPERTY(EditAnywhere, Category = "Parameters")
 	TSubclassOf<AActor> BasicProjectile;
 	
 	UPROPERTY(EditAnywhere)
