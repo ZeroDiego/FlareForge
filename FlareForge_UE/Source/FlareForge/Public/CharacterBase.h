@@ -4,7 +4,6 @@
 #include "CoreMinimal.h"
 #include "TopDown/FlareForgeCharacter.h"
 #include "AbilitySystemInterface.h"
-#include "MyCharacterAttributeSet.h"
 #include "MyAbilitySystemComponent.h"
 #include "CharacterBase.generated.h"
 /**
@@ -25,7 +24,6 @@ public:
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
 protected:
 
@@ -33,8 +31,5 @@ protected:
 	
 	UPROPERTY()
 	TObjectPtr<UMyAbilitySystemComponent> AbilitySystemComponent;
-
-	UPROPERTY()
-	TObjectPtr<UMyCharacterAttributeSet> AttributeSet;
 	
 };
