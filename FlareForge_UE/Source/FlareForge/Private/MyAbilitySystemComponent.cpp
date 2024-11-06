@@ -3,3 +3,7 @@
 
 #include "MyAbilitySystemComponent.h"
 
+void UMyAbilitySystemComponent::RecieveDamage(UMyAbilitySystemComponent* SourceASC, float UnmitigatedDamage, float MitigatedDamage)
+{
+	RecievedDamage.Broadcast(SourceASC, UnmitigatedDamage, MitigatedDamage);
+}

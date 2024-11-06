@@ -3,6 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
+#include <FlareForge/FlareForge.h>
+#include "GameplayTagContainer.h"
 #include "InputActionValue.h"
 #include "Templates/SubclassOf.h"
 #include "GameFramework/PlayerController.h"
@@ -24,13 +27,15 @@ enum class EFlareForgeAbilityInputID : uint8
 	Cancel UMETA(DisplayName = "Cancel")
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterDiedDelegate, AFlareForgePlayerController*, Character);
+
 UCLASS()
-class AFlareForgePlayerController : public APlayerController
+class AFlareForgePlayerController : public APlayerController, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
-	AFlareForgePlayerController();
+	AFlareForgePlayerController(const class FObjectInitializer& ObjectInitializer);
 
 	/** Time Threshold to know if it was a short press */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
@@ -66,6 +71,38 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
 	TArray<TSubclassOf<class UGameplayAbility>> DefaultAbilities;
 
+	//return AbilitySystemComponent
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	UPROPERTY(BlueprintAssignable, Category = "Character")
+	FCharacterDiedDelegate OnCharacterDied;
+
+	UFUNCTION(BlueprintAssignable, Category = "Character")
+    virtual bool IsAlive() const;
+
+	UFUNCTION(BlueprintAssignable, Category = "Character")
+	virtual int32 GetAbilityLevel(FlareForgeAbilityID AbilityID) const;
+
+	virtual void RemoveCharacterAbilites();
+
+	virtual void Die();
+
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	virtual void FinishDying();
+
+	//Get attributes
+	UFUNCTION(BlueprintCallable, Category = "Character_Attributes")
+	float GetCharacterLevel() const;
+	
+	UFUNCTION(BlueprintCallable, Category = "Character_Attributes")
+	float GetHealth() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Character_Attributes")
+	float GetMaxHealth() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Character_Attributes")
+	float GetPower() const;
+
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
 	uint32 bMoveToMouseCursor : 1;
@@ -93,8 +130,38 @@ protected:
 
 	UFUNCTION(Server, Reliable)
 	void RotatePlayerOnServer(const FRotator PlayerRotation);
-	
 
+	TWeakObjectPtr<class UMyAbilitySystemComponent> AbilitySystemComponent;
+	TWeakObjectPtr<class UMyCharacterAttributeSet> AttributeSet;
+
+	FGameplayTag DeadTag;
+	FGameplayTag EffectRemoveOnDeathTag;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Character")
+	FText CharacterName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
+	UAnimMontage* DeathMontage;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities")
+    TArray<TSubclassOf<class UCharacterGameplayAbility> CharacterAbilities>
+	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities")
+	TSubclassOf<class UGameplayEffect> DefaultAttributes;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Effects")
+	TArray<TSubclassOf<class UGameplayEffect> StartupEffects>;
+
+	virtual void AddCharacterAbilites();
+
+	virtual void InitializeAttributes();
+
+	virtual void AddStartupEffects();
+
+    //Set Health on spawn
+	virtual void SetHealth(float Health);
+
+	
 private:
 	FVector CachedDestination;
 
