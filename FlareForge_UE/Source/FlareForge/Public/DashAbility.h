@@ -19,6 +19,9 @@ public:
 	//Override the ActivateAbility method
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+	//UPROPERTY(EditAnywhere)
+	//FVector DashDistance;
+
 	UPROPERTY(EditAnywhere)
-	FVector DashDistance;
+	float DashDistance = 5000.0f;
 };

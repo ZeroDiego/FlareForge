@@ -21,5 +21,5 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-	FVector TeleportDistance;
+	float TeleportDistance = 1000.0f;
 };
