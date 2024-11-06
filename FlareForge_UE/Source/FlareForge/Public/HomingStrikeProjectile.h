@@ -22,9 +22,14 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	
-	USceneComponent* FindHomingStrikeTarget() const;
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void LockOn(USceneComponent* TargetComponent);
+	UFUNCTION(BlueprintCallable)
+	USceneComponent* FindHomingStrikeTarget() const;
+	
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* SpawningRootComponent;
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void LockOn(USceneComponent* TargetComponent, USceneComponent* PlayerSpawningRootComponent);
+
 };
