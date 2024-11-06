@@ -18,10 +18,11 @@
 #include "Components/CapsuleComponent.h"
 #include "MyCharacterAttributeSet.h"
 #include "CharacterGameplayAbility.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
-AFlareForgePlayerController::AFlareForgePlayerController(const class FObjectInitializer& ObjectInitializer)
+AFlareForgePlayerController::AFlareForgePlayerController(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
@@ -50,7 +51,7 @@ bool AFlareForgePlayerController::IsAlive() const
 	return GetHealth() > 0.0f;
 }
 
-int32 AFlareForgePlayerController::GetAbilityLevel(FlareForgeAbilityID AbilityID) const
+int32 AFlareForgePlayerController::GetAbilityLevel(EFlareForgeAbilityID AbilityID) const
 {
 	return 1;
 }
@@ -110,7 +111,7 @@ float AFlareForgePlayerController::GetPower() const
 void AFlareForgePlayerController::Die()
 {
 	RemoveCharacterAbilites();
-	//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCharacterMovement()->GravityScale = 0;
 	GetCharacterMovement()->Velocity = FVector(0);
 

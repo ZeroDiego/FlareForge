@@ -77,11 +77,11 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Character")
 	FCharacterDiedDelegate OnCharacterDied;
 
-	UFUNCTION(BlueprintAssignable, Category = "Character")
+	UFUNCTION(BlueprintCallable, Category = "Character")
     virtual bool IsAlive() const;
 
-	UFUNCTION(BlueprintAssignable, Category = "Character")
-	virtual int32 GetAbilityLevel(FlareForgeAbilityID AbilityID) const;
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	virtual int32 GetAbilityLevel(EFlareForgeAbilityID AbilityID) const;
 
 	virtual void RemoveCharacterAbilites();
 
@@ -144,13 +144,13 @@ protected:
 	UAnimMontage* DeathMontage;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities")
-    TArray<TSubclassOf<class UCharacterGameplayAbility> CharacterAbilities>
+    TArray<TSubclassOf<class UCharacterGameplayAbility>> CharacterAbilities;
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities")
 	TSubclassOf<class UGameplayEffect> DefaultAttributes;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Effects")
-	TArray<TSubclassOf<class UGameplayEffect> StartupEffects>;
+	TArray<TSubclassOf<class UGameplayEffect>> StartupEffects;
 
 	virtual void AddCharacterAbilites();
 
