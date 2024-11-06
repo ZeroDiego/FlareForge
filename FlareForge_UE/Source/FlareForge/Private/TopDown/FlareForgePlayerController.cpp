@@ -160,6 +160,7 @@ void AFlareForgePlayerController::RotatePlayerTowardsMouse()
             // Set the new rotation
             //DrawDebugLine(GetWorld(), Start, End, FColor(255,0,0),false,1);
             CurrentChar->SetActorRotation(NewRot);
+        	RotatePlayerOnServer(NewRot);
         }
         else
         {
@@ -171,6 +172,12 @@ void AFlareForgePlayerController::RotatePlayerTowardsMouse()
         //UE_LOG(LogTemp, Error, TEXT("Deprojection failed"));
     }
 }
+
+void AFlareForgePlayerController::RotatePlayerOnServer_Implementation(const FRotator PlayerRotation)
+{
+	this->GetCharacter()->SetActorRotation(PlayerRotation);
+}
+
 
 
 

@@ -90,6 +90,9 @@ protected:
 
 	// rotate character with mouse
 	void RotatePlayerTowardsMouse();
+
+	UFUNCTION(Server, Reliable)
+	void RotatePlayerOnServer(const FRotator PlayerRotation);
 	
 
 private:
