@@ -30,7 +30,10 @@ AFlareForgePlayerController::AFlareForgePlayerController(const class FObjectInit
 	FollowTime = 0.f;
 
 	// Initialize MyAbilitySystemComponent
-	MyAbilitySystemComponent = CreateDefaultSubobject<UMyAbilitySystemComponent>(TEXT("MyAbilitySystemComponent"));
+	AbilitySystemComponent = CreateDefaultSubobject<UMyAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+
+
+		
 
 	//GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Overlap);
 
@@ -58,7 +61,7 @@ int32 AFlareForgePlayerController::GetAbilityLevel(EFlareForgeAbilityID AbilityI
 
 void AFlareForgePlayerController::RemoveCharacterAbilites()
 {
-	if (GetLocalRole() != ROLE_Authority || !AbilitySystemComponent.IsValid || !AbilitySystemComponent->CharacterAbilitesGiven)
+	if (GetLocalRole() != ROLE_Authority || !AbilitySystemComponent.IsValid() || !AbilitySystemComponent->CharacterAbilitesGiven)
 	{
 		return;
 	}
@@ -107,7 +110,7 @@ float AFlareForgePlayerController::GetPower() const
 	}
 	return 0.0f;
 }
-
+/*
 void AFlareForgePlayerController::Die()
 {
 	RemoveCharacterAbilites();
@@ -116,7 +119,6 @@ void AFlareForgePlayerController::Die()
 	GetCharacterMovement()->Velocity = FVector(0);
 
 	OnCharacterDied.Broadcast(this);
-
 	if(AbilitySystemComponent.IsValid())
 	{
 		AbilitySystemComponent->CancelAbilities();
@@ -126,7 +128,7 @@ void AFlareForgePlayerController::Die()
 		int32 NumEffectsRemoved = AbilitySystemComponent->RemoveActiveEffectsWithTags(EffectsTagsToRemove);
 		AbilitySystemComponent->AddLooseGameplayTag(DeadTag);
 	}
-
+	
 	if(DeathMontage)
 	{
 		PlayAnimMontage(DeathMontage);
@@ -134,7 +136,9 @@ void AFlareForgePlayerController::Die()
 	{
 		FinishDying();
 	}
+	
 }
+*/
 
 void AFlareForgePlayerController::FinishDying()
 {
