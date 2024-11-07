@@ -15,14 +15,11 @@
 #include "Engine/LocalPlayer.h"
 #include "MyAbilitySystemComponent.h"
 #include "TeleportAbility.h"
-#include "Components/CapsuleComponent.h"
-#include "MyCharacterAttributeSet.h"
-#include "CharacterGameplayAbility.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
-AFlareForgePlayerController::AFlareForgePlayerController(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
+AFlareForgePlayerController::AFlareForgePlayerController()
 {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
@@ -31,115 +28,6 @@ AFlareForgePlayerController::AFlareForgePlayerController(const class FObjectInit
 
 	// Initialize MyAbilitySystemComponent
 	MyAbilitySystemComponent = CreateDefaultSubobject<UMyAbilitySystemComponent>(TEXT("MyAbilitySystemComponent"));
-	
-
-	//GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Overlap);
-
-    bAlwaysRelevant = true;
-	
-	DeadTag = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
-	EffectRemoveOnDeathTag = FGameplayTag::RequestGameplayTag(FName("State.RemoveOnDeath"));
-
-}
-
-UAbilitySystemComponent* AFlareForgePlayerController::GetAbilitySystemComponent() const
-{
-	return MyAbilitySystemComponent.Get();
-}
-
-bool AFlareForgePlayerController::IsAlive() const
-{
-	return GetHealth() > 0.0f;
-}
-
-int32 AFlareForgePlayerController::GetAbilityLevel(EFlareForgeAbilityID AbilityID) const
-{
-	return 1;
-}
-
-void AFlareForgePlayerController::RemoveCharacterAbilities()
-{
-	if (GetLocalRole() != ROLE_Authority || !MyAbilitySystemComponent.IsValid() || !MyAbilitySystemComponent->CharacterAbilitiesGiven)
-	{
-		return;
-	}
-	TArray<FGameplayAbilitySpecHandle> AbilitiesToRemove;
-	for(const FGameplayAbilitySpec& Spec : MyAbilitySystemComponent->GetActivatableAbilities())
-	{
-		if((Spec.SourceObject == this) && CharacterAbilities.Contains(Spec.Ability->GetClass()))
-		{
-			AbilitiesToRemove.Add(Spec.Handle);
-		}
-	}
- }
-
-float AFlareForgePlayerController::GetCharacterLevel() const
-{
-	if(AttributeSet.IsValid())
-	{
-		return AttributeSet->GetLevel();
-	}
-	return 0.0f;
-}
-
-float AFlareForgePlayerController::GetHealth() const
-{
-	if(AttributeSet.IsValid())
-	{
-		return AttributeSet->GetHealth();
-	}
-	return 0.0f;
-}
-
-float AFlareForgePlayerController::GetMaxHealth() const
-{
-	if(AttributeSet.IsValid())
-	{
-		return AttributeSet->GetMaxHealth();
-	}
-	return 0.0f;
-}
-
-float AFlareForgePlayerController::GetPower() const
-{
-	if(AttributeSet.IsValid())
-	{
-		return AttributeSet->GetPower();
-	}
-	return 0.0f;
-}
-
-void AFlareForgePlayerController::Die()
-{
-	/*RemoveCharacterAbilites();
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	GetCharacterMovement()->GravityScale = 0;
-	GetCharacterMovement()->Velocity = FVector(0);
-*/
-	OnCharacterDied.Broadcast(this);
-	if(MyAbilitySystemComponent.IsValid())
-	{
-		MyAbilitySystemComponent->CancelAbilities();
-
-		FGameplayTagContainer EffectsTagsToRemove;
-		EffectsTagsToRemove.AddTag(EffectRemoveOnDeathTag);
-		int32 NumEffectsRemoved = MyAbilitySystemComponent->RemoveActiveEffectsWithTags(EffectsTagsToRemove);
-		MyAbilitySystemComponent->AddLooseGameplayTag(DeadTag);
-	}
-	/*
-	if(DeathMontage)
-	{
-		PlayAnimMontage(DeathMontage);
-	}else
-	{
-		FinishDying();
-	}
-	*/
-}
-
-void AFlareForgePlayerController::FinishDying()
-{
-	Destroy();
 }
 
 void AFlareForgePlayerController::BeginPlay()
@@ -148,7 +36,7 @@ void AFlareForgePlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	// Ensure MyAbilitySystemComponent is valid
-	if (MyAbilitySystemComponent.IsValid())
+	if (MyAbilitySystemComponent)
 	{
 		// Grant each ability in the DefaultAbilities array
 		for (TSubclassOf<UGameplayAbility>& Ability : DefaultAbilities)
@@ -158,72 +46,6 @@ void AFlareForgePlayerController::BeginPlay()
 				MyAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability, 1, static_cast<int32>(EFlareForgeAbilityInputID::Confirm), this));
 			}
 		}
-	}
-}
-
-void AFlareForgePlayerController::AddCharacterAbilities()
-{
-	if (GetLocalRole() != ROLE_Authority || !MyAbilitySystemComponent.IsValid() || MyAbilitySystemComponent->CharacterAbilitiesGiven)
-	{
-		return;
-	}
-
-	for(TSubclassOf<UCharacterGameplayAbility>& StartupAbility : CharacterAbilities)
-	{
-		MyAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(StartupAbility, GetAbilityLevel(StartupAbility.GetDefaultObject()->AbilityID), static_cast<int32>(StartupAbility.GetDefaultObject()->AbilityInputID), this));
-	}
-
-	MyAbilitySystemComponent->CharacterAbilitiesGiven = true;
-}
-
-void AFlareForgePlayerController::InitializeAttributes()
-{
-	if(!MyAbilitySystemComponent.IsValid())
-	{
-		return;
-	}
-
-	if(!DefaultAttributes)
-	{
-		UE_LOG(LogTemp, Error, TEXT("%s() Missing DefaultAttributes for %s. Please fill in the character's Blueprint."), *FString(__FUNCTION__), *GetName());
-	}
-
-	FGameplayEffectContextHandle EffectContext = MyAbilitySystemComponent->MakeEffectContext();
-	EffectContext.AddSourceObject(this);
-
-	FGameplayEffectSpecHandle NewHandle = MyAbilitySystemComponent->MakeOutgoingSpec(DefaultAttributes, GetCharacterLevel(), EffectContext);
-	if(NewHandle.IsValid())
-	{
-		FActiveGameplayEffectHandle ActiveGEHandle = MyAbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), MyAbilitySystemComponent.Get());
-	}
-}
-
-void AFlareForgePlayerController::AddStartupEffects()
-{
-	if(GetLocalRole() != ROLE_Authority || !MyAbilitySystemComponent.IsValid() || MyAbilitySystemComponent->StartupEffectsApplied)
-	{
-		return;
-	}
-
-	FGameplayEffectContextHandle EffectContext = MyAbilitySystemComponent->MakeEffectContext();
-	EffectContext.AddSourceObject(this);
-
-	for(TSubclassOf<UGameplayEffect> GameplayEffect : StartupEffects)
-	{
-		FGameplayEffectSpecHandle NewHandle = MyAbilitySystemComponent->MakeOutgoingSpec(GameplayEffect, GetCharacterLevel(), EffectContext);
-		if(NewHandle.IsValid())
-		{
-			FActiveGameplayEffectHandle ActiveGEHandle = MyAbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), MyAbilitySystemComponent.Get());
-		}
-	}
-	MyAbilitySystemComponent->StartupEffectsApplied = true;
-}
-
-void AFlareForgePlayerController::SetHealth(float Health)
-{
-	if (AttributeSet.IsValid())
-	{
-		AttributeSet->SetHealth(Health);
 	}
 }
 
@@ -265,8 +87,11 @@ void AFlareForgePlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(MovementHorizontalAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::MovementHorizontal);
 		EnhancedInputComponent->BindAction(MovementVerticalAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::MovementVertical);
 
+		// Dash Setup
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::Dash);
+
 		// Ensure MyAbilitySystemComponent is valid and bind it to the input
-		if (MyAbilitySystemComponent.IsValid() && InputComponent)
+		if (MyAbilitySystemComponent && InputComponent)
 		{
 			MyAbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, FGameplayAbilityInputBinds(
 				"Confirm",
@@ -303,6 +128,45 @@ void AFlareForgePlayerController::MovementVertical(const FInputActionValue& Valu
 	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	GetCharacter()->AddMovementInput(Direction, Value.Get<FVector2D>().X);
 }
+
+void AFlareForgePlayerController::Dash()
+{
+	
+	/*FVector MoveDirection = GetCharacter()->GetCharacterMovement()->GetLastInputVector().GetSafeNormal();
+	double MaxMoveSpeed = GetCharacter()->GetCharacterMovement()->MaxWalkSpeed;
+	FVector DashVector = DashSpeed * MoveDirection * MaxMoveSpeed;
+	GetCharacter()->LaunchCharacter(DashVector, false, false);
+	//GetCharacter()->LaunchCharacter(DashVector, false, false);*/
+	
+	if(DashTimer < UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()))
+	{
+		FVector MoveDirection = GetCharacter()->GetCharacterMovement()->GetLastInputVector();
+		//double MaxMoveSpeed = GetCharacter()->GetCharacterMovement()->MaxWalkSpeed;
+		FVector DashVector;
+		
+		if(MoveDirection.IsZero())
+		{
+			DashVector = FVector(DashSpeed * GetCharacter()->GetActorForwardVector());
+		}
+		else
+		{
+			DashVector = FVector(DashSpeed * MoveDirection);
+		}
+		
+		GetCharacter()->LaunchCharacter(DashVector, false, false);
+		DashOnServer(DashVector);
+		DashTimer = UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()) + 3;
+	}
+	
+}
+
+void AFlareForgePlayerController::DashOnServer_Implementation(const FVector& DashVector) const
+{
+	GetCharacter()->LaunchCharacter(DashVector, false, false);
+}
+
+
+
 
 void AFlareForgePlayerController::RotatePlayerTowardsMouse()
 {

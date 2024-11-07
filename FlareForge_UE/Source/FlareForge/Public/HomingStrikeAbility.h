@@ -27,5 +27,8 @@ public:
 private:
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<AHomingStrikeProjectile> OrbProjectile;
+	TSubclassOf<AHomingStrikeProjectile> ProjectileBlueprint;
+
+	UPROPERTY(VisibleAnywhere)
+	AHomingStrikeProjectile* Projectile;
 };

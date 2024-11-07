@@ -3,9 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystemInterface.h"
-#include <FlareForge/FlareForge.h>
-#include "GameplayTagContainer.h"
 #include "InputActionValue.h"
 #include "Templates/SubclassOf.h"
 #include "GameFramework/PlayerController.h"
@@ -27,19 +24,20 @@ enum class EFlareForgeAbilityInputID : uint8
 	Cancel UMETA(DisplayName = "Cancel")
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterDiedDelegate, AFlareForgePlayerController*, Character);
-
 UCLASS()
-class AFlareForgePlayerController : public APlayerController, public IAbilitySystemInterface
+class AFlareForgePlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
 public:
-	AFlareForgePlayerController(const class FObjectInitializer& ObjectInitializer);
+	AFlareForgePlayerController();
 
 	/** Time Threshold to know if it was a short press */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	float ShortPressThreshold;
+
+	UPROPERTY(EditAnywhere, Blueprintable)
+	float DashSpeed = 100.0f;
 
 	/** FX Class that we will spawn when clicking */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
@@ -63,41 +61,23 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MovementHorizontalAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* DashAction;
+	
+	/** Define MyAbilitySystemComponent **/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")
+	class UMyAbilitySystemComponent* MyAbilitySystemComponent;
+
 	// Array to store default abilities to be granted to the character
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
 	TArray<TSubclassOf<class UGameplayAbility>> DefaultAbilities;
 
-	//return AbilitySystemComponent
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	// Dash functions
+	void Dash();
 
-	UPROPERTY(BlueprintAssignable, Category = "Character")
-	FCharacterDiedDelegate OnCharacterDied;
+	UFUNCTION(Server, Reliable)
+	void DashOnServer(const FVector& DashVector) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Character")
-    virtual bool IsAlive() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Character")
-	virtual int32 GetAbilityLevel(EFlareForgeAbilityID AbilityID) const;
-
-	virtual void RemoveCharacterAbilities();
-
-	virtual void Die();
-
-	UFUNCTION(BlueprintCallable, Category = "Character")
-	virtual void FinishDying();
-
-	//Get attributes
-	UFUNCTION(BlueprintCallable, Category = "Character_Attributes")
-	float GetCharacterLevel() const;
-	
-	UFUNCTION(BlueprintCallable, Category = "Character_Attributes")
-	float GetHealth() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Character_Attributes")
-	float GetMaxHealth() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Character_Attributes")
-	float GetPower() const;
 
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
@@ -120,49 +100,22 @@ protected:
 	// movement functions
 	void MovementVertical(const FInputActionValue& Value);
 	void MovementHorizontal(const FInputActionValue& Value);
-
+	
 	// rotate character with mouse
 	void RotatePlayerTowardsMouse();
 
 	UFUNCTION(Server, Reliable)
 	void RotatePlayerOnServer(const FRotator PlayerRotation);
-
-	TWeakObjectPtr<class UMyAbilitySystemComponent> MyAbilitySystemComponent;
-	TWeakObjectPtr<class UMyCharacterAttributeSet> AttributeSet;
-
-	FGameplayTag DeadTag;
-	FGameplayTag EffectRemoveOnDeathTag;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Character")
-	FText CharacterName;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Animation")
-	UAnimMontage* DeathMontage;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities")
-    TArray<TSubclassOf<class UCharacterGameplayAbility>> CharacterAbilities;
 	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities")
-	TSubclassOf<class UGameplayEffect> DefaultAttributes;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Effects")
-	TArray<TSubclassOf<class UGameplayEffect>> StartupEffects;
-
-	virtual void AddCharacterAbilities();
-
-	virtual void InitializeAttributes();
-
-	virtual void AddStartupEffects();
-
-    //Set Health on spawn
-	virtual void SetHealth(float Health);
-
-	
 private:
 	FVector CachedDestination;
 
 	bool bIsTouch; // Is it a touch device
 	float FollowTime; // For how long it has been pressed
+	
+	float DashTimer = 0.0f;
+	
 };
 
 
