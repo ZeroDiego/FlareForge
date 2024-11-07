@@ -127,7 +127,6 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void RotatePlayerOnServer(const FRotator PlayerRotation);
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")
 	TWeakObjectPtr<class UMyAbilitySystemComponent> MyAbilitySystemComponent;
 	TWeakObjectPtr<class UMyCharacterAttributeSet> AttributeSet;
 
