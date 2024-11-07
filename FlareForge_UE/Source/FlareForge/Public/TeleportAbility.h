@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "TopDown/FlareForgePlayerController.h"
 #include "TeleportAbility.generated.h"
 
 /**
@@ -19,7 +20,9 @@ public:
 	//Override the ActivateAbility method
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+	UFUNCTION(Server, Reliable)
+	void TeleportAbility(const AActor* Actor);
 private:
-	UPROPERTY(EditAnywhere)
-	float TeleportDistance = 1000.0f;
+	//UPROPERTY(EditAnywhere)
+	//float TeleportDistance = 1000.0f;
 };

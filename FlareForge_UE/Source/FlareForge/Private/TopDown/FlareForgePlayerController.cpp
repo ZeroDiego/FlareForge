@@ -35,6 +35,11 @@ void AFlareForgePlayerController::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+	InitMyAbilitySystemComponent();
+}
+
+void AFlareForgePlayerController::InitMyAbilitySystemComponent_Implementation()
+{
 	// Ensure MyAbilitySystemComponent is valid
 	if (MyAbilitySystemComponent)
 	{
@@ -48,6 +53,7 @@ void AFlareForgePlayerController::BeginPlay()
 		}
 	}
 }
+
 
 void AFlareForgePlayerController::Tick(float DeltaSeconds)
 {
@@ -166,8 +172,6 @@ void AFlareForgePlayerController::DashOnServer_Implementation(const FVector& Das
 }
 
 
-
-
 void AFlareForgePlayerController::RotatePlayerTowardsMouse()
 {
     FVector MouseLocation, MouseDirection;
@@ -191,6 +195,7 @@ void AFlareForgePlayerController::RotatePlayerTowardsMouse()
         {
             // Ensure the hit location is on the same plane as the character
             FVector HitLocation = HitResult.Location;
+        	SetMouseLocation(HitLocation);
             FVector CharacterPlaneLocation = FVector(HitLocation.X, HitLocation.Y, CharacterLocation.Z);
 
             FVector Direction = CharacterPlaneLocation - CharacterLocation;
@@ -221,9 +226,15 @@ void AFlareForgePlayerController::RotatePlayerOnServer_Implementation(const FRot
 	this->GetCharacter()->SetActorRotation(PlayerRotation);
 }
 
+void AFlareForgePlayerController::SetMouseLocation(const FVector& MouseHitResult)
+{
+	CurrentMouseLocation = MouseHitResult;
+}
 
-
-
+FVector AFlareForgePlayerController::GetMouseLocation() const
+{
+	return CurrentMouseLocation;
+}
 
 void AFlareForgePlayerController::OnInputStarted()
 {
