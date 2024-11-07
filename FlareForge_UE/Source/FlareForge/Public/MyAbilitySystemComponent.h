@@ -11,7 +11,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FRecievedDamageDelegate, UMyAbili
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
+
 class FLAREFORGE_API UMyAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
