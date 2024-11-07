@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "TeleportAbility.h"
 #include "TopDown/FlareForgePlayerController.h"
 #include "GameFramework/Pawn.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
@@ -14,7 +15,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
 #include "MyAbilitySystemComponent.h"
-#include "TeleportAbility.h"
 #include "GameFramework/Character.h"
 #include "MyAbilitySystemComponent.h"
 #include "Kismet/GameplayStatics.h"

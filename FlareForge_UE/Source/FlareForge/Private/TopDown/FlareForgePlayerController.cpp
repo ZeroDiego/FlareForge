@@ -15,6 +15,7 @@
 #include "Engine/LocalPlayer.h"
 #include "MyAbilitySystemComponent.h"
 #include "TeleportAbility.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -86,6 +87,9 @@ void AFlareForgePlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(MovementHorizontalAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::MovementHorizontal);
 		EnhancedInputComponent->BindAction(MovementVerticalAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::MovementVertical);
 
+		// Dash Setup
+		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::Dash);
+
 		// Ensure MyAbilitySystemComponent is valid and bind it to the input
 		if (MyAbilitySystemComponent && InputComponent)
 		{
@@ -124,6 +128,45 @@ void AFlareForgePlayerController::MovementVertical(const FInputActionValue& Valu
 	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	GetCharacter()->AddMovementInput(Direction, Value.Get<FVector2D>().X);
 }
+
+void AFlareForgePlayerController::Dash()
+{
+	
+	/*FVector MoveDirection = GetCharacter()->GetCharacterMovement()->GetLastInputVector().GetSafeNormal();
+	double MaxMoveSpeed = GetCharacter()->GetCharacterMovement()->MaxWalkSpeed;
+	FVector DashVector = DashSpeed * MoveDirection * MaxMoveSpeed;
+	GetCharacter()->LaunchCharacter(DashVector, false, false);
+	//GetCharacter()->LaunchCharacter(DashVector, false, false);*/
+	
+	if(DashTimer < UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()))
+	{
+		FVector MoveDirection = GetCharacter()->GetCharacterMovement()->GetLastInputVector();
+		//double MaxMoveSpeed = GetCharacter()->GetCharacterMovement()->MaxWalkSpeed;
+		FVector DashVector;
+		
+		if(MoveDirection.IsZero())
+		{
+			DashVector = FVector(DashSpeed * GetCharacter()->GetActorForwardVector());
+		}
+		else
+		{
+			DashVector = FVector(DashSpeed * MoveDirection);
+		}
+		
+		GetCharacter()->LaunchCharacter(DashVector, false, false);
+		DashOnServer(DashVector);
+		DashTimer = UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()) + 3;
+	}
+	
+}
+
+void AFlareForgePlayerController::DashOnServer_Implementation(const FVector& DashVector) const
+{
+	GetCharacter()->LaunchCharacter(DashVector, false, false);
+}
+
+
+
 
 void AFlareForgePlayerController::RotatePlayerTowardsMouse()
 {

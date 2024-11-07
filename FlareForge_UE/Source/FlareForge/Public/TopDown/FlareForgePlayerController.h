@@ -36,6 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	float ShortPressThreshold;
 
+	UPROPERTY(EditAnywhere, Blueprintable)
+	float DashSpeed = 100.0f;
+
 	/** FX Class that we will spawn when clicking */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UNiagaraSystem* FXCursor;
@@ -57,6 +60,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MovementHorizontalAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* DashAction;
 	
 	/** Define MyAbilitySystemComponent **/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")
@@ -65,6 +71,13 @@ public:
 	// Array to store default abilities to be granted to the character
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
 	TArray<TSubclassOf<class UGameplayAbility>> DefaultAbilities;
+
+	// Dash functions
+	void Dash();
+
+	UFUNCTION(Server, Reliable)
+	void DashOnServer(const FVector& DashVector) const;
+
 
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
@@ -87,7 +100,7 @@ protected:
 	// movement functions
 	void MovementVertical(const FInputActionValue& Value);
 	void MovementHorizontal(const FInputActionValue& Value);
-
+	
 	// rotate character with mouse
 	void RotatePlayerTowardsMouse();
 
@@ -100,6 +113,9 @@ private:
 
 	bool bIsTouch; // Is it a touch device
 	float FollowTime; // For how long it has been pressed
+	
+	float DashTimer = 0.0f;
+	
 };
 
 
