@@ -2,6 +2,7 @@
 
 
 #include "DashAbility.h"
+#include "TopDown//FlareForgePlayerController.h"
 #include "GameFramework/Character.h"
 #include "MyAbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -18,16 +19,16 @@ void UDashAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 		//Character->LaunchCharacter(DashDistance, )
 	}
 
-	if (const AActor* Actor = GetAvatarActorFromActorInfo())
+	if (AActor* Actor = GetAvatarActorFromActorInfo())
 	{
-		if (const APlayerController* PlayerController = Cast<APlayerController>(Actor))
+		if (AFlareForgePlayerController* PlayerController = Cast<AFlareForgePlayerController>(Actor))
 		{
 			if (ACharacter* Character = Cast<ACharacter>(PlayerController->GetPawn()))
 			{
 				//const FVector SpawnProjectileLocation = Character->GetComponentByClass<UFiringOffset>()->GetComponentLocation();
 				//const FVector CurrentMovingDirection = Character->GetActorRotation().Vector();
-				const FVector DashDirection = Character->GetActorRotation().Vector();
-				Character->LaunchCharacter(DashDistance * DashDirection, false, false);
+				/*const FVector DashDirection = Character->GetActorRotation().Vector();
+				Character->LaunchCharacter(DashDistance * DashDirection, false, false);*/
 				
 				/*const FVector CurrentMovingDirection = Character->GetCharacterMovement()->GetLastInputVector().GetSafeNormal();
 				double MaxMoveSpeed = Character->GetCharacterMovement()->MaxWalkSpeed;
