@@ -17,6 +17,7 @@ void UHomingStrikeAbility::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 				const FVector SpawnProjectileLocation = Character->GetComponentByClass<UFiringOffset>()->GetComponentLocation();
 				const FRotator CurrentRotation = Character->GetActorRotation();
 				HomingStrikeAbility(SpawnProjectileLocation, CurrentRotation);
+				Projectile->LockOn(Projectile->FindHomingStrikeTarget(), PlayerController->GetPawn()->GetRootComponent());
 			}
 		}
 	}
@@ -29,8 +30,6 @@ void UHomingStrikeAbility::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 void UHomingStrikeAbility::HomingStrikeAbility_Implementation(const FVector SpawnProjectileLocation, const FRotator CurrentRotation)
 {
-	// Make the Projectile Spawn
 	const FActorSpawnParameters SpawnParameters;
-	GetWorld()->SpawnActor<AHomingStrikeProjectile>(OrbProjectile, SpawnProjectileLocation, CurrentRotation, SpawnParameters);
-	
+	Projectile = GetWorld()->SpawnActor<AHomingStrikeProjectile>(ProjectileBlueprint, SpawnProjectileLocation, CurrentRotation, SpawnParameters);
 }
