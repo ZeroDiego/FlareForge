@@ -4,21 +4,33 @@
 #include "BasicProjectileAbility.h"
 #include "GameFramework/Character.h"
 #include "MyAbilitySystemComponent.h"
+#include "FiringOffset.h"
 #include "Kismet/GameplayStatics.h"
 
 void UBasicProjectileAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	
-	// Make the Character Teleport
-	if (ACharacter* Character = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))
+	if (const AActor* Actor = GetAvatarActorFromActorInfo())
 	{
-		const FVector SpawnProjectileLocation = Character->GetActorLocation() + SpawnOffset;
-		const FRotator CurrentRotation = Character->GetActorRotation();
-		const FActorSpawnParameters SpawnParameters;
-        GetWorld()->SpawnActor<AActor>(BasicProjectile, SpawnProjectileLocation, CurrentRotation, SpawnParameters);
-		CommitAbilityCooldown(Handle, ActorInfo, ActivationInfo, true, nullptr);
+		if (const APlayerController* PlayerController = Cast<APlayerController>(Actor))
+		{
+			if (const ACharacter* Character = Cast<ACharacter>(PlayerController->GetPawn()))
+			{
+				const FVector SpawnProjectileLocation = Character->GetComponentByClass<UFiringOffset>()->GetComponentLocation();
+				const FRotator CurrentRotation = Character->GetActorRotation();
+				BasicProjectileAbility(SpawnProjectileLocation, CurrentRotation);
+				BasicProjectile->PlayerSpawningRootComponent(PlayerController->GetPawn()->GetRootComponent());
+			}
+		}
 	}
+
+	CommitAbilityCooldown(Handle, ActorInfo, ActivationInfo, true, nullptr);
 	
 	// End the ability
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
+}
+
+void UBasicProjectileAbility::BasicProjectileAbility_Implementation(const FVector SpawnProjectileLocation, const FRotator CurrentRotation)
+{
+	const FActorSpawnParameters SpawnParameters;
+	BasicProjectile = GetWorld()->SpawnActor<ABasicProjectile>(BasicProjectileBlueprint, SpawnProjectileLocation, CurrentRotation, SpawnParameters);
 }
