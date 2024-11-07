@@ -62,10 +62,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MovementHorizontalAction;
-	
-	/** Define MyAbilitySystemComponent **/
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")
-	class UMyAbilitySystemComponent* MyAbilitySystemComponent;
 
 	// Array to store default abilities to be granted to the character
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
@@ -83,7 +79,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Character")
 	virtual int32 GetAbilityLevel(EFlareForgeAbilityID AbilityID) const;
 
-	virtual void RemoveCharacterAbilites();
+	virtual void RemoveCharacterAbilities();
 
 	virtual void Die();
 
@@ -131,7 +127,7 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void RotatePlayerOnServer(const FRotator PlayerRotation);
 
-	TWeakObjectPtr<class UMyAbilitySystemComponent> AbilitySystemComponent;
+	TWeakObjectPtr<class UMyAbilitySystemComponent> MyAbilitySystemComponent;
 	TWeakObjectPtr<class UMyCharacterAttributeSet> AttributeSet;
 
 	FGameplayTag DeadTag;
@@ -152,7 +148,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Effects")
 	TArray<TSubclassOf<class UGameplayEffect>> StartupEffects;
 
-	virtual void AddCharacterAbilites();
+	virtual void AddCharacterAbilities();
 
 	virtual void InitializeAttributes();
 

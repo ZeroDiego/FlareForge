@@ -4,6 +4,10 @@
 #include "MyCharacterAttributeSet.h"
 #include "Net/UnrealNetwork.h"
 
+UMyCharacterAttributeSet::UMyCharacterAttributeSet()
+{
+	// Initialize any attributes or variables here
+}
 
 void UMyCharacterAttributeSet::OnRep_Level(const FGameplayAttributeData& OldLevel)
 {
