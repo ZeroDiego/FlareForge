@@ -78,6 +78,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void DashOnServer(const FVector& DashVector) const;
 
+	UFUNCTION(Server, Reliable)
+	void InitAbilitySystem();
+
 
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */

@@ -35,6 +35,11 @@ void AFlareForgePlayerController::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+	InitAbilitySystem();
+}
+
+void AFlareForgePlayerController::InitAbilitySystem_Implementation()
+{
 	// Ensure MyAbilitySystemComponent is valid
 	if (MyAbilitySystemComponent)
 	{
@@ -48,6 +53,7 @@ void AFlareForgePlayerController::BeginPlay()
 		}
 	}
 }
+
 
 void AFlareForgePlayerController::Tick(float DeltaSeconds)
 {
