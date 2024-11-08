@@ -21,22 +21,32 @@
 
 void UTeleportAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	
-	// Make the Character Teleport
-	/*if (ACharacter* Character = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))
-	{
-		Character->SetActorLocation(Character->GetActorLocation() + TeleportDistance, 1.0, nullptr, ETeleportType::ResetPhysics);
-	}*/
-
 	if (const AActor* Actor = GetAvatarActorFromActorInfo())
 	{
-		if (const APlayerController* PlayerController = Cast<APlayerController>(Actor))
+		UE_LOG(LogTemp, Display, TEXT("Actor"));
+		if (const AFlareForgePlayerController* PlayerController = Cast<AFlareForgePlayerController>(Actor))
 		{
+			UE_LOG(LogTemp, Display, TEXT("Playercontroller"));
 			if (ACharacter* Character = Cast<ACharacter>(PlayerController->GetPawn()))
 			{
-				const FVector TeleportDirection = Character->GetActorRotation().Vector();
-				Character->SetActorLocation(TeleportDirection * TeleportDistance, true, nullptr, ETeleportType::ResetPhysics);
+				UE_LOG(LogTemp, Display, TEXT("Character"));
+				if (IsLocallyControlled())
+				{
+					UE_LOG(LogTemp, Display, TEXT("Mousething"));
+					if (FVector MouseLocation, MouseDirection; PlayerController->DeprojectMousePositionToWorld(MouseLocation, MouseDirection))
+					{
+						Server_ReceiveMouseData(MouseLocation, MouseDirection);
+					}
+				}
 
+				if (HasAuthority(&ActivationInfo))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("ActivateAbility called on %hd"), HasAuthority(&ActivationInfo));
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("ActivateAbility called on %hd"), HasAuthority(&ActivationInfo));
+				}
 			}
 		}
 	}
@@ -45,4 +55,40 @@ void UTeleportAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	
 	// End the ability
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
+}
+
+void UTeleportAbility::Server_ReceiveMouseData_Implementation(FVector MouseLocation, FVector MouseDirection)
+{
+	AActor* AvatarActor = GetAvatarActorFromActorInfo();
+	if (!AvatarActor)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AvatarActor is null"));
+		return;
+	}
+
+	const AFlareForgePlayerController* PlayerController = Cast<AFlareForgePlayerController>(AvatarActor);
+	if (!PlayerController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PlayerController cast failed"));
+		return;
+	}
+
+	ACharacter* Character = Cast<ACharacter>(PlayerController->GetPawn());
+	if (!Character)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Character cast failed"));
+		return;
+	}
+	
+	FVector Start = MouseLocation;
+	FVector End = MouseLocation + MouseDirection * 10000.0f;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(Character);
+
+	FHitResult HitResult;
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
+	{
+		FVector HitLocation = HitResult.Location;
+		Character->SetActorLocation(HitLocation, false, nullptr, ETeleportType::TeleportPhysics);
+	}
 }
