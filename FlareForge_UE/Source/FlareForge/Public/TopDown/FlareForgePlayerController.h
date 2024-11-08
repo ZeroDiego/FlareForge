@@ -38,9 +38,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Blueprintable)
 	float DashSpeed = 100.0f;
-	
-	/*UPROPERTY(EditAnywhere, Category=Replication)
-	FVector CurrentMouseLocation;*/
 
 	/** FX Class that we will spawn when clicking */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
@@ -81,13 +78,8 @@ public:
 	UFUNCTION(Server, Reliable)
 	void DashOnServer(const FVector& DashVector) const;
 
-	void SetMouseLocation(const FVector& MouseHitResult);
-
 	UFUNCTION(Server, Reliable)
-	void InitMyAbilitySystemComponent();
-
-	
-	FVector GetMouseLocation() const;
+	void InitAbilitySystem();
 
 
 protected:
@@ -127,7 +119,6 @@ private:
 	
 	float DashTimer = 0.0f;
 	
-	FVector CurrentMouseLocation;
 };
 
 
