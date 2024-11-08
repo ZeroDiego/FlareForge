@@ -33,13 +33,13 @@ class FLAREFORGE_API ULucasAbilitySystemComponent : public UAbilitySystemCompone
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Enhanced Input Abilities")
+	UFUNCTION(BlueprintCallable, Category = "Lucas Input Abilities")
 	void SetInputBinding(UInputAction* InputAction, FGameplayAbilitySpecHandle AbilityHandle);
 
-	UFUNCTION(BlueprintCallable, Category = "Enhanced Input Abilities")
+	UFUNCTION(BlueprintCallable, Category = "Lucas Input Abilities")
 	void ClearInputBinding(FGameplayAbilitySpecHandle AbilityHandle);
 
-	UFUNCTION(BlueprintCallable, Category = "Enhanced Input Abilities")
+	UFUNCTION(BlueprintCallable, Category = "Lucas Input Abilities")
 	void ClearAbilityBindings(UInputAction* InputAction);
 	
 private:
