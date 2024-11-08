@@ -18,8 +18,14 @@ public:
 
 	//Override the ActivateAbility method
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+	
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_ReceiveMouseData(FVector MouseLocation, FVector MouseDirection);
+	void Server_ReceiveMouseData_Implementation(FVector MouseLocation, FVector MouseDirection);
+	bool Server_ReceiveMouseData_Validate(FVector MouseLocation, FVector MouseDirection) { return true; }
 
 private:
+	
 	UPROPERTY(EditAnywhere)
 	float TeleportDistance = 1000.0f;
 };
