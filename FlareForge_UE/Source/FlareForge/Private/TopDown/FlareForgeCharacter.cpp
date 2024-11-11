@@ -15,9 +15,14 @@
 #include "CharacterPlayerState.h"
 #include "CharacterGameplayAbility.h"
 #include "MyCharacterAttributeSet.h"
+#include "MyAbilitySystemComponent.h"
 
-AFlareForgeCharacter::AFlareForgeCharacter(const class FObjectInitializer& ObjectInitializer)
+AFlareForgeCharacter::AFlareForgeCharacter(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
+
+	// Initialize MyAbilitySystemComponent
+	MyAbilitySystemComponent = CreateDefaultSubobject<UMyAbilitySystemComponent>(TEXT("MyAbilitySystemComponent"));
+	
 	// Set size for player capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -49,6 +54,13 @@ AFlareForgeCharacter::AFlareForgeCharacter(const class FObjectInitializer& Objec
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
 
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Overlap);
+
+	bAlwaysRelevant = true;
+	
+	DeadTag = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
+	EffectRemoveOnDeathTag = FGameplayTag::RequestGameplayTag(FName("State.RemoveOnDeath"));
+	
 	DeadTag = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
 }
 
@@ -57,7 +69,186 @@ void AFlareForgeCharacter::Tick(float DeltaSeconds)
     Super::Tick(DeltaSeconds);
 }
 
-void AFlareForgeCharacter::PossessedBy()
+UAbilitySystemComponent* AFlareForgeCharacter::GetAbilitySystemComponent() const
 {
-	Super::PossessedBy(AController* NewController);
+	return MyAbilitySystemComponent.Get();
+}
+
+bool AFlareForgeCharacter::IsAlive() const
+{
+	return GetHealth() > 0.0f;
+}
+
+int32 AFlareForgeCharacter::GetAbilityLevel(EFlareForgeAbilityID AbilityID) const
+{
+	return 1;
+}
+
+void AFlareForgeCharacter::RemoveCharacterAbilities()
+{
+	if (GetLocalRole() != ROLE_Authority || !MyAbilitySystemComponent.IsValid() || !MyAbilitySystemComponent->CharacterAbilitiesGiven)
+	{
+		return;
+	}
+	TArray<FGameplayAbilitySpecHandle> AbilitiesToRemove;
+	for(const FGameplayAbilitySpec& Spec : MyAbilitySystemComponent->GetActivatableAbilities())
+	{
+		if((Spec.SourceObject == this) && CharacterAbilities.Contains(Spec.Ability->GetClass()))
+		{
+			AbilitiesToRemove.Add(Spec.Handle);
+		}
+	}
+ }
+
+float AFlareForgeCharacter::GetCharacterLevel() const
+{
+	if(AttributeSet.IsValid())
+	{
+		return AttributeSet->GetLevel();
+	}
+	return 0.0f;
+}
+
+float AFlareForgeCharacter::GetHealth() const
+{
+	if(AttributeSet.IsValid())
+	{
+		return AttributeSet->GetHealth();
+	}
+	return 0.0f;
+}
+
+float AFlareForgeCharacter::GetMaxHealth() const
+{
+	if(AttributeSet.IsValid())
+	{
+		return AttributeSet->GetMaxHealth();
+	}
+	return 0.0f;
+}
+
+float AFlareForgeCharacter::GetPower() const
+{
+	if(AttributeSet.IsValid())
+	{
+		return AttributeSet->GetPower();
+	}
+	return 0.0f;
+}
+
+void AFlareForgeCharacter::Die()
+{
+	RemoveCharacterAbilities();
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCharacterMovement()->GravityScale = 0;
+	GetCharacterMovement()->Velocity = FVector(0);
+
+	OnCharacterDied.Broadcast(this);
+	if(MyAbilitySystemComponent.IsValid())
+	{
+		MyAbilitySystemComponent->CancelAbilities();
+
+		FGameplayTagContainer EffectsTagsToRemove;
+		EffectsTagsToRemove.AddTag(EffectRemoveOnDeathTag);
+		int32 NumEffectsRemoved = MyAbilitySystemComponent->RemoveActiveEffectsWithTags(EffectsTagsToRemove);
+		MyAbilitySystemComponent->AddLooseGameplayTag(DeadTag);
+	}
+	
+	if(DeathMontage)
+	{
+		PlayAnimMontage(DeathMontage);
+	}else
+	{
+		FinishDying();
+	}
+}
+
+void AFlareForgeCharacter::FinishDying()
+{
+	Destroy();
+}
+
+void AFlareForgeCharacter::BeginPlay()
+{
+	// Call the base class  
+	Super::BeginPlay();
+
+	// Ensure MyAbilitySystemComponent is valid
+	if (MyAbilitySystemComponent.IsValid())
+	{
+		// Grant each ability in the DefaultAbilities array
+		for (TSubclassOf<UGameplayAbility>& Ability : DefaultAbilities)
+		{
+			if (Ability)
+			{
+				MyAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability, 1, static_cast<int32>(EFlareForgeAbilityInputID::Confirm), this));
+			}
+		}
+	}
+}
+
+void AFlareForgeCharacter::AddCharacterAbilities()
+{
+	if (GetLocalRole() != ROLE_Authority || !MyAbilitySystemComponent.IsValid() || MyAbilitySystemComponent->CharacterAbilitiesGiven)
+	{
+		return;
+	}
+
+	for(TSubclassOf<UCharacterGameplayAbility>& StartupAbility : CharacterAbilities)
+	{
+		MyAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(StartupAbility, GetAbilityLevel(StartupAbility.GetDefaultObject()->AbilityID), static_cast<int32>(StartupAbility.GetDefaultObject()->AbilityInputID), this));
+	}
+
+	MyAbilitySystemComponent->CharacterAbilitiesGiven = true;
+}
+
+void AFlareForgeCharacter::InitializeAttributes()
+{
+	if(!MyAbilitySystemComponent.IsValid())
+	{
+		return;
+	}
+
+	if(!DefaultAttributes)
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s() Missing DefaultAttributes for %s. Please fill in the character's Blueprint."), *FString(__FUNCTION__), *GetName());
+	}
+
+	FGameplayEffectContextHandle EffectContext = MyAbilitySystemComponent->MakeEffectContext();
+	EffectContext.AddSourceObject(this);
+
+	FGameplayEffectSpecHandle NewHandle = MyAbilitySystemComponent->MakeOutgoingSpec(DefaultAttributes, GetCharacterLevel(), EffectContext);
+	if(NewHandle.IsValid())
+	{
+		FActiveGameplayEffectHandle ActiveGEHandle = MyAbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), MyAbilitySystemComponent.Get());
+	}
+}
+
+void AFlareForgeCharacter::AddStartupEffects()
+{
+	if(GetLocalRole() != ROLE_Authority || !MyAbilitySystemComponent.IsValid() || MyAbilitySystemComponent->StartupEffectsApplied)
+	{
+		return;
+	}
+
+	FGameplayEffectContextHandle EffectContext = MyAbilitySystemComponent->MakeEffectContext();
+	EffectContext.AddSourceObject(this);
+
+	for(TSubclassOf<UGameplayEffect> GameplayEffect : StartupEffects)
+	{
+		FGameplayEffectSpecHandle NewHandle = MyAbilitySystemComponent->MakeOutgoingSpec(GameplayEffect, GetCharacterLevel(), EffectContext);
+		if(NewHandle.IsValid())
+		{
+			FActiveGameplayEffectHandle ActiveGEHandle = MyAbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), MyAbilitySystemComponent.Get());
+		}
+	}
+	MyAbilitySystemComponent->StartupEffectsApplied = true;
+}
+
+void AFlareForgeCharacter::SetHealth(float Health)
+{
+	if (AttributeSet.IsValid())
+	{
+		AttributeSet->SetHealth(Health);
+	}
 }
