@@ -15,13 +15,12 @@
 #include "CharacterPlayerState.h"
 #include "CharacterGameplayAbility.h"
 #include "MyCharacterAttributeSet.h"
-#include "MyAbilitySystemComponent.h"
+#include "LucasAbilitySystemComponent.h"
 
 AFlareForgeCharacter::AFlareForgeCharacter(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 
-	// Initialize MyAbilitySystemComponent
-	MyAbilitySystemComponent = CreateDefaultSubobject<UMyAbilitySystemComponent>(TEXT("MyAbilitySystemComponent"));
+	ULucasAbilitySystemComponent* LucasAbilitySystemComponent = CreateDefaultSubobject<ULucasAbilitySystemComponent>(TEXT("LucasAbilitySystemComponent"));
 	
 	// Set size for player capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -71,7 +70,7 @@ void AFlareForgeCharacter::Tick(float DeltaSeconds)
 
 UAbilitySystemComponent* AFlareForgeCharacter::GetAbilitySystemComponent() const
 {
-	return MyAbilitySystemComponent.Get();
+	return LucasAbilitySystemComponent;
 }
 
 bool AFlareForgeCharacter::IsAlive() const
@@ -173,17 +172,11 @@ void AFlareForgeCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-	// Ensure MyAbilitySystemComponent is valid
-	if (MyAbilitySystemComponent.IsValid())
+	if (IsValid(LucasAbilitySystemComponent))
 	{
-		// Grant each ability in the DefaultAbilities array
-		for (TSubclassOf<UGameplayAbility>& Ability : DefaultAbilities)
-		{
-			if (Ability)
-			{
-				MyAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability, 1, static_cast<int32>(EFlareForgeAbilityInputID::Confirm), this));
-			}
-		}
+		// Initialize any necessary mappings or abilities here
+		// Example: Binding default abilities to input actions
+		LucasAbilitySystemComponent->SetInputBinding(MovementHorizontalAction, MovementHorizontalHandle);
 	}
 }
 

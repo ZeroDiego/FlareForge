@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
+#include "LucasAbilitySystemComponent.h"
 #include "MyAbilitySystemComponent.h"
 #include "Templates/SubclassOf.h"
 #include "GameFramework/PlayerController.h"
@@ -84,7 +85,7 @@ private:
 	bool bIsTouch; // Is it a touch device
 	float FollowTime; // For how long it has been pressed
 
-	UMyAbilitySystemComponent* MyAbilitySystemComponent;
+	ULucasAbilitySystemComponent* LucasAbilitySystemComponent;
 };
 
 

@@ -89,7 +89,7 @@ protected:
 
 	virtual void BeginPlay() override;
 	
-	TWeakObjectPtr<class UMyAbilitySystemComponent> MyAbilitySystemComponent;
+	TWeakObjectPtr<class ULucasAbilitySystemComponent> LucasAbilitySystemComponent;
 	TWeakObjectPtr<class UMyCharacterAttributeSet> AttributeSet;
 
 	FGameplayTag DeadTag;
