@@ -12,7 +12,11 @@ class AFlareForgeCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	AFlareForgeCharacter();
+	AFlareForgeCharacter(const class FObjectInitializer& ObjectInitializer);
+
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
+	virtual void PossessedBy(AController* NewController) override;
 
 	// Called every frame.
 	virtual void Tick(float DeltaSeconds) override;
@@ -30,5 +34,13 @@ private:
 	/** Camera boom positioning the camera above the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
+
+protected:
+
+	FGameplayTag DeadTag:
+
+	virtual void BeginPlay() override;
+
+	virtual void OnRep_PlayerState() override;
 };
 

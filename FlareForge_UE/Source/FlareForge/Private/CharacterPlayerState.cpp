@@ -49,6 +49,11 @@ float ACharacterPlayerState::GetMaxHealth() const
 	return AttributeSet->GetMaxHealth();
 }
 
+float ACharacterPlayerState::GetPower() const
+{
+	return AttributeSet->GetPower();
+}
+
 int32 ACharacterPlayerState::GetCharacterLevel() const
 {
 	return AttributeSet->GetLevel();
