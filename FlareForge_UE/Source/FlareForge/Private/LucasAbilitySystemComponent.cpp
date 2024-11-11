@@ -178,3 +178,4 @@ void ULucasAbilitySystemComponent::BeginPlay() {
 		InputComponent = CastChecked<UEnhancedInputComponent>(Owner->InputComponent);
 	}
 }
+

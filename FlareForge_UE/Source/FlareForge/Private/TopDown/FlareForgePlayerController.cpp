@@ -25,9 +25,6 @@ AFlareForgePlayerController::AFlareForgePlayerController()
 	DefaultMouseCursor = EMouseCursor::Default;
 	CachedDestination = FVector::ZeroVector;
 	FollowTime = 0.f;
-
-	// Initialize MyAbilitySystemComponent
-	LucasAbilitySystemComponent = CreateDefaultSubobject<ULucasAbilitySystemComponent>(TEXT("LucasAbilitySystemComponent"));
 }
 
 
@@ -73,19 +70,19 @@ void AFlareForgePlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(MovementHorizontalAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::MovementHorizontal);
 		EnhancedInputComponent->BindAction(MovementVerticalAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::MovementVertical);
 
-		// Ensure MyAbilitySystemComponent is valid and bind it to the input
-		if (LucasAbilitySystemComponent && InputComponent)
+		// Bind actions to abilities using LucasAbilitySystemComponent
+		if (LucasAbilitySystemComponent)
 		{
-			// Bind abilities to input actions using LucasAbilitySystemComponent
-			LucasAbilitySystemComponent->SetInputBinding(SetDestinationClickAction, AbilityHandle);
-			LucasAbilitySystemComponent->SetInputBinding(MovementHorizontalAction, AnotherAbilityHandle);
+			// Example: Binding movement actions to abilities
+			LucasAbilitySystemComponent->SetInputBinding(MovementHorizontalAction, MovementHorizontalHandle);
+			LucasAbilitySystemComponent->SetInputBinding(SetDestinationClickAction, SetDestinationHandle);
 		}
 		else
 		{
-			UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+			UE_LOG(LogTemp, Error, TEXT("Failed to find Lucas Ability System Component!"));
 		}
 	}
-
+}
 
 
 	void AFlareForgePlayerController::MovementHorizontal(const FInputActionValue& Value)
@@ -228,4 +225,3 @@ void AFlareForgePlayerController::SetupInputComponent()
 		bIsTouch = false;
 		OnSetDestinationReleased();
 	}
-}

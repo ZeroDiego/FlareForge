@@ -20,7 +20,7 @@
 AFlareForgeCharacter::AFlareForgeCharacter(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 
-	ULucasAbilitySystemComponent* LucasAbilitySystemComponent = CreateDefaultSubobject<ULucasAbilitySystemComponent>(TEXT("LucasAbilitySystemComponent"));
+	LucasAbilitySystemComponent = CreateDefaultSubobject<ULucasAbilitySystemComponent>(TEXT("LucasAbilitySystemComponent"));
 	
 	// Set size for player capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -70,7 +70,7 @@ void AFlareForgeCharacter::Tick(float DeltaSeconds)
 
 UAbilitySystemComponent* AFlareForgeCharacter::GetAbilitySystemComponent() const
 {
-	return LucasAbilitySystemComponent;
+	return LucasAbilitySystemComponent.Get();
 }
 
 bool AFlareForgeCharacter::IsAlive() const
@@ -85,19 +85,29 @@ int32 AFlareForgeCharacter::GetAbilityLevel(EFlareForgeAbilityID AbilityID) cons
 
 void AFlareForgeCharacter::RemoveCharacterAbilities()
 {
-	if (GetLocalRole() != ROLE_Authority || !MyAbilitySystemComponent.IsValid() || !MyAbilitySystemComponent->CharacterAbilitiesGiven)
+	if (GetLocalRole() != ROLE_Authority || !LucasAbilitySystemComponent.IsValid() || !LucasAbilitySystemComponent->CharacterAbilitiesGiven)
 	{
 		return;
 	}
+
 	TArray<FGameplayAbilitySpecHandle> AbilitiesToRemove;
-	for(const FGameplayAbilitySpec& Spec : MyAbilitySystemComponent->GetActivatableAbilities())
+	for (const FGameplayAbilitySpec& Spec : LucasAbilitySystemComponent->GetActivatableAbilities())
 	{
-		if((Spec.SourceObject == this) && CharacterAbilities.Contains(Spec.Ability->GetClass()))
+		if ((Spec.SourceObject == this) && CharacterAbilities.Contains(Spec.Ability->GetClass()))
 		{
 			AbilitiesToRemove.Add(Spec.Handle);
 		}
 	}
- }
+
+	// Remove abilities from the component
+	for (FGameplayAbilitySpecHandle AbilityHandle : AbilitiesToRemove)
+	{
+		LucasAbilitySystemComponent->ClearAbility(AbilityHandle);
+	}
+
+	LucasAbilitySystemComponent->CharacterAbilitiesGiven = false;
+}
+
 
 float AFlareForgeCharacter::GetCharacterLevel() const
 {
@@ -143,14 +153,14 @@ void AFlareForgeCharacter::Die()
 	GetCharacterMovement()->Velocity = FVector(0);
 
 	OnCharacterDied.Broadcast(this);
-	if(MyAbilitySystemComponent.IsValid())
+	if(LucasAbilitySystemComponent.IsValid())
 	{
-		MyAbilitySystemComponent->CancelAbilities();
+		LucasAbilitySystemComponent->CancelAbilities();
 
 		FGameplayTagContainer EffectsTagsToRemove;
 		EffectsTagsToRemove.AddTag(EffectRemoveOnDeathTag);
-		int32 NumEffectsRemoved = MyAbilitySystemComponent->RemoveActiveEffectsWithTags(EffectsTagsToRemove);
-		MyAbilitySystemComponent->AddLooseGameplayTag(DeadTag);
+		int32 NumEffectsRemoved = LucasAbilitySystemComponent->RemoveActiveEffectsWithTags(EffectsTagsToRemove);
+		LucasAbilitySystemComponent->AddLooseGameplayTag(DeadTag);
 	}
 	
 	if(DeathMontage)
@@ -172,70 +182,73 @@ void AFlareForgeCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-	if (IsValid(LucasAbilitySystemComponent))
+	if (IsValid(LucasAbilitySystemComponent.Get()))
+	{
+		// Grant default abilities at the start of the game
+		for (TSubclassOf<UGameplayAbility>& Ability : DefaultAbilities)
+		{
+			LucasAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability.GetDefaultObject(), 1));
+		}
+
+		// Initialize attributes and effects if needed
+		InitializeAttributes();
+		AddStartupEffects();
+	}
+	
+	/*if (IsValid(LucasAbilitySystemComponent.Get()))
 	{
 		// Initialize any necessary mappings or abilities here
 		// Example: Binding default abilities to input actions
 		LucasAbilitySystemComponent->SetInputBinding(MovementHorizontalAction, MovementHorizontalHandle);
-	}
+	}*/
 }
 
 void AFlareForgeCharacter::AddCharacterAbilities()
 {
-	if (GetLocalRole() != ROLE_Authority || !MyAbilitySystemComponent.IsValid() || MyAbilitySystemComponent->CharacterAbilitiesGiven)
+	if (GetLocalRole() != ROLE_Authority || !LucasAbilitySystemComponent.IsValid() || LucasAbilitySystemComponent->CharacterAbilitiesGiven)
 	{
 		return;
 	}
 
-	for(TSubclassOf<UCharacterGameplayAbility>& StartupAbility : CharacterAbilities)
+	for (TSubclassOf<UCharacterGameplayAbility>& StartupAbility : CharacterAbilities)
 	{
-		MyAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(StartupAbility, GetAbilityLevel(StartupAbility.GetDefaultObject()->AbilityID), static_cast<int32>(StartupAbility.GetDefaultObject()->AbilityInputID), this));
+		LucasAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(StartupAbility, GetAbilityLevel(StartupAbility.GetDefaultObject()->AbilityID), static_cast<int32>(StartupAbility.GetDefaultObject()->AbilityInputID), this));
 	}
 
-	MyAbilitySystemComponent->CharacterAbilitiesGiven = true;
+	LucasAbilitySystemComponent->CharacterAbilitiesGiven = true;
 }
 
 void AFlareForgeCharacter::InitializeAttributes()
 {
-	if(!MyAbilitySystemComponent.IsValid())
+	if (IsValid(LucasAbilitySystemComponent.Get()) && DefaultAttributes)
 	{
-		return;
-	}
+		FGameplayEffectContextHandle EffectContext = LucasAbilitySystemComponent->MakeEffectContext();
+		EffectContext.AddSourceObject(this);
 
-	if(!DefaultAttributes)
-	{
-		UE_LOG(LogTemp, Error, TEXT("%s() Missing DefaultAttributes for %s. Please fill in the character's Blueprint."), *FString(__FUNCTION__), *GetName());
-	}
-
-	FGameplayEffectContextHandle EffectContext = MyAbilitySystemComponent->MakeEffectContext();
-	EffectContext.AddSourceObject(this);
-
-	FGameplayEffectSpecHandle NewHandle = MyAbilitySystemComponent->MakeOutgoingSpec(DefaultAttributes, GetCharacterLevel(), EffectContext);
-	if(NewHandle.IsValid())
-	{
-		FActiveGameplayEffectHandle ActiveGEHandle = MyAbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), MyAbilitySystemComponent.Get());
+		FGameplayEffectSpecHandle NewHandle = LucasAbilitySystemComponent->MakeOutgoingSpec(DefaultAttributes, GetCharacterLevel(), EffectContext);
+		if (NewHandle.IsValid())
+		{
+			FActiveGameplayEffectHandle ActiveGEHandle = LucasAbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), LucasAbilitySystemComponent.Get());
+		}
 	}
 }
 
 void AFlareForgeCharacter::AddStartupEffects()
 {
-	if(GetLocalRole() != ROLE_Authority || !MyAbilitySystemComponent.IsValid() || MyAbilitySystemComponent->StartupEffectsApplied)
+	if (IsValid(LucasAbilitySystemComponent.Get()) && StartupEffects.Num() > 0)
 	{
-		return;
-	}
+		FGameplayEffectContextHandle EffectContext = LucasAbilitySystemComponent->MakeEffectContext();
+		EffectContext.AddSourceObject(this);
 
-	FGameplayEffectContextHandle EffectContext = MyAbilitySystemComponent->MakeEffectContext();
-	EffectContext.AddSourceObject(this);
-
-	for(TSubclassOf<UGameplayEffect> GameplayEffect : StartupEffects)
-	{
-		FGameplayEffectSpecHandle NewHandle = MyAbilitySystemComponent->MakeOutgoingSpec(GameplayEffect, GetCharacterLevel(), EffectContext);
-		if(NewHandle.IsValid())
+		for (TSubclassOf<UGameplayEffect> Effect : StartupEffects)
 		{
-			FActiveGameplayEffectHandle ActiveGEHandle = MyAbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), MyAbilitySystemComponent.Get());
+			FGameplayEffectSpecHandle NewHandle = LucasAbilitySystemComponent->MakeOutgoingSpec(Effect, GetCharacterLevel(), EffectContext);
+			if (NewHandle.IsValid())
+			{
+				FActiveGameplayEffectHandle ActiveGEHandle = LucasAbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), LucasAbilitySystemComponent.Get());
+			}
 		}
 	}
-	MyAbilitySystemComponent->StartupEffectsApplied = true;
 }
 
 void AFlareForgeCharacter::SetHealth(float Health)

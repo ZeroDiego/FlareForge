@@ -86,6 +86,8 @@ private:
 	float FollowTime; // For how long it has been pressed
 
 	ULucasAbilitySystemComponent* LucasAbilitySystemComponent;
+	FGameplayAbilitySpecHandle MovementHorizontalHandle;
+	FGameplayAbilitySpecHandle SetDestinationHandle;
 };
 
 

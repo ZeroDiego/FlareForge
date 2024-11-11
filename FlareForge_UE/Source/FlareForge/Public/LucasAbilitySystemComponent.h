@@ -31,8 +31,10 @@ UCLASS(Blueprintable, BlueprintType, Category = "AbilityInput", meta = (Blueprin
 class FLAREFORGE_API ULucasAbilitySystemComponent : public UAbilitySystemComponent
 {	
 	GENERATED_BODY()
+	
 
 public:
+	
 	UFUNCTION(BlueprintCallable, Category = "Lucas Input Abilities")
 	void SetInputBinding(UInputAction* InputAction, FGameplayAbilitySpecHandle AbilityHandle);
 
@@ -41,6 +43,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Lucas Input Abilities")
 	void ClearAbilityBindings(UInputAction* InputAction);
+
+	UPROPERTY(BlueprintReadWrite, Category = "Abilities")
+	bool CharacterAbilitiesGiven = false;
 	
 private:
 	void OnAbilityInputPressed(UInputAction* InputAction);
@@ -60,4 +65,5 @@ private:
 
 	UPROPERTY(transient)
 	UEnhancedInputComponent* InputComponent;
+	
 };
