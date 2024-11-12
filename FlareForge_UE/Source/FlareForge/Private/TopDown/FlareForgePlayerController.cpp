@@ -9,7 +9,6 @@
 #include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
-#include "MyAbilitySystemComponent.h"
 #include "TeleportAbility.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -32,34 +31,14 @@ AFlareForgePlayerController::AFlareForgePlayerController()
 	CachedDestination = FVector::ZeroVector;
 	FollowTime = 0.f;
 
-	// Initialize MyAbilitySystemComponent
-	MyAbilitySystemComponent = CreateDefaultSubobject<UMyAbilitySystemComponent>(TEXT("MyAbilitySystemComponent"));
 }
 
 void AFlareForgePlayerController::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
-
-	InitAbilitySystem();
+	
 }
-
-void AFlareForgePlayerController::InitAbilitySystem_Implementation()
-{
-	// Ensure MyAbilitySystemComponent is valid
-	if (MyAbilitySystemComponent)
-	{
-		// Grant each ability in the DefaultAbilities array
-		for (TSubclassOf<UGameplayAbility>& Ability : DefaultAbilities)
-		{
-			if (Ability)
-			{
-				MyAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability, 1, static_cast<int32>(EFlareForgeAbilityInputID::Confirm), this));
-			}
-		}
-	}
-}
-
 
 void AFlareForgePlayerController::Tick(const float DeltaSeconds)
 {
@@ -78,7 +57,7 @@ void AFlareForgePlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 	UE_LOG(LogTemp, Warning, TEXT("Instance: %d"), InstanceID);
 	// Add Input Mapping Context
-	if(InstanceID == 1)
+	if(InstanceID == 0)
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 		{
@@ -106,24 +85,14 @@ void AFlareForgePlayerController::SetupInputComponent()
 
 			// Dash Setup
 			EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::Dash);
-
-			// Ensure MyAbilitySystemComponent is valid and bind it to the input
-			if (MyAbilitySystemComponent && InputComponent)
-			{
-				MyAbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, FGameplayAbilityInputBinds(
-					"Confirm",
-					"Cancel",
-					FTopLevelAssetPath(TEXT("/Script/FlareForge"), TEXT("EFlareForgeAbilityInputID")),
-					static_cast<int32>(EFlareForgeAbilityInputID::Confirm),
-					static_cast<int32>(EFlareForgeAbilityInputID::Cancel)));
-			}
+			
 		}
 		else
 		{
 			UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 		}
 	}
-	else if (InstanceID == 0)
+	else if (InstanceID == 1)
 	{
 		// Add Input Mapping Context
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
@@ -143,17 +112,7 @@ void AFlareForgePlayerController::SetupInputComponent()
 
 			// Controller Rotation Setup
 			EnhancedInputComponent->BindAction(ControllerRotationAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::RotatePlayerTowardsJoystick);
-
-			// Ensure MyAbilitySystemComponent is valid and bind it to the input
-			if (MyAbilitySystemComponent && InputComponent)
-			{
-				MyAbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, FGameplayAbilityInputBinds(
-					"Confirm",
-					"Cancel",
-					FTopLevelAssetPath(TEXT("/Script/FlareForge"), TEXT("EFlareForgeAbilityInputID")),
-					static_cast<int32>(EFlareForgeAbilityInputID::Confirm),
-					static_cast<int32>(EFlareForgeAbilityInputID::Cancel)));
-			}
+			
 		}
 		else
 		{

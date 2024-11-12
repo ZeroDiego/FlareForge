@@ -1,6 +1,10 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "TopDown/FlareForgeCharacter.h"
+
+#include "MyPlayerCharacter.h"
+#include "LucasAbilitySystemComponent.h"
+#include "MyCharacterAttributeSet.h"
+#include "MyPlayerState.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
@@ -11,7 +15,9 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 
-AFlareForgeCharacter::AFlareForgeCharacter()
+
+// Sets default values
+AMyPlayerCharacter::AMyPlayerCharacter()
 {
 	// Set size for player capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -43,11 +49,50 @@ AFlareForgeCharacter::AFlareForgeCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
-
-	
 }
 
-void AFlareForgeCharacter::Tick(float DeltaSeconds)
+void AMyPlayerCharacter::PossessedBy(AController* NewController)
 {
-    Super::Tick(DeltaSeconds);
+	Super::PossessedBy(NewController);
+	    
+	InitAbilitySystemComponent();
+	GiveDefaultAbilities();
+	InitDefaultAttributes();
+	//InitHUD();
+}
+
+void AMyPlayerCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	
+	InitAbilitySystemComponent();
+	GiveDefaultAbilities();
+	InitDefaultAttributes();
+	//InitHUD();
+}
+
+void AMyPlayerCharacter::InitAbilitySystemComponent()
+{
+	AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>();
+	check(MyPlayerState);
+	AbilitySystemComponent =  CastChecked<ULucasAbilitySystemComponent>(
+		MyPlayerState->GetAbilitySystemComponent());
+	AbilitySystemComponent->InitAbilityActorInfo(MyPlayerState, this);
+	AttributeSet = MyPlayerState->GetAttributeSet();
+}
+/*
+void AMyPlayerCharacter::InitHUD() const
+{
+	if(const APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		if(AFlareForgeHUD* FabHUD = Cast<AFlareForgeHUD>(PlayerController->GetHUD()))
+		{
+			FabHUD->Init();
+		}
+	}
+}*/
+
+void AMyPlayerCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
 }

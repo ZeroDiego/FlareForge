@@ -4,7 +4,7 @@
 #include "DashAbility.h"
 #include "TopDown//FlareForgePlayerController.h"
 #include "GameFramework/Character.h"
-#include "MyAbilitySystemComponent.h"
+#include "LucasAbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 

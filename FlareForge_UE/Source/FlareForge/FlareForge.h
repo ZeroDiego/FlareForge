@@ -6,7 +6,8 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(LogFlareForge, Log, All);
 
-enum class FlareForgeAbilityID : uint8
+UENUM(BlueprintType)
+enum class EFlareForgeAbilityID : uint8
 {
 	None UMETA(DisplayName = "None"),
 	Confirm UMETA(DisplayName = "Confirm"),

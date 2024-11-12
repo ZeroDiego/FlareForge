@@ -15,7 +15,7 @@ class UInputAction;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
-// Define the FlareForgeAbilityInputID enum here in the header file
+/*// Define the FlareForgeAbilityInputID enum here in the header file
 UENUM(BlueprintType)
 enum class EFlareForgeAbilityInputID : uint8
 {
@@ -23,7 +23,7 @@ enum class EFlareForgeAbilityInputID : uint8
 	Confirm UMETA(DisplayName = "Confirm"),
 	Cancel UMETA(DisplayName = "Cancel")
 };
-
+*/
 UCLASS()
 class AFlareForgePlayerController : public APlayerController
 {
@@ -71,13 +71,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* ControllerRotationAction;
 	
-	/** Define MyAbilitySystemComponent **/
+	/** Define MyAbilitySystemComponent **//*
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")
 	class UMyAbilitySystemComponent* MyAbilitySystemComponent;
 
 	// Array to store default abilities to be granted to the character
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
-	TArray<TSubclassOf<class UGameplayAbility>> DefaultAbilities;
+	TArray<TSubclassOf<class UGameplayAbility>> DefaultAbilities;*/
 
 	// Dash functions
 	void Dash();
@@ -85,8 +85,8 @@ public:
 	UFUNCTION(Server, Reliable)
 	void DashOnServer(const FVector& DashVector) const;
 
-	UFUNCTION(Server, Reliable)
-	void InitAbilitySystem();
+	/*UFUNCTION(Server, Reliable)
+	void InitAbilitySystem();*/
 
 	static int32 InstanceCounter;
 
