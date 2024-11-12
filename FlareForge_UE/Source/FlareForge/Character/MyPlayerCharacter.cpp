@@ -54,7 +54,7 @@ AMyPlayerCharacter::AMyPlayerCharacter()
 void AMyPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	
+	    
 	InitAbilitySystemComponent();
 	GiveDefaultAbilities();
 	InitDefaultAttributes();
