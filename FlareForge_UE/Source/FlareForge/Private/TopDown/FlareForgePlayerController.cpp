@@ -110,29 +110,42 @@ void AFlareForgePlayerController::SetupInputComponent()
 	}
 }
 
-
-
-// ReSharper disable once CppMemberFunctionMayBeConst
+// Get Y value of vector
 void AFlareForgePlayerController::MovementHorizontal(const FInputActionValue& Value)
 {
-	
-	//GetPawn()->AddMovementInput(GetPawn()->GetActorRightVector(), Value.Get<FVector2D>().X);
-	const FRotator Rotation = GetControlRotation();
-	const FRotator YawRotation(0, Rotation.Yaw, 0);
-	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-	GetCharacter()->AddMovementInput(Direction, Value.Get<FVector2D>().X);
+	InputVector.Y = Value.Get<FVector2D>().X;
+	ApplyMovement();
 }
 
-// ReSharper disable once CppMemberFunctionMayBeConst
+// Get X value of vector
 void AFlareForgePlayerController::MovementVertical(const FInputActionValue& Value)
 {
-	
-	//GetPawn()->AddMovementInput(GetPawn()->GetActorRightVector(), Value.Get<FVector2D>().X);
+	InputVector.X = Value.Get<FVector2D>().X;
+	ApplyMovement();
+}
+
+// Apply both X and Y values to and place the vector to player character
+void AFlareForgePlayerController::ApplyMovement()
+{
+	//Normalize input so diagonal input is not hypotenuse from input
+	FVector2D NormalizedInput = InputVector.GetSafeNormal();
+
+	// Get rotation
 	const FRotator Rotation = GetControlRotation();
 	const FRotator YawRotation(0, Rotation.Yaw, 0);
-	const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	GetCharacter()->AddMovementInput(Direction, Value.Get<FVector2D>().X);
+	
+	// Y input
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	GetCharacter()->AddMovementInput(RightDirection, NormalizedInput.Y);
+
+    // X input
+	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	GetCharacter()->AddMovementInput(ForwardDirection, NormalizedInput.X);
+
+    // reset vector at the end
+	InputVector = FVector2D::ZeroVector;
 }
+
 
 void AFlareForgePlayerController::Dash()
 {

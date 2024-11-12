@@ -107,6 +107,8 @@ protected:
 	// movement functions
 	void MovementVertical(const FInputActionValue& Value);
 	void MovementHorizontal(const FInputActionValue& Value);
+
+	void ApplyMovement();
 	
 	// rotate character with mouse
 	void RotatePlayerTowardsMouse();
@@ -120,6 +122,8 @@ private:
 
 	bool bIsTouch; // Is it a touch device
 	float FollowTime; // For how long it has been pressed
+
+	FVector2D InputVector = FVector2D::ZeroVector;
 	
 	float DashTimer = 0.0f;
 	
