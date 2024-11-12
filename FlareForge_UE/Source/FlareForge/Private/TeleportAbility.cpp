@@ -80,19 +80,8 @@ void UTeleportAbility::Server_ReceiveMouseData_Implementation(FVector MouseLocat
 		return;
 	}
 	
-	FVector Start = MouseLocation;
-	FVector End = MouseLocation + MouseDirection * 10000.0f;
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(Character);
-
-	FHitResult HitResult;
-	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
-	{
-		FVector HitLocation = HitResult.Location;
-		FVector TeleportVector = UKismetMathLibrary::GetForwardVector(Character->GetActorRotation());
-		UE_LOG(LogTemp, Warning, TEXT("Vector: %s"), *TeleportVector.ToString());
-		//Character->SetActorLocation(HitLocation, false, nullptr, ETeleportType::TeleportPhysics);
-		Character->SetActorLocation(FVector(Character->GetActorLocation().X + TeleportVector.X,
-			Character->GetActorLocation().Y + TeleportVector.Y, 0.0) * TeleportDistance, false, nullptr, ETeleportType::TeleportPhysics);
-	}
+	FVector TeleportVector = UKismetMathLibrary::GetForwardVector(Character->GetActorRotation());
+	FVector TargetLocation = FVector(Character->GetActorLocation().X + TeleportVector.X * TeleportDistance,
+	Character->GetActorLocation().Y + TeleportVector.Y * TeleportDistance, 0.0);
+	Character->TeleportTo(TargetLocation, Character->GetActorRotation());
 }
