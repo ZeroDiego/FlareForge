@@ -13,7 +13,7 @@ AFlareForgeGameMode::AFlareForgeGameMode()
 	PlayerControllerClass = AFlareForgePlayerController::StaticClass();
 
 	// Set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/FlareForge/Blueprints/BP_MyPlayerCharacter"));
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/TopDown/Blueprints/BP_MyPlayerCharacter"));
 	if (PlayerPawnBPClass.Class != nullptr)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
