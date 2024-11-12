@@ -66,6 +66,7 @@ void AMyPlayerCharacter::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 	
 	InitAbilitySystemComponent();
+	GiveDefaultAbilities();
 	InitDefaultAttributes();
 	//InitHUD();
 }
