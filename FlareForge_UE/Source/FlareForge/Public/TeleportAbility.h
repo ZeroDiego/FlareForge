@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "TopDown/FlareForgeCharacter.h"
 #include "TeleportAbility.generated.h"
 
 /**
