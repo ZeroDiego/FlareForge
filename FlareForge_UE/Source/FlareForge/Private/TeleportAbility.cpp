@@ -3,21 +3,11 @@
 #include "TeleportAbility.h"
 #include "TopDown/FlareForgePlayerController.h"
 #include "GameFramework/Pawn.h"
-#include "Blueprint/AIBlueprintHelperLibrary.h"
-#include "NiagaraSystem.h"
-#include "NiagaraFunctionLibrary.h"
-#include "TopDown/FlareForgeCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
-#include "EnhancedInputComponent.h"
-#include "InputActionValue.h"
-#include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
 #include "MyAbilitySystemComponent.h"
 #include "GameFramework/Character.h"
-#include "MyAbilitySystemComponent.h"
-#include "Kismet/GameplayStatics.h"
 
 void UTeleportAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
