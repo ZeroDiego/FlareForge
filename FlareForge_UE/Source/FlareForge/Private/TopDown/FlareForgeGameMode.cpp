@@ -9,6 +9,10 @@ AFlareForgeGameMode::AFlareForgeGameMode()
 {
 	// use our custom PlayerController class
 	PlayerControllerClass = AFlareForgePlayerController::StaticClass();
+	
+	// Reset the instance counter at the beginning of each play session
+	AFlareForgePlayerController::InstanceCounter = 0;
+	
 
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/TopDown/Blueprints/BP_TopDownCharacter"));
@@ -23,12 +27,4 @@ AFlareForgeGameMode::AFlareForgeGameMode()
 	{
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
-}
-
-void AFlareForgeGameMode::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// Reset the instance counter at the beginning of each play session
-	AFlareForgePlayerController::InstanceCounter = 0;
 }
