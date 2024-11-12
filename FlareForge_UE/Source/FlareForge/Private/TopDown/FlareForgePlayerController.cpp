@@ -15,8 +15,17 @@
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
+// Initialize the static counter to 0
+int32 AFlareForgePlayerController::InstanceCounter = 0;
+
 AFlareForgePlayerController::AFlareForgePlayerController()
 {
+	// Assign the current value of InstanceCounter to InstanceID
+	InstanceID = InstanceCounter;
+
+	// Increment the static counter for the next instance
+	InstanceCounter++;
+	
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
 	CachedDestination = FVector::ZeroVector;
@@ -56,7 +65,9 @@ void AFlareForgePlayerController::Tick(const float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 	
 	if (!ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer())->HasMappingContext(GamepadMappingContext))
-		RotatePlayerTowardsMouse();
+	{
+		RotatePlayerTowardsMouse();	
+	}
 }
 
 
@@ -66,47 +77,87 @@ void AFlareForgePlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	// Add Input Mapping Context
-	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	if(InstanceID == 0)
 	{
-		Subsystem->AddMappingContext(DefaultMappingContext, 0);
-	}
-
-	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
-	{
-		/*// Setup mouse input events
-		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Started, this, &AFlareForgePlayerController::OnInputStarted);
-		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::OnSetDestinationTriggered);
-		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Completed, this, &AFlareForgePlayerController::OnSetDestinationReleased);
-		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Canceled, this, &AFlareForgePlayerController::OnSetDestinationReleased);
-
-		// Setup touch input events
-		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Started, this, &AFlareForgePlayerController::OnInputStarted);
-		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::OnTouchTriggered);
-		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Completed, this, &AFlareForgePlayerController::OnTouchReleased);
-		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Canceled, this, &AFlareForgePlayerController::OnTouchReleased);*/
-
-		// Setup Movement
-		EnhancedInputComponent->BindAction(MovementHorizontalAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::MovementHorizontal);
-		EnhancedInputComponent->BindAction(MovementVerticalAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::MovementVertical);
-
-		// Dash Setup
-		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::Dash);
-
-		// Ensure MyAbilitySystemComponent is valid and bind it to the input
-		if (MyAbilitySystemComponent && InputComponent)
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 		{
-			MyAbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, FGameplayAbilityInputBinds(
-				"Confirm",
-				"Cancel",
-				FTopLevelAssetPath(TEXT("/Script/FlareForge"), TEXT("EFlareForgeAbilityInputID")),
-				static_cast<int32>(EFlareForgeAbilityInputID::Confirm),
-				static_cast<int32>(EFlareForgeAbilityInputID::Cancel)));
+			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+		}
+
+		// Set up action bindings
+		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
+		{
+			/*// Setup mouse input events
+			EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Started, this, &AFlareForgePlayerController::OnInputStarted);
+			EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::OnSetDestinationTriggered);
+			EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Completed, this, &AFlareForgePlayerController::OnSetDestinationReleased);
+			EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Canceled, this, &AFlareForgePlayerController::OnSetDestinationReleased);
+	
+			// Setup touch input events
+			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Started, this, &AFlareForgePlayerController::OnInputStarted);
+			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::OnTouchTriggered);
+			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Completed, this, &AFlareForgePlayerController::OnTouchReleased);
+			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Canceled, this, &AFlareForgePlayerController::OnTouchReleased);*/
+
+			// Setup Movement
+			EnhancedInputComponent->BindAction(MovementHorizontalAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::MovementHorizontal);
+			EnhancedInputComponent->BindAction(MovementVerticalAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::MovementVertical);
+
+			// Dash Setup
+			EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::Dash);
+
+			// Ensure MyAbilitySystemComponent is valid and bind it to the input
+			if (MyAbilitySystemComponent && InputComponent)
+			{
+				MyAbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, FGameplayAbilityInputBinds(
+					"Confirm",
+					"Cancel",
+					FTopLevelAssetPath(TEXT("/Script/FlareForge"), TEXT("EFlareForgeAbilityInputID")),
+					static_cast<int32>(EFlareForgeAbilityInputID::Confirm),
+					static_cast<int32>(EFlareForgeAbilityInputID::Cancel)));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 		}
 	}
-	else
+	else if (InstanceID == 1)
 	{
-		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+		// Add Input Mapping Context
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(GamepadMappingContext, 0);
+		}
+		
+		// Set up action bindings
+		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
+		{
+			// Setup Movement
+			EnhancedInputComponent->BindAction(MovementHorizontalAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::MovementHorizontal);
+			EnhancedInputComponent->BindAction(MovementVerticalAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::MovementVertical);
+
+			// Dash Setup
+			EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::Dash);
+
+			// Controller Rotation Setup
+			EnhancedInputComponent->BindAction(ControllerRotationAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::RotatePlayerTowardsJoystick);
+
+			// Ensure MyAbilitySystemComponent is valid and bind it to the input
+			if (MyAbilitySystemComponent && InputComponent)
+			{
+				MyAbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, FGameplayAbilityInputBinds(
+					"Confirm",
+					"Cancel",
+					FTopLevelAssetPath(TEXT("/Script/FlareForge"), TEXT("EFlareForgeAbilityInputID")),
+					static_cast<int32>(EFlareForgeAbilityInputID::Confirm),
+					static_cast<int32>(EFlareForgeAbilityInputID::Cancel)));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+		}
 	}
 }
 
@@ -220,6 +271,19 @@ void AFlareForgePlayerController::RotatePlayerTowardsMouse()
         }
     }
 }
+
+void AFlareForgePlayerController::RotatePlayerTowardsJoystick(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Value: %s"), *Value.Get<FVector2D>().ToString()); 
+
+	/*ACharacter* CurrentChar = this->GetCharacter();
+	if (!CurrentChar) return;
+
+	FRotator NewRot;
+	
+	CurrentChar->SetActorRotation(NewRot);*/
+}
+
 
 void AFlareForgePlayerController::RotatePlayerOnServer_Implementation(const FRotator PlayerRotation)
 {

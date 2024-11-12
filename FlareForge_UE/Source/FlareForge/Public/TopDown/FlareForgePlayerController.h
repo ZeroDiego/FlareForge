@@ -67,6 +67,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* DashAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* ControllerRotationAction;
 	
 	/** Define MyAbilitySystemComponent **/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")
@@ -85,7 +88,12 @@ public:
 	UFUNCTION(Server, Reliable)
 	void InitAbilitySystem();
 
+	static int32 InstanceCounter;
 
+	// Instance-specific ID
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 InstanceID;
+	
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
 	uint32 bMoveToMouseCursor : 1;
@@ -112,6 +120,9 @@ protected:
 	
 	// rotate character with mouse
 	void RotatePlayerTowardsMouse();
+
+	// rotate character with joystick
+	void RotatePlayerTowardsJoystick(const FInputActionValue& Value);
 
 	UFUNCTION(Server, Reliable)
 	void RotatePlayerOnServer(const FRotator PlayerRotation);
