@@ -4,6 +4,7 @@
 #include "HomingStrikeAbility.h"
 #include "GameFramework/Character.h"
 #include "MyAbilitySystemComponent.h"
+#include "FiringOffset.h"
 #include "Kismet/GameplayStatics.h"
 
 void UHomingStrikeAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

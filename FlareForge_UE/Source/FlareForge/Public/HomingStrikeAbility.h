@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FiringOffset.h"
 #include "HomingStrikeProjectile.h"
 #include "Abilities/GameplayAbility.h"
 #include "HomingStrikeAbility.generated.h"

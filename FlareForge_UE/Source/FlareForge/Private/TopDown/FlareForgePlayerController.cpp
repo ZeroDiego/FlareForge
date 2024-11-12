@@ -2,11 +2,7 @@
 
 #include "TopDown/FlareForgePlayerController.h"
 #include "GameFramework/Pawn.h"
-#include "Blueprint/AIBlueprintHelperLibrary.h"
-#include "NiagaraSystem.h"
-#include "NiagaraFunctionLibrary.h"
 #include "TopDown/FlareForgeCharacter.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "EnhancedInputComponent.h"
@@ -35,6 +31,11 @@ void AFlareForgePlayerController::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
+	InitAbilitySystem();
+}
+
+void AFlareForgePlayerController::InitAbilitySystem_Implementation()
+{
 	// Ensure MyAbilitySystemComponent is valid
 	if (MyAbilitySystemComponent)
 	{
@@ -49,11 +50,13 @@ void AFlareForgePlayerController::BeginPlay()
 	}
 }
 
-void AFlareForgePlayerController::Tick(float DeltaSeconds)
+
+void AFlareForgePlayerController::Tick(const float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	
-	RotatePlayerTowardsMouse();
+	if (!ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer())->HasMappingContext(GamepadMappingContext))
+		RotatePlayerTowardsMouse();
 }
 
 
@@ -71,7 +74,7 @@ void AFlareForgePlayerController::SetupInputComponent()
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
 	{
-		// Setup mouse input events
+		/*// Setup mouse input events
 		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Started, this, &AFlareForgePlayerController::OnInputStarted);
 		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::OnSetDestinationTriggered);
 		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Completed, this, &AFlareForgePlayerController::OnSetDestinationReleased);
@@ -81,7 +84,7 @@ void AFlareForgePlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Started, this, &AFlareForgePlayerController::OnInputStarted);
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::OnTouchTriggered);
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Completed, this, &AFlareForgePlayerController::OnTouchReleased);
-		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Canceled, this, &AFlareForgePlayerController::OnTouchReleased);
+		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Canceled, this, &AFlareForgePlayerController::OnTouchReleased);*/
 
 		// Setup Movement
 		EnhancedInputComponent->BindAction(MovementHorizontalAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::MovementHorizontal);
@@ -109,6 +112,7 @@ void AFlareForgePlayerController::SetupInputComponent()
 
 
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void AFlareForgePlayerController::MovementHorizontal(const FInputActionValue& Value)
 {
 	
@@ -119,6 +123,7 @@ void AFlareForgePlayerController::MovementHorizontal(const FInputActionValue& Va
 	GetCharacter()->AddMovementInput(Direction, Value.Get<FVector2D>().X);
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void AFlareForgePlayerController::MovementVertical(const FInputActionValue& Value)
 {
 	
@@ -140,7 +145,7 @@ void AFlareForgePlayerController::Dash()
 	
 	if(DashTimer < UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()))
 	{
-		FVector MoveDirection = GetCharacter()->GetCharacterMovement()->GetLastInputVector();
+		const FVector MoveDirection = GetCharacter()->GetCharacterMovement()->GetLastInputVector();
 		//double MaxMoveSpeed = GetCharacter()->GetCharacterMovement()->MaxWalkSpeed;
 		FVector DashVector;
 		
@@ -165,13 +170,9 @@ void AFlareForgePlayerController::DashOnServer_Implementation(const FVector& Das
 	GetCharacter()->LaunchCharacter(DashVector, false, false);
 }
 
-
-
-
 void AFlareForgePlayerController::RotatePlayerTowardsMouse()
 {
-    FVector MouseLocation, MouseDirection;
-    if (this->DeprojectMousePositionToWorld(MouseLocation, MouseDirection))
+    if (FVector MouseLocation, MouseDirection; this->DeprojectMousePositionToWorld(MouseLocation, MouseDirection))
     {
         // Get local reference to the controller's character
         ACharacter* CurrentChar = this->GetCharacter();
@@ -201,18 +202,9 @@ void AFlareForgePlayerController::RotatePlayerTowardsMouse()
             FRotator NewRot = FRotator(CharRotation.Pitch, TargetRotation.Yaw, CharRotation.Roll);
 
             // Set the new rotation
-            //DrawDebugLine(GetWorld(), Start, End, FColor(255,0,0),false,1);
             CurrentChar->SetActorRotation(NewRot);
         	RotatePlayerOnServer(NewRot);
         }
-        else
-        {
-            //UE_LOG(LogTemp, Warning, TEXT("No hit detected"));
-        }
-    }
-    else
-    {
-        //UE_LOG(LogTemp, Error, TEXT("Deprojection failed"));
     }
 }
 
@@ -221,10 +213,7 @@ void AFlareForgePlayerController::RotatePlayerOnServer_Implementation(const FRot
 	this->GetCharacter()->SetActorRotation(PlayerRotation);
 }
 
-
-
-
-
+/*
 void AFlareForgePlayerController::OnInputStarted()
 {
 	StopMovement();
@@ -288,3 +277,4 @@ void AFlareForgePlayerController::OnTouchReleased()
 	bIsTouch = false;
 	OnSetDestinationReleased();
 }
+*/
