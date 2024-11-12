@@ -9,7 +9,7 @@
 #include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
-#include "MyAbilitySystemComponent.h"
+#include "LucasAbilitySystemComponent.h"
 #include "TeleportAbility.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -22,8 +22,8 @@ AFlareForgePlayerController::AFlareForgePlayerController()
 	CachedDestination = FVector::ZeroVector;
 	FollowTime = 0.f;
 
-	// Initialize MyAbilitySystemComponent
-	MyAbilitySystemComponent = CreateDefaultSubobject<UMyAbilitySystemComponent>(TEXT("MyAbilitySystemComponent"));
+	/*// Initialize MyAbilitySystemComponent
+	MyAbilitySystemComponent = CreateDefaultSubobject<UMyAbilitySystemComponent>(TEXT("MyAbilitySystemComponent"))*/
 }
 
 void AFlareForgePlayerController::BeginPlay()
@@ -31,9 +31,9 @@ void AFlareForgePlayerController::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-	InitAbilitySystem();
+	/*InitAbilitySystem();*/
 }
-
+/*
 void AFlareForgePlayerController::InitAbilitySystem_Implementation()
 {
 	// Ensure MyAbilitySystemComponent is valid
@@ -48,7 +48,7 @@ void AFlareForgePlayerController::InitAbilitySystem_Implementation()
 			}
 		}
 	}
-}
+}*/
 
 
 void AFlareForgePlayerController::Tick(const float DeltaSeconds)
@@ -93,7 +93,7 @@ void AFlareForgePlayerController::SetupInputComponent()
 		// Dash Setup
 		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::Dash);
 
-		// Ensure MyAbilitySystemComponent is valid and bind it to the input
+		/*// Ensure MyAbilitySystemComponent is valid and bind it to the input
 		if (MyAbilitySystemComponent && InputComponent)
 		{
 			MyAbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, FGameplayAbilityInputBinds(
@@ -102,7 +102,7 @@ void AFlareForgePlayerController::SetupInputComponent()
 				FTopLevelAssetPath(TEXT("/Script/FlareForge"), TEXT("EFlareForgeAbilityInputID")),
 				static_cast<int32>(EFlareForgeAbilityInputID::Confirm),
 				static_cast<int32>(EFlareForgeAbilityInputID::Cancel)));
-		}
+		}*/
 	}
 	else
 	{

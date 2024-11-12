@@ -3,7 +3,7 @@
 
 #include "BasicProjectileAbility.h"
 #include "GameFramework/Character.h"
-#include "MyAbilitySystemComponent.h"
+#include "LucasAbilitySystemComponent.h"
 #include "FiringOffset.h"
 #include "Kismet/GameplayStatics.h"
 

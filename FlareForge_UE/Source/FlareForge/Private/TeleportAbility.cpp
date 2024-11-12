@@ -14,9 +14,8 @@
 #include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
-#include "MyAbilitySystemComponent.h"
+#include "LucasAbilitySystemComponent.h"
 #include "GameFramework/Character.h"
-#include "MyAbilitySystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 void UTeleportAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

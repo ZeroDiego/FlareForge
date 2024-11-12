@@ -13,47 +13,61 @@ GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
 GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+#define NUMERIC_VALUE(AttributeSetName, PropertyName) \
+	AttributeSetName->Get##PropertyName##Attribute().GetNumericValue(AttributeSetName)
+
+/**
+ * 
+ */
 UCLASS()
 class FLAREFORGE_API UMyCharacterAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
-
 public:
-
 	UMyCharacterAttributeSet();
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Level", ReplicatedUsing = OnRep_Level)
-	FGameplayAttributeData Level;
-	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, Level);
-	
-	UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_Health)
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Ability | Gameplay Attribute")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, Health);
 
-	UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_MaxHealth)
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxHealth, Category = "Ability | Gameplay Attribute")
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, MaxHealth);
 
-	UPROPERTY(BlueprintReadOnly, Category = "Power", ReplicatedUsing = OnRep_Power)
-	FGameplayAttributeData Power;
-	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, Power);
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Stamina, Category = "Ability | Gameplay Attribute")
+	FGameplayAttributeData Stamina;
+	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, Stamina);
 
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxStamina, Category = "Ability | Gameplay Attribute")
+	FGameplayAttributeData MaxStamina;
+	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, MaxStamina);
 
-	//Damage is a meta attribute used by the DamageExecution to calculate final damage, which then turn into -Health
-	//Temporary value that only exists on the Server. Not replicated.
-	UPROPERTY(BlueprintReadOnly, Category = "Damage")
-	FGameplayAttributeData Damage;
-	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, Damage);
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Strength, Category = "Ability | Gameplay Attribute")
+	FGameplayAttributeData Strength;
+	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, Strength);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxStrength, Category = "Ability | Gameplay Attribute")
+	FGameplayAttributeData MaxStrength;
+	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, MaxStrength);
 
 	UFUNCTION()
-	virtual void OnRep_Level(const FGameplayAttributeData& OldLevel);
-	UFUNCTION()
-	virtual void OnRep_Health(const FGameplayAttributeData& OldHealth);
-	UFUNCTION()
-	virtual void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth);
-	UFUNCTION()
-	virtual void OnRep_Power(const FGameplayAttributeData& OldPower);
+	void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
 
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
+	UFUNCTION()
+	void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
+
+	UFUNCTION()
+	void OnRep_Stamina(const FGameplayAttributeData& OldStamina) const;
+
+	UFUNCTION()
+	void OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina) const;
+
+	UFUNCTION()
+	void OnRep_Strength(const FGameplayAttributeData& OldStamina) const;
+
+	UFUNCTION()
+	void OnRep_MaxStrength(const FGameplayAttributeData& OldMaxStamina) const;
 };

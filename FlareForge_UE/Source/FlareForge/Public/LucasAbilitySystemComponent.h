@@ -4,60 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
-#include "GameplayAbilitySpec.h" // for FGameplayAbilitySpecHandle
-#include "EnhancedInputComponent.h" // for FInputBindingHandle
 #include "LucasAbilitySystemComponent.generated.h"
 
 /**
  * 
  */
-class UInputAction;
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 
-USTRUCT()
-struct FAbilityInputBinding
+class FLAREFORGE_API ULucasAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
 
-	int32  InputID = 0;
-	uint32 OnPressedHandle = 0;
-	uint32 OnReleasedHandle = 0;
-	TArray<FGameplayAbilitySpecHandle> BoundAbilitiesStack;
-};
-
-/**
- * 
- */
-UCLASS(Blueprintable, BlueprintType, Category = "AbilityInput", meta = (BlueprintSpawnableComponent))
-class FLAREFORGE_API ULucasAbilitySystemComponent : public UAbilitySystemComponent
-{	
-	GENERATED_BODY()
-
 public:
-	UFUNCTION(BlueprintCallable, Category = "Lucas Input Abilities")
-	void SetInputBinding(UInputAction* InputAction, FGameplayAbilitySpecHandle AbilityHandle);
+	ULucasAbilitySystemComponent();
 
-	UFUNCTION(BlueprintCallable, Category = "Lucas Input Abilities")
-	void ClearInputBinding(FGameplayAbilitySpecHandle AbilityHandle);
-
-	UFUNCTION(BlueprintCallable, Category = "Lucas Input Abilities")
-	void ClearAbilityBindings(UInputAction* InputAction);
-	
-private:
-	void OnAbilityInputPressed(UInputAction* InputAction);
-
-	void OnAbilityInputReleased(UInputAction* InputAction);
-
-	void RemoveEntry(UInputAction* InputAction);
-
-	void TryBindAbilityInput(UInputAction* InputAction, FAbilityInputBinding& AbilityInputBinding);
-
-	FGameplayAbilitySpec* FindAbilitySpec(FGameplayAbilitySpecHandle Handle);
-
+protected:
 	virtual void BeginPlay() override;
-
-	UPROPERTY(transient)
-	TMap<UInputAction*, FAbilityInputBinding> MappedAbilities;
-
-	UPROPERTY(transient)
-	UEnhancedInputComponent* InputComponent;
 };
