@@ -11,15 +11,12 @@ void UHomingStrikeAbility::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 {
 	if (const AActor* Actor = GetAvatarActorFromActorInfo())
 	{
-		if (const APlayerController* PlayerController = Cast<APlayerController>(Actor))
+		if (const ACharacter* Character = Cast<ACharacter>(Actor))
 		{
-			if (const ACharacter* Character = Cast<ACharacter>(PlayerController->GetPawn()))
-			{
-				const FVector SpawnProjectileLocation = Character->GetComponentByClass<UFiringOffset>()->GetComponentLocation();
-				const FRotator CurrentRotation = Character->GetActorRotation();
-				HomingStrikeAbility(SpawnProjectileLocation, CurrentRotation);
-				Projectile->LockOn(Projectile->FindHomingStrikeTarget(), PlayerController->GetPawn()->GetRootComponent());
-			}
+			const FVector SpawnProjectileLocation = Character->GetComponentByClass<UFiringOffset>()->GetComponentLocation();
+			const FRotator CurrentRotation = Character->GetActorRotation();
+			HomingStrikeAbility(SpawnProjectileLocation, CurrentRotation);
+			Projectile->LockOn(Projectile->FindHomingStrikeTarget(), Character->GetRootComponent());
 		}
 	}
 	

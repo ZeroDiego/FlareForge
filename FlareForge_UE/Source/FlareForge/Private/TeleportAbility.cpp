@@ -22,30 +22,26 @@ void UTeleportAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 {
 	if (const AActor* Actor = GetAvatarActorFromActorInfo())
 	{
-		UE_LOG(LogTemp, Display, TEXT("Actor"));
-		if (const AFlareForgePlayerController* PlayerController = Cast<AFlareForgePlayerController>(Actor))
+		if (const ACharacter* Character = Cast<ACharacter>(Actor))
 		{
-			UE_LOG(LogTemp, Display, TEXT("Playercontroller"));
-			if (ACharacter* Character = Cast<ACharacter>(PlayerController->GetPawn()))
+			if (IsLocallyControlled())
 			{
-				UE_LOG(LogTemp, Display, TEXT("Character"));
-				if (IsLocallyControlled())
+				if (const APlayerController* PlayerController = Cast<APlayerController>(Character->GetOwner()))
 				{
-					UE_LOG(LogTemp, Display, TEXT("Mousething"));
 					if (FVector MouseLocation, MouseDirection; PlayerController->DeprojectMousePositionToWorld(MouseLocation, MouseDirection))
 					{
 						Server_ReceiveMouseData(MouseLocation, MouseDirection);
 					}
 				}
+			}
 
-				if (HasAuthority(&ActivationInfo))
-				{
-					UE_LOG(LogTemp, Warning, TEXT("ActivateAbility called on %hd"), HasAuthority(&ActivationInfo));
-				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("ActivateAbility called on %hd"), HasAuthority(&ActivationInfo));
-				}
+			if (HasAuthority(&ActivationInfo))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("ActivateAbility called on %hd"), HasAuthority(&ActivationInfo));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("ActivateAbility called on %hd"), HasAuthority(&ActivationInfo));
 			}
 		}
 	}
@@ -65,14 +61,7 @@ void UTeleportAbility::Server_ReceiveMouseData_Implementation(FVector MouseLocat
 		return;
 	}
 
-	const AFlareForgePlayerController* PlayerController = Cast<AFlareForgePlayerController>(AvatarActor);
-	if (!PlayerController)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PlayerController cast failed"));
-		return;
-	}
-
-	ACharacter* Character = Cast<ACharacter>(PlayerController->GetPawn());
+	ACharacter* Character = Cast<ACharacter>(AvatarActor);
 	if (!Character)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Character cast failed"));
