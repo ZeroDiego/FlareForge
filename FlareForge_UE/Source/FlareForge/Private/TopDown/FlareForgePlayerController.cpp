@@ -76,7 +76,7 @@ void AFlareForgePlayerController::SetupInputComponent()
 {
 	// set up gameplay key bindings
 	Super::SetupInputComponent();
-	
+	UE_LOG(LogTemp, Warning, TEXT("Instance: %d"), InstanceID);
 	// Add Input Mapping Context
 	if(InstanceID == 1)
 	{
@@ -123,7 +123,7 @@ void AFlareForgePlayerController::SetupInputComponent()
 			UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 		}
 	}
-	else if (InstanceID == 2)
+	else if (InstanceID == 0)
 	{
 		// Add Input Mapping Context
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
@@ -282,8 +282,6 @@ void AFlareForgePlayerController::RotatePlayerTowardsJoystick(const FInputAction
 	const float YValue = Value.Get<FVector2D>().Y;
 
 	const FRotator NewRot = UKismetMathLibrary::FindLookAtRotation(FVector(0.0, 0.0, 0.0), FVector(XValue, YValue, 0.0));
-	
-	UE_LOG(LogTemp, Warning, TEXT("Value: %s"), *NewRot.ToString()); 
 	
 	CurrentChar->SetActorRotation(NewRot);
 }

@@ -13,6 +13,8 @@ class AFlareForgeGameMode : public AGameModeBase
 
 public:
 	AFlareForgeGameMode();
+
+	virtual void BeginPlay() override;
 };
 
 
