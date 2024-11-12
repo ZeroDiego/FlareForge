@@ -92,7 +92,7 @@ public:
 
 	// Instance-specific ID
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	int32 InstanceID;
+	int32 InstanceID = 0;
 	
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */

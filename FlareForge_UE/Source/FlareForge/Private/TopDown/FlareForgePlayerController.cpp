@@ -12,6 +12,7 @@
 #include "MyAbilitySystemComponent.h"
 #include "TeleportAbility.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -22,7 +23,7 @@ AFlareForgePlayerController::AFlareForgePlayerController()
 {
 	// Assign the current value of InstanceCounter to InstanceID
 	InstanceID = InstanceCounter;
-
+	
 	// Increment the static counter for the next instance
 	InstanceCounter++;
 	
@@ -75,9 +76,9 @@ void AFlareForgePlayerController::SetupInputComponent()
 {
 	// set up gameplay key bindings
 	Super::SetupInputComponent();
-
+	
 	// Add Input Mapping Context
-	if(InstanceID == 0)
+	if(InstanceID == 1)
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 		{
@@ -122,7 +123,7 @@ void AFlareForgePlayerController::SetupInputComponent()
 			UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 		}
 	}
-	else if (InstanceID == 1)
+	else if (InstanceID == 2)
 	{
 		// Add Input Mapping Context
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
@@ -274,14 +275,17 @@ void AFlareForgePlayerController::RotatePlayerTowardsMouse()
 
 void AFlareForgePlayerController::RotatePlayerTowardsJoystick(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Value: %s"), *Value.Get<FVector2D>().ToString()); 
-
-	/*ACharacter* CurrentChar = this->GetCharacter();
+	ACharacter* CurrentChar = this->GetCharacter();
 	if (!CurrentChar) return;
 
-	FRotator NewRot;
+	const float XValue = Value.Get<FVector2D>().X;
+	const float YValue = Value.Get<FVector2D>().Y;
+
+	const FRotator NewRot = UKismetMathLibrary::FindLookAtRotation(FVector(0.0, 0.0, 0.0), FVector(XValue, YValue, 0.0));
 	
-	CurrentChar->SetActorRotation(NewRot);*/
+	UE_LOG(LogTemp, Warning, TEXT("Value: %s"), *NewRot.ToString()); 
+	
+	CurrentChar->SetActorRotation(NewRot);
 }
 
 
