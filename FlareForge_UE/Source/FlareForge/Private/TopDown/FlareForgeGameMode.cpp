@@ -1,7 +1,10 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "TopDown/FlareForgeGameMode.h"
+
+#include "FlareForge/Character/MyPlayerState.h"
 #include "TopDown/FlareForgePlayerController.h"
+#include "FlareForge/Character/MyPlayerState.h"
 #include "TopDown/FlareForgeCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -15,12 +18,15 @@ AFlareForgeGameMode::AFlareForgeGameMode()
 	
 
 	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/TopDown/Blueprints/BP_TopDownCharacter"));
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/TopDown/Blueprints/BP_MyPlayerCharacter"));
 	if (PlayerPawnBPClass.Class != nullptr)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 
+	//set default Player State
+	PlayerStateClass = AMyPlayerState::StaticClass();
+	
 	// set default controller to our Blueprinted controller
 	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerBPClass(TEXT("/Game/TopDown/Blueprints/BP_TopDownPlayerController"));
 	if(PlayerControllerBPClass.Class != NULL)

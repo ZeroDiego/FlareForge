@@ -4,9 +4,8 @@
 #include "HomingStrikeProjectile.h"
 
 #include "EngineUtils.h"
-#include "Kismet/GameplayStatics.h"
+#include "FlareForge/Character/MyPlayerCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "TopDown/FlareForgeCharacter.h"
 
 // Sets default values
 AHomingStrikeProjectile::AHomingStrikeProjectile()
@@ -34,7 +33,7 @@ USceneComponent* AHomingStrikeProjectile::FindHomingStrikeTarget() const
 	
 	TArray<AActor*> FoundTargets;
 
-	for (TActorIterator<AFlareForgeCharacter> CharacterItr(GetWorld()); CharacterItr; ++CharacterItr)
+	for (TActorIterator<AMyPlayerCharacter> CharacterItr(GetWorld()); CharacterItr; ++CharacterItr)
 	{
 		if (const double VectorLength = UKismetMathLibrary::VSize(CharacterItr->GetActorLocation() - GetActorLocation()); VectorLength < ClosestDistance)
 		{
