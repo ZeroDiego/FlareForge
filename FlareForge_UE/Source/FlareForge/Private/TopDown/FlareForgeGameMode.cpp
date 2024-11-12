@@ -24,3 +24,11 @@ AFlareForgeGameMode::AFlareForgeGameMode()
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
 }
+
+void AFlareForgeGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// Reset the instance counter at the beginning of each play session
+	AFlareForgePlayerController::InstanceCounter = 0;
+}
