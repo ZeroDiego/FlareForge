@@ -3,6 +3,8 @@
 #include "TopDown/FlareForgeGameMode.h"
 #include "TopDown/FlareForgePlayerController.h"
 #include "TopDown/FlareForgeCharacter.h"
+#include "FlareForge/Character/MyPlayerCharacter.h"
+#include "FlareForge/Character/MyPlayerState.h"
 #include "UObject/ConstructorHelpers.h"
 
 AFlareForgeGameMode::AFlareForgeGameMode()
@@ -10,8 +12,8 @@ AFlareForgeGameMode::AFlareForgeGameMode()
 	// use our custom PlayerController class
 	PlayerControllerClass = AFlareForgePlayerController::StaticClass();
 
-	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/TopDown/Blueprints/BP_TopDownCharacter"));
+	// Set default pawn class to our Blueprinted character
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/FlareForge/Blueprints/BP_MyPlayerCharacter"));
 	if (PlayerPawnBPClass.Class != nullptr)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
@@ -23,4 +25,7 @@ AFlareForgeGameMode::AFlareForgeGameMode()
 	{
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
+
+	// Set default player state class
+	PlayerStateClass = AMyPlayerState::StaticClass();
 }
