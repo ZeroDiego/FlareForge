@@ -89,6 +89,10 @@ void UTeleportAbility::Server_ReceiveMouseData_Implementation(FVector MouseLocat
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
 	{
 		FVector HitLocation = HitResult.Location;
-		Character->SetActorLocation(HitLocation, false, nullptr, ETeleportType::TeleportPhysics);
+		FVector TeleportVector = UKismetMathLibrary::GetForwardVector(Character->GetActorRotation());
+		UE_LOG(LogTemp, Warning, TEXT("Vector: %s"), *TeleportVector.ToString());
+		//Character->SetActorLocation(HitLocation, false, nullptr, ETeleportType::TeleportPhysics);
+		Character->SetActorLocation(FVector(Character->GetActorLocation().X + TeleportVector.X,
+			Character->GetActorLocation().Y + TeleportVector.Y, 0.0) * TeleportDistance, false, nullptr, ETeleportType::TeleportPhysics);
 	}
 }
