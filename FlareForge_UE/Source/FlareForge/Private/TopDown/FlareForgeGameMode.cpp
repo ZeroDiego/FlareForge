@@ -15,7 +15,13 @@ AFlareForgeGameMode::AFlareForgeGameMode()
 	
 	// Reset the instance counter at the beginning of each play session
 	AFlareForgePlayerController::InstanceCounter = 0;
-	
+
+	// set default HUD class to BP_FlareForgeHUD
+	static ConstructorHelpers::FClassFinder<AHUD> HUDClassFinder(TEXT("/Game/UI/BP_FlareForgeHUD"));
+	if (HUDClassFinder.Class != nullptr)
+	{
+		HUDClass = HUDClassFinder.Class;
+	}
 
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/TopDown/Blueprints/BP_MyPlayerCharacter"));
