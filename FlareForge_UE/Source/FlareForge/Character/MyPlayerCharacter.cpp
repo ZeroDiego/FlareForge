@@ -5,6 +5,7 @@
 #include "LucasAbilitySystemComponent.h"
 #include "MyCharacterAttributeSet.h"
 #include "MyPlayerState.h"
+#include "FlareForge/UI/FlareForgeHUD.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
@@ -58,7 +59,7 @@ void AMyPlayerCharacter::PossessedBy(AController* NewController)
 	InitAbilitySystemComponent();
 	GiveDefaultAbilities();
 	InitDefaultAttributes();
-	//InitHUD();
+	InitHUD();
 }
 
 void AMyPlayerCharacter::OnRep_PlayerState()
@@ -68,7 +69,7 @@ void AMyPlayerCharacter::OnRep_PlayerState()
 	InitAbilitySystemComponent();
 	GiveDefaultAbilities();
 	InitDefaultAttributes();
-	//InitHUD();
+	InitHUD();
 }
 
 void AMyPlayerCharacter::InitAbilitySystemComponent()
@@ -80,17 +81,17 @@ void AMyPlayerCharacter::InitAbilitySystemComponent()
 	AbilitySystemComponent->InitAbilityActorInfo(MyPlayerState, this);
 	AttributeSet = MyPlayerState->GetAttributeSet();
 }
-/*
+
 void AMyPlayerCharacter::InitHUD() const
 {
 	if(const APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 	{
-		if(AFlareForgeHUD* FabHUD = Cast<AFlareForgeHUD>(PlayerController->GetHUD()))
+		if(AFlareForgeHUD* FlareForgeHUD = Cast<AFlareForgeHUD>(PlayerController->GetHUD()))
 		{
-			FabHUD->Init();
+			FlareForgeHUD->Init();
 		}
 	}
-}*/
+}
 
 void AMyPlayerCharacter::Tick(float DeltaSeconds)
 {
