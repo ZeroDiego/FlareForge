@@ -21,4 +21,7 @@ public:
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	float HealthPercent;
+
+	UPROPERTY(BlueprintReadOnly)
+	float Player2HealthPercent;
 };
