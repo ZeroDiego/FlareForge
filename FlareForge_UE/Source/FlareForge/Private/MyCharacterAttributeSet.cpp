@@ -17,8 +17,8 @@ void UMyCharacterAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 
 	DOREPLIFETIME_CONDITION_NOTIFY(UMyCharacterAttributeSet, Health, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMyCharacterAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMyCharacterAttributeSet, Stamina, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UMyCharacterAttributeSet, MaxStamina, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UMyCharacterAttributeSet, Armor, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UMyCharacterAttributeSet, Haste, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMyCharacterAttributeSet, Strength, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMyCharacterAttributeSet, MaxStrength, COND_None, REPNOTIFY_Always);
 }
@@ -53,14 +53,14 @@ void UMyCharacterAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& Old
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UMyCharacterAttributeSet, MaxHealth, OldMaxHealth);
 }
 
-void UMyCharacterAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldStamina) const
+void UMyCharacterAttributeSet::OnRep_Armor(const FGameplayAttributeData& OldArmor) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMyCharacterAttributeSet, Stamina, OldStamina);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMyCharacterAttributeSet, Armor, OldArmor);
 }
 
-void UMyCharacterAttributeSet::OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina) const
+void UMyCharacterAttributeSet::OnRep_Haste(const FGameplayAttributeData& OldHaste) const
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UMyCharacterAttributeSet, MaxStamina, OldMaxStamina);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMyCharacterAttributeSet, Haste, OldHaste);
 }
 
 void UMyCharacterAttributeSet::OnRep_Strength(const FGameplayAttributeData& OldStrength) const

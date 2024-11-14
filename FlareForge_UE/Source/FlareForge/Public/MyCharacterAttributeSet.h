@@ -37,13 +37,13 @@ public:
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, MaxHealth);
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Stamina, Category = "Ability | Gameplay Attribute")
-	FGameplayAttributeData Stamina;
-	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, Stamina);
-
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxStamina, Category = "Ability | Gameplay Attribute")
-	FGameplayAttributeData MaxStamina;
-	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, MaxStamina);
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Armor, Category = "Ability | Gameplay Attribute")
+	FGameplayAttributeData Armor;
+	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, Armor);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Haste, Category = "Ability | Gameplay Attribute")
+	FGameplayAttributeData Haste;
+	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, Haste);
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Strength, Category = "Ability | Gameplay Attribute")
 	FGameplayAttributeData Strength;
@@ -60,10 +60,10 @@ public:
 	void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
 
 	UFUNCTION()
-	void OnRep_Stamina(const FGameplayAttributeData& OldStamina) const;
+	void OnRep_Armor(const FGameplayAttributeData& OldArmor) const;
 
 	UFUNCTION()
-	void OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina) const;
+	void OnRep_Haste(const FGameplayAttributeData& OldHaste) const;
 
 	UFUNCTION()
 	void OnRep_Strength(const FGameplayAttributeData& OldStamina) const;
