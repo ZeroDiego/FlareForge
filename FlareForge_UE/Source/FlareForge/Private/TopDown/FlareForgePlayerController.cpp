@@ -146,11 +146,18 @@ void AFlareForgePlayerController::ApplyMovement()
 	
 	// Y input
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-	GetCharacter()->AddMovementInput(RightDirection, NormalizedInput.Y);
+	
+	if (GetCharacter())
+	{
+		GetCharacter()->AddMovementInput(RightDirection, NormalizedInput.Y);
+	}
 
     // X input
 	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	GetCharacter()->AddMovementInput(ForwardDirection, NormalizedInput.X);
+	if (GetCharacter())
+	{
+		GetCharacter()->AddMovementInput(ForwardDirection, NormalizedInput.X);
+	}
 
     // reset vector at the end
 	InputVector = FVector2D::ZeroVector;
@@ -159,31 +166,28 @@ void AFlareForgePlayerController::ApplyMovement()
 
 void AFlareForgePlayerController::Dash()
 {
-	
-	/*FVector MoveDirection = GetCharacter()->GetCharacterMovement()->GetLastInputVector().GetSafeNormal();
-	double MaxMoveSpeed = GetCharacter()->GetCharacterMovement()->MaxWalkSpeed;
-	FVector DashVector = DashSpeed * MoveDirection * MaxMoveSpeed;
-	GetCharacter()->LaunchCharacter(DashVector, false, false);
-	//GetCharacter()->LaunchCharacter(DashVector, false, false);*/
-	
 	if(DashTimer < UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()))
 	{
-		const FVector MoveDirection = GetCharacter()->GetCharacterMovement()->GetLastInputVector();
-		//double MaxMoveSpeed = GetCharacter()->GetCharacterMovement()->MaxWalkSpeed;
-		FVector DashVector;
-		
-		if(MoveDirection.IsZero())
+		if (GetCharacter())
 		{
-			DashVector = FVector(DashSpeed * GetCharacter()->GetActorForwardVector());
-		}
-		else
-		{
-			DashVector = FVector(DashSpeed * MoveDirection);
-		}
+			const FVector MoveDirection = GetCharacter()->GetCharacterMovement()->GetLastInputVector();
 		
-		GetCharacter()->LaunchCharacter(DashVector, false, false);
-		DashOnServer(DashVector);
-		DashTimer = UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()) + 3;
+			//double MaxMoveSpeed = GetCharacter()->GetCharacterMovement()->MaxWalkSpeed;
+			FVector DashVector;
+		
+			if(MoveDirection.IsZero())
+			{
+				DashVector = FVector(DashSpeed * GetCharacter()->GetActorForwardVector());
+			}
+			else
+			{
+				DashVector = FVector(DashSpeed * MoveDirection);
+			}
+			
+			GetCharacter()->LaunchCharacter(DashVector, false, false);
+			DashOnServer(DashVector);
+			DashTimer = UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()) + 3;
+		}
 	}
 	
 }
