@@ -55,7 +55,6 @@ void AFlareForgePlayerController::SetupInputComponent()
 {
 	// set up gameplay key bindings
 	Super::SetupInputComponent();
-	UE_LOG(LogTemp, Warning, TEXT("Instance: %d"), InstanceID);
 	// Add Input Mapping Context
 	if(InstanceID == 0)
 	{

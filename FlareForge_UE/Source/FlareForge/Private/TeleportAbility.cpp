@@ -70,6 +70,8 @@ void UTeleportAbility::Server_ReceiveMouseData_Implementation(FVector MouseLocat
 	
 	FVector TeleportVector = UKismetMathLibrary::GetForwardVector(Character->GetActorRotation());
 	FVector TargetLocation = FVector(Character->GetActorLocation().X + TeleportVector.X * TeleportDistance,
-	Character->GetActorLocation().Y + TeleportVector.Y * TeleportDistance, 0.0);
+	Character->GetActorLocation().Y + TeleportVector.Y * TeleportDistance, 100);
+	UE_LOG(LogTemp, Warning, TEXT("Z: %f"), Character->GetActorLocation().Z);
 	Character->TeleportTo(TargetLocation, Character->GetActorRotation());
+	UE_LOG(LogTemp, Warning, TEXT("Z: %f"), Character->GetActorLocation().Z);
 }
