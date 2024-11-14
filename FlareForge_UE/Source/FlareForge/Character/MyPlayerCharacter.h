@@ -27,7 +27,7 @@ public:
 
 private:
 	void InitAbilitySystemComponent();
-	//void InitHUD() const;
+	void InitHUD() const;
 
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
