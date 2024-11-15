@@ -24,6 +24,7 @@ void UTeleportAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	{
 		if (const ACharacter* Character = Cast<ACharacter>(Actor))
 		{
+			// Make so that players only do this and not also runned on the server
 			if (IsLocallyControlled())
 			{
 				if (const APlayerController* PlayerController = Cast<APlayerController>(Character->GetOwner()))
@@ -46,12 +47,14 @@ void UTeleportAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 		}
 	}
 
+	// start cooldown
 	CommitAbilityCooldown(Handle, ActorInfo, ActivationInfo, true, nullptr);
 	
 	// End the ability
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 }
 
+// teleport on server
 void UTeleportAbility::Server_ReceiveMouseData_Implementation(FVector MouseLocation, FVector MouseDirection)
 {
 	float OriginalTeleportDistance = TeleportDistance;
@@ -71,10 +74,14 @@ void UTeleportAbility::Server_ReceiveMouseData_Implementation(FVector MouseLocat
 	}
 	
 	FVector TeleportVector = UKismetMathLibrary::GetForwardVector(Character->GetActorRotation());
+
+	// teleport position, take vector player in x and y direction
 	FVector TargetLocation = FVector(Character->GetActorLocation().X + TeleportVector.X * TeleportDistance,
 	Character->GetActorLocation().Y + TeleportVector.Y * TeleportDistance, 100);
-	//UE_LOG(LogTemp, Warning, TEXT("Distance: %f"), TeleportDistance);
-	
+
+
+	// If we teleport into a wall, we lower the distance and check again with new distance
+	// this allows players to always teleport
 	while(!Character->TeleportTo(TargetLocation, Character->GetActorRotation()))
 	{
 		TeleportDistance -= 50;
@@ -84,6 +91,7 @@ void UTeleportAbility::Server_ReceiveMouseData_Implementation(FVector MouseLocat
 		UE_LOG(LogTemp, Warning, TEXT("Distance: %f"), TeleportDistance);
 	}
 
+	// reset teleport distance
 	TeleportDistance = OriginalTeleportDistance;
 	
 }
