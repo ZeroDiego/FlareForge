@@ -215,7 +215,7 @@ void AFlareForgePlayerController::RotatePlayerTowardsMouse()
         FCollisionQueryParams Params;
         Params.AddIgnoredActor(CurrentChar);
         
-        if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
+        if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_GameTraceChannel2, Params))
         {
             // Ensure the hit location is on the same plane as the character
             FVector HitLocation = HitResult.Location;
