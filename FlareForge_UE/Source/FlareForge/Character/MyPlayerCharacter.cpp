@@ -57,7 +57,7 @@ void AMyPlayerCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 	    
 	InitAbilitySystemComponent();
-	GiveDefaultAbilities();
+	GiveSelectedAbilities();
 	InitDefaultAttributes();
 	InitHUD();
 }
@@ -67,7 +67,7 @@ void AMyPlayerCharacter::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 	
 	InitAbilitySystemComponent();
-	GiveDefaultAbilities();
+	GiveSelectedAbilities();
 	InitDefaultAttributes();
 	InitHUD();
 }
