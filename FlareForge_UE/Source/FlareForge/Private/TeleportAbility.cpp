@@ -54,6 +54,8 @@ void UTeleportAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 
 void UTeleportAbility::Server_ReceiveMouseData_Implementation(FVector MouseLocation, FVector MouseDirection)
 {
+	float OriginalTeleportDistance = TeleportDistance;
+	
 	AActor* AvatarActor = GetAvatarActorFromActorInfo();
 	if (!AvatarActor)
 	{
@@ -71,5 +73,17 @@ void UTeleportAbility::Server_ReceiveMouseData_Implementation(FVector MouseLocat
 	FVector TeleportVector = UKismetMathLibrary::GetForwardVector(Character->GetActorRotation());
 	FVector TargetLocation = FVector(Character->GetActorLocation().X + TeleportVector.X * TeleportDistance,
 	Character->GetActorLocation().Y + TeleportVector.Y * TeleportDistance, 100);
-	Character->TeleportTo(TargetLocation, Character->GetActorRotation());
+	//UE_LOG(LogTemp, Warning, TEXT("Distance: %f"), TeleportDistance);
+	
+	while(!Character->TeleportTo(TargetLocation, Character->GetActorRotation()))
+	{
+		TeleportDistance -= 50;
+		TargetLocation = FVector(Character->GetActorLocation().X + TeleportVector.X * TeleportDistance,
+			Character->GetActorLocation().Y + TeleportVector.Y * TeleportDistance, 100);
+		Character->TeleportTo(TargetLocation, Character->GetActorRotation());
+		UE_LOG(LogTemp, Warning, TEXT("Distance: %f"), TeleportDistance);
+	}
+
+	TeleportDistance = OriginalTeleportDistance;
+	
 }
