@@ -15,7 +15,7 @@ class UInputAction;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
-// Define the FlareForgeAbilityInputID enum here in the header file
+/*// Define the FlareForgeAbilityInputID enum here in the header file
 UENUM(BlueprintType)
 enum class EFlareForgeAbilityInputID : uint8
 {
@@ -23,7 +23,7 @@ enum class EFlareForgeAbilityInputID : uint8
 	Confirm UMETA(DisplayName = "Confirm"),
 	Cancel UMETA(DisplayName = "Cancel")
 };
-
+*/
 UCLASS()
 class AFlareForgePlayerController : public APlayerController
 {
@@ -36,6 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	float ShortPressThreshold;
 
+	UPROPERTY(EditAnywhere, Blueprintable)
+	float DashSpeed = 100.0f;
+
 	/** FX Class that we will spawn when clicking */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UNiagaraSystem* FXCursor;
@@ -43,6 +46,10 @@ public:
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
+	
+	/** GamepadMappingContext */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputMappingContext* GamepadMappingContext;
 	
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
@@ -57,15 +64,36 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MovementHorizontalAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* DashAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* ControllerRotationAction;
 	
-	/** Define MyAbilitySystemComponent **/
+	/** Define MyAbilitySystemComponent **//*
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")
 	class UMyAbilitySystemComponent* MyAbilitySystemComponent;
 
 	// Array to store default abilities to be granted to the character
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
-	TArray<TSubclassOf<class UGameplayAbility>> DefaultAbilities;
+	TArray<TSubclassOf<class UGameplayAbility>> DefaultAbilities;*/
 
+	// Dash functions
+	void Dash();
+
+	UFUNCTION(Server, Reliable)
+	void DashOnServer(const FVector& DashVector) const;
+
+	/*UFUNCTION(Server, Reliable)
+	void InitAbilitySystem();*/
+
+	static int32 InstanceCounter;
+
+	// Instance-specific ID
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 InstanceID = 0;
+	
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
 	uint32 bMoveToMouseCursor : 1;
@@ -88,8 +116,16 @@ protected:
 	void MovementVertical(const FInputActionValue& Value);
 	void MovementHorizontal(const FInputActionValue& Value);
 
+	void ApplyMovement();
+	
 	// rotate character with mouse
 	void RotatePlayerTowardsMouse();
+
+	// rotate character with joystick
+	void RotatePlayerTowardsJoystick(const FInputActionValue& Value);
+
+	UFUNCTION(Server, Reliable)
+	void RotatePlayerOnServer(const FRotator PlayerRotation);
 	
 
 private:
@@ -97,6 +133,11 @@ private:
 
 	bool bIsTouch; // Is it a touch device
 	float FollowTime; // For how long it has been pressed
+
+	FVector2D InputVector = FVector2D::ZeroVector;
+	
+	float DashTimer = 0.0f;
+	
 };
 
 

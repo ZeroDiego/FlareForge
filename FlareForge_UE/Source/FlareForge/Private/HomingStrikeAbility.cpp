@@ -3,22 +3,31 @@
 
 #include "HomingStrikeAbility.h"
 #include "GameFramework/Character.h"
-#include "MyAbilitySystemComponent.h"
+#include "LucasAbilitySystemComponent.h"
+#include "FiringOffset.h"
 #include "Kismet/GameplayStatics.h"
 
 void UHomingStrikeAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	
-	// Make the Projectile Spawn
-	if (const ACharacter* Character = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))
+	if (const AActor* Actor = GetAvatarActorFromActorInfo())
 	{
-		const FVector SpawnProjectileLocation = Character->GetActorLocation() + SpawnOffset;
-		const FRotator CurrentRotation = Character->GetActorRotation();
-		const FActorSpawnParameters SpawnParameters;
-		GetWorld()->SpawnActor<AHomingStrikeProjectile>(OrbProjectile, SpawnProjectileLocation, CurrentRotation, SpawnParameters);
-		CommitAbilityCooldown(Handle, ActorInfo, ActivationInfo, true, nullptr);
+		if (const ACharacter* Character = Cast<ACharacter>(Actor))
+		{
+			const FVector SpawnProjectileLocation = Character->GetComponentByClass<UFiringOffset>()->GetComponentLocation();
+			const FRotator CurrentRotation = Character->GetActorRotation();
+			HomingStrikeAbility(SpawnProjectileLocation, CurrentRotation);
+			Projectile->LockOn(Projectile->FindHomingStrikeTarget(), Character->GetRootComponent());
+		}
 	}
+	
+	CommitAbilityCooldown(Handle, ActorInfo, ActivationInfo, true, nullptr);
 	
 	// End the ability
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
+}
+
+void UHomingStrikeAbility::HomingStrikeAbility_Implementation(const FVector SpawnProjectileLocation, const FRotator CurrentRotation)
+{
+	const FActorSpawnParameters SpawnParameters;
+	Projectile = GetWorld()->SpawnActor<AHomingStrikeProjectile>(ProjectileBlueprint, SpawnProjectileLocation, CurrentRotation, SpawnParameters);
 }
