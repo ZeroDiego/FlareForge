@@ -23,12 +23,12 @@ UMyCharacterAttributeSet* AMyCharacterBase::GetAttributeSet() const
 	return AttributeSet;
 }
 
-void AMyCharacterBase::GiveDefaultAbilities()
+void AMyCharacterBase::GiveSelectedAbilities()
 {
 	check(AbilitySystemComponent);
 	if(!HasAuthority()) return;
 
-	for(TSubclassOf<UGameplayAbility> AbilityClass : DefaultAbilities)
+	for(TSubclassOf<UGameplayAbility> AbilityClass : SelectedAbilities)
 	{
 		const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
 		AbilitySystemComponent->GiveAbility(AbilitySpec);

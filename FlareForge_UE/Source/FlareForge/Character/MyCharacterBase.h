@@ -25,7 +25,7 @@ public:
 	virtual UMyCharacterAttributeSet* GetAttributeSet() const;
 
 protected:
-	void GiveDefaultAbilities();
+	void GiveSelectedAbilities();
 	void InitDefaultAttributes() const;
 
 	UPROPERTY()
@@ -35,7 +35,7 @@ protected:
 	TObjectPtr<UMyCharacterAttributeSet> AttributeSet;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Ability")
-	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
+	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Ability")
 	TSubclassOf<UGameplayEffect> DefaultAttributeEffect;
