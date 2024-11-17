@@ -70,14 +70,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* ControllerRotationAction;
-	
-	/** Define MyAbilitySystemComponent **//*
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")
-	class UMyAbilitySystemComponent* MyAbilitySystemComponent;
-
-	// Array to store default abilities to be granted to the character
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
-	TArray<TSubclassOf<class UGameplayAbility>> DefaultAbilities;*/
 
 	// Dash functions
 	void Dash();
@@ -85,12 +77,12 @@ public:
 	UFUNCTION(Server, Reliable)
 	void DashOnServer(const FVector& DashVector) const;
 
-	/*UFUNCTION(Server, Reliable)
-	void InitAbilitySystem();*/
-
+	// Keeps track of the number of instances that
+	// have been created of this class thus far
 	static int32 InstanceCounter;
 
-	// Instance-specific ID
+	// Instance ID that increments after a new instance is created
+	// So the first instance is 0 and the one after is 1 and so on
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int32 InstanceID = 0;
 	

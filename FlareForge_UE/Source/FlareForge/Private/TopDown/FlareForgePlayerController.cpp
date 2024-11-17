@@ -55,7 +55,10 @@ void AFlareForgePlayerController::SetupInputComponent()
 {
 	// set up gameplay key bindings
 	Super::SetupInputComponent();
-	// Add Input Mapping Context
+	
+	// Add Input Mapping Context depending on which instance
+	// because instance 0 is player 0 who plays on mouse
+	// and instance 1 is player 1 who plays on gamepad
 	if(InstanceID == 0)
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
@@ -66,18 +69,6 @@ void AFlareForgePlayerController::SetupInputComponent()
 		// Set up action bindings
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
 		{
-			/*// Setup mouse input events
-			EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Started, this, &AFlareForgePlayerController::OnInputStarted);
-			EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::OnSetDestinationTriggered);
-			EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Completed, this, &AFlareForgePlayerController::OnSetDestinationReleased);
-			EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Canceled, this, &AFlareForgePlayerController::OnSetDestinationReleased);
-	
-			// Setup touch input events
-			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Started, this, &AFlareForgePlayerController::OnInputStarted);
-			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::OnTouchTriggered);
-			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Completed, this, &AFlareForgePlayerController::OnTouchReleased);
-			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Canceled, this, &AFlareForgePlayerController::OnTouchReleased);*/
-
 			// Setup Movement
 			EnhancedInputComponent->BindAction(MovementHorizontalAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::MovementHorizontal);
 			EnhancedInputComponent->BindAction(MovementVerticalAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::MovementVertical);
@@ -215,7 +206,7 @@ void AFlareForgePlayerController::RotatePlayerTowardsMouse()
         FCollisionQueryParams Params;
         Params.AddIgnoredActor(CurrentChar);
         
-        if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
+        if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_GameTraceChannel2, Params))
         {
             // Ensure the hit location is on the same plane as the character
             FVector HitLocation = HitResult.Location;
