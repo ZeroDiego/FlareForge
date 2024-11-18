@@ -16,15 +16,15 @@
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 // Initialize the static counter to 0
-int32 AFlareForgePlayerController::InstanceCounter = 0;
+//int32 AFlareForgePlayerController::InstanceCounter = 0;
 
 AFlareForgePlayerController::AFlareForgePlayerController()
 {
 	// Assign the current value of InstanceCounter to InstanceID
-	InstanceID = InstanceCounter;
+	//InstanceID = InstanceCounter;
 	
 	// Increment the static counter for the next instance
-	InstanceCounter++;
+	//InstanceCounter++;
 	
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
@@ -44,10 +44,10 @@ void AFlareForgePlayerController::Tick(const float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	
-	if (!ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer())->HasMappingContext(GamepadMappingContext))
-	{
-		RotatePlayerTowardsMouse();	
-	}
+	//if (!ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer())->HasMappingContext(GamepadMappingContext))
+	//{
+	RotatePlayerTowardsMouse();	
+	//}
 }
 
 
@@ -59,8 +59,8 @@ void AFlareForgePlayerController::SetupInputComponent()
 	// Add Input Mapping Context depending on which instance
 	// because instance 0 is player 0 who plays on mouse
 	// and instance 1 is player 1 who plays on gamepad
-	if(InstanceID == 0)
-	{
+	//if(InstanceID == 0)
+	//{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
@@ -81,9 +81,9 @@ void AFlareForgePlayerController::SetupInputComponent()
 		{
 			UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 		}
-	}
-	else if (InstanceID == 1)
-	{
+	//}
+	//else if (InstanceID == 1)
+	/*{
 		// Add Input Mapping Context
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 		{
@@ -108,7 +108,7 @@ void AFlareForgePlayerController::SetupInputComponent()
 		{
 			UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 		}
-	}
+	}*/
 }
 
 // Get Y value of vector

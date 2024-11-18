@@ -79,12 +79,12 @@ public:
 
 	// Keeps track of the number of instances that
 	// have been created of this class thus far
-	static int32 InstanceCounter;
+	//static int32 InstanceCounter;
 
 	// Instance ID that increments after a new instance is created
 	// So the first instance is 0 and the one after is 1 and so on
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	int32 InstanceID = 0;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	//int32 InstanceID = 0;
 	
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */

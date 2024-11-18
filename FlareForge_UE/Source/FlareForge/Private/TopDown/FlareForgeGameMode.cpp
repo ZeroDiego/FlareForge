@@ -12,9 +12,6 @@ AFlareForgeGameMode::AFlareForgeGameMode()
 {
 	// use our custom PlayerController class
 	PlayerControllerClass = AFlareForgePlayerController::StaticClass();
-	
-	// Reset the instance counter at the beginning of each play session
-	AFlareForgePlayerController::InstanceCounter = 0;
 
 	// set default HUD class to BP_FlareForgeHUD
 	static ConstructorHelpers::FClassFinder<AHUD> HUDClassFinder(TEXT("/Game/UI/BP_FlareForgeHUD"));
