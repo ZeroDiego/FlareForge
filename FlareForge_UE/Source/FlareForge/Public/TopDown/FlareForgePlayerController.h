@@ -71,12 +71,38 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* ControllerRotationAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* Ability1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* Ability2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* Ability3;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* BasicAbility;
+
 	// Dash functions
 	void Dash();
 
 	UFUNCTION(Server, Reliable)
 	void DashOnServer(const FVector& DashVector) const;
 
+
+	//Ability functions
+	UFUNCTION()
+	void ActivateBasicAbility();
+
+	UFUNCTION()
+	void ActivateAbility1();
+	
+	UFUNCTION()
+	void ActivateAbility2();
+	
+	UFUNCTION()
+	void ActivateAbility3();
+	
 	// Keeps track of the number of instances that
 	// have been created of this class thus far
 	static int32 InstanceCounter;

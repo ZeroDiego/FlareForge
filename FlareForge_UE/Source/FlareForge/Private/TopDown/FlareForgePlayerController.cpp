@@ -31,6 +31,30 @@ AFlareForgePlayerController::AFlareForgePlayerController()
 	CachedDestination = FVector::ZeroVector;
 	FollowTime = 0.f;
 
+	static ConstructorHelpers::FObjectFinder<UInputAction> LMBActionObj(TEXT("/All/Content/Input/IA_LMB"));
+	if (LMBActionObj.Succeeded())
+	{
+		BasicAbility = LMBActionObj.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> RMBActionObj(TEXT("/All/Content/Input/IA_RMB"));
+	if (RMBActionObj.Succeeded())
+	{
+		Ability1 = RMBActionObj.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> ShiftActionObj(TEXT("/All/Content/Input/IA_Shift"));
+	if (ShiftActionObj.Succeeded())
+	{
+		Ability2 = ShiftActionObj.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> SpaceActionObj(TEXT("/All/Content/Input/IA_Space"));
+	if (SpaceActionObj.Succeeded())
+	{
+		Ability3 = SpaceActionObj.Object;
+	}
+
 }
 
 void AFlareForgePlayerController::BeginPlay()
@@ -75,7 +99,18 @@ void AFlareForgePlayerController::SetupInputComponent()
 
 			// Dash Setup
 			EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::Dash);
-			
+
+			// Bind LMB to Basic Ability
+			EnhancedInputComponent->BindAction(BasicAbility, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::ActivateBasicAbility);
+
+			// Bind RMB to Ability 1
+			EnhancedInputComponent->BindAction(Ability1, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::ActivateAbility1);
+
+			// Bind Space to Ability 2
+			EnhancedInputComponent->BindAction(Ability2, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::ActivateAbility2);
+
+			// Bind Shift to Ability 3
+			EnhancedInputComponent->BindAction(Ability3, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::ActivateAbility3);
 		}
 		else
 		{
@@ -99,7 +134,7 @@ void AFlareForgePlayerController::SetupInputComponent()
 
 			// Dash Setup
 			EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::Dash);
-
+			
 			// Controller Rotation Setup
 			EnhancedInputComponent->BindAction(ControllerRotationAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::RotatePlayerTowardsJoystick);
 			
@@ -244,6 +279,27 @@ void AFlareForgePlayerController::RotatePlayerOnServer_Implementation(const FRot
 {
 	this->GetCharacter()->SetActorRotation(PlayerRotation);
 }
+
+void AFlareForgePlayerController::ActivateBasicAbility()
+{
+	UE_LOG(LogTemplateCharacter, Log, TEXT("Basic Ability Activated"));
+}
+
+void AFlareForgePlayerController::ActivateAbility1()
+{
+	UE_LOG(LogTemplateCharacter, Log, TEXT("Ability1 Activated"));
+}
+
+void AFlareForgePlayerController::ActivateAbility2()
+{
+	UE_LOG(LogTemplateCharacter, Log, TEXT("Ability2 Activated"));
+}
+
+void AFlareForgePlayerController::ActivateAbility3()
+{
+	UE_LOG(LogTemplateCharacter, Log, TEXT("Ability3 Activated"));
+}
+
 
 /*
 void AFlareForgePlayerController::OnInputStarted()
