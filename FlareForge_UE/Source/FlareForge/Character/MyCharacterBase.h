@@ -34,7 +34,7 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UMyCharacterAttributeSet> AttributeSet;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Ability")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
 	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Ability")

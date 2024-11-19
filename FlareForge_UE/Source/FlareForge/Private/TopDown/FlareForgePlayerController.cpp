@@ -32,25 +32,25 @@ AFlareForgePlayerController::AFlareForgePlayerController()
 	CachedDestination = FVector::ZeroVector;
 	FollowTime = 0.f;
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> LMBActionObj(TEXT("/Game/Input/IA_LMBAbility.IA_LMBAbility"));
+	static ConstructorHelpers::FObjectFinder<UInputAction> LMBActionObj(TEXT("/Game/TopDown/Input/Actions/AbilityInput/IA_LMBAbility.IA_LMBAbility"));
 	if (LMBActionObj.Succeeded())
 	{
 		BasicAbility = LMBActionObj.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> RMBActionObj(TEXT("/Game/Input/IA_RMBAbility.IA_RMBAbility"));
+	static ConstructorHelpers::FObjectFinder<UInputAction> RMBActionObj(TEXT("/Game/TopDown/Input/Actions/AbilityInput/IA_RMBAbility.IA_RMBAbility"));
 	if (RMBActionObj.Succeeded())
 	{
 		Ability1 = RMBActionObj.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> ShiftActionObj(TEXT("/Game/Input/IA_ShiftAbility.IA_ShiftAbility"));
+	static ConstructorHelpers::FObjectFinder<UInputAction> ShiftActionObj(TEXT("/Game/TopDown/Input/Actions/AbilityInput/IA_ShiftAbility.IA_ShiftAbility"));
 	if (ShiftActionObj.Succeeded())
 	{
 		Ability2 = ShiftActionObj.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> SpaceActionObj(TEXT("/Game/Input/IA_SpaceAbility.IA_SpaceAbility"));
+	static ConstructorHelpers::FObjectFinder<UInputAction> SpaceActionObj(TEXT("/Game/TopDown/Input/Actions/AbilityInput/IA_SpaceAbility.IA_SpaceAbility"));
 	if (SpaceActionObj.Succeeded())
 	{
 		Ability3 = SpaceActionObj.Object;
