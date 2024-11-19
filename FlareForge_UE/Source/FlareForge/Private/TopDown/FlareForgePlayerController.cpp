@@ -8,6 +8,7 @@
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
+#include "LucasAbilitySystemComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "TeleportAbility.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -31,25 +32,25 @@ AFlareForgePlayerController::AFlareForgePlayerController()
 	CachedDestination = FVector::ZeroVector;
 	FollowTime = 0.f;
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> LMBActionObj(TEXT("/All/Content/Input/IA_LMB"));
+	static ConstructorHelpers::FObjectFinder<UInputAction> LMBActionObj(TEXT("/Game/Input/IA_LMBAbility.IA_LMBAbility"));
 	if (LMBActionObj.Succeeded())
 	{
 		BasicAbility = LMBActionObj.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> RMBActionObj(TEXT("/All/Content/Input/IA_RMB"));
+	static ConstructorHelpers::FObjectFinder<UInputAction> RMBActionObj(TEXT("/Game/Input/IA_RMBAbility.IA_RMBAbility"));
 	if (RMBActionObj.Succeeded())
 	{
 		Ability1 = RMBActionObj.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> ShiftActionObj(TEXT("/All/Content/Input/IA_Shift"));
+	static ConstructorHelpers::FObjectFinder<UInputAction> ShiftActionObj(TEXT("/Game/Input/IA_ShiftAbility.IA_ShiftAbility"));
 	if (ShiftActionObj.Succeeded())
 	{
 		Ability2 = ShiftActionObj.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> SpaceActionObj(TEXT("/All/Content/Input/IA_Space"));
+	static ConstructorHelpers::FObjectFinder<UInputAction> SpaceActionObj(TEXT("/Game/Input/IA_SpaceAbility.IA_SpaceAbility"));
 	if (SpaceActionObj.Succeeded())
 	{
 		Ability3 = SpaceActionObj.Object;
