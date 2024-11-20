@@ -283,6 +283,14 @@ void AFlareForgePlayerController::RotatePlayerOnServer_Implementation(const FRot
 
 void AFlareForgePlayerController::ActivateBasicAbility()
 {
+	if (SelectedAbilities.IsValidIndex(0))  // Assuming BasicAbility is at index 0
+	{
+		UAbilitySystemComponent* ASC = GetCharacter()->GetAbilitySystemComponent();
+		if (ASC)
+		{
+			ASC->TryActivateAbilityByClass(SelectedAbilities[0]);
+		}
+	}
 	UE_LOG(LogTemplateCharacter, Log, TEXT("Basic Ability Activated"));
 }
 
