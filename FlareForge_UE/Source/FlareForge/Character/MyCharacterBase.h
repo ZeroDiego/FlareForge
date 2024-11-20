@@ -24,15 +24,23 @@ public:
 	//~End of IAbilitySystemInterface interface
 	virtual UMyCharacterAttributeSet* GetAttributeSet() const;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability", meta = (ExposeOnSpawn=true))
+	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
+	
+	// Adds an ability to the SelectedAbilities array
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	void AddAbility(TSubclassOf<UGameplayAbility> NewAbility);
+
+	// Removes an ability from the SelectedAbilities array
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	void RemoveAbility(TSubclassOf<UGameplayAbility> AbilityToRemove);
+	
 protected:
 	void GiveSelectedAbilities();
 	void InitDefaultAttributes() const;
 
 	UPROPERTY()
 	TObjectPtr<ULucasAbilitySystemComponent> AbilitySystemComponent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
-	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
 
 	UPROPERTY()
 	TObjectPtr<UMyCharacterAttributeSet> AttributeSet;

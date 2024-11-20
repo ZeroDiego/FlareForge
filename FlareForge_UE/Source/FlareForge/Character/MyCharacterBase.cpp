@@ -49,3 +49,35 @@ void AMyCharacterBase::InitDefaultAttributes() const
 		AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());			
 	}
 }
+
+void AMyCharacterBase::AddAbility(TSubclassOf<UGameplayAbility> NewAbility)
+{
+	// Check if AbilitySystemComponent is valid and we have authority
+	if (!HasAuthority() || !NewAbility)
+	{
+		return;
+	}
+
+	// Check if the ability is already in the SelectedAbilities array
+	if (!SelectedAbilities.Contains(NewAbility))
+	{
+		// Add the new ability to the array
+		SelectedAbilities.Add(NewAbility);
+	}
+}
+
+void AMyCharacterBase::RemoveAbility(TSubclassOf<UGameplayAbility> AbilityToRemove)
+{
+	// Check if AbilitySystemComponent is valid and we have authority
+	if (!HasAuthority() || !AbilityToRemove)
+	{
+		return;
+	}
+
+	// Check if the ability exists in the SelectedAbilities array
+	if (SelectedAbilities.Contains(AbilityToRemove))
+	{
+		// Remove the ability from the array
+		SelectedAbilities.Remove(AbilityToRemove);
+	}
+}
