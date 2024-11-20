@@ -50,19 +50,28 @@ void AMyCharacterBase::InitDefaultAttributes() const
 	}
 }
 
-void AMyCharacterBase::AddAbility(TSubclassOf<UGameplayAbility> NewAbility)
+void AMyCharacterBase::SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility)
 {
-	// Check if AbilitySystemComponent is valid and we have authority
+	// Check if we have authority and if NewAbility is valid
 	if (!HasAuthority() || !NewAbility)
 	{
 		return;
 	}
 
-	// Check if the ability is already in the SelectedAbilities array
-	if (!SelectedAbilities.Contains(NewAbility))
+	// Ensure that the index is within bounds, or resize if necessary
+	if (SelectedAbilities.IsValidIndex(Index))
 	{
-		// Add the new ability to the array
-		SelectedAbilities.Add(NewAbility);
+		// Replace the existing ability at this index
+		SelectedAbilities[Index] = NewAbility;
+	}
+	else
+	{
+		// Optionally resize the array to accommodate this new index
+		if (Index >= 0)
+		{
+			SelectedAbilities.SetNum(Index + 1);
+			SelectedAbilities[Index] = NewAbility;
+		}
 	}
 }
 

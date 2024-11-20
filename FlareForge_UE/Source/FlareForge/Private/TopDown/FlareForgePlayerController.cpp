@@ -298,16 +298,43 @@ void AFlareForgePlayerController::ActivateBasicAbility()
 
 void AFlareForgePlayerController::ActivateAbility1()
 {
+	AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn());
+	if (MyCharacter && MyCharacter->SelectedAbilities.IsValidIndex(1))
+	{
+		UAbilitySystemComponent* ASC = MyCharacter->GetAbilitySystemComponent();
+		if (ASC)
+		{
+			ASC->TryActivateAbilityByClass(MyCharacter->SelectedAbilities[1]);
+		}
+	}
 	UE_LOG(LogTemplateCharacter, Log, TEXT("Ability1 Activated"));
 }
 
 void AFlareForgePlayerController::ActivateAbility2()
 {
+	AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn());
+	if (MyCharacter && MyCharacter->SelectedAbilities.IsValidIndex(2))
+	{
+		UAbilitySystemComponent* ASC = MyCharacter->GetAbilitySystemComponent();
+		if (ASC)
+		{
+			ASC->TryActivateAbilityByClass(MyCharacter->SelectedAbilities[2]);
+		}
+	}
 	UE_LOG(LogTemplateCharacter, Log, TEXT("Ability2 Activated"));
 }
 
 void AFlareForgePlayerController::ActivateAbility3()
 {
+	AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn());
+	if (MyCharacter && MyCharacter->SelectedAbilities.IsValidIndex(3))
+	{
+		UAbilitySystemComponent* ASC = MyCharacter->GetAbilitySystemComponent();
+		if (ASC)
+		{
+			ASC->TryActivateAbilityByClass(MyCharacter->SelectedAbilities[3]);
+		}
+	}
 	UE_LOG(LogTemplateCharacter, Log, TEXT("Ability3 Activated"));
 }
 

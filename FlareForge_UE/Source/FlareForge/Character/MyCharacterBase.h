@@ -28,8 +28,9 @@ public:
 	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
 	
 	// Adds an ability to the SelectedAbilities array
+	// Sets an ability at a specific index in the SelectedAbilities array
 	UFUNCTION(BlueprintCallable, Category = "Ability")
-	void AddAbility(TSubclassOf<UGameplayAbility> NewAbility);
+	void SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility);
 
 	// Removes an ability from the SelectedAbilities array
 	UFUNCTION(BlueprintCallable, Category = "Ability")
