@@ -11,6 +11,7 @@
 #include "LucasAbilitySystemComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "TeleportAbility.h"
+#include "FlareForge/Character/MyCharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -283,12 +284,13 @@ void AFlareForgePlayerController::RotatePlayerOnServer_Implementation(const FRot
 
 void AFlareForgePlayerController::ActivateBasicAbility()
 {
-	if (SelectedAbilities.IsValidIndex(0))  // Assuming BasicAbility is at index 0
+	AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn());
+	if (MyCharacter && MyCharacter->SelectedAbilities.IsValidIndex(0)) // Assuming BasicAbility is at index 0
 	{
-		UAbilitySystemComponent* ASC = GetCharacter()->GetAbilitySystemComponent();
+		UAbilitySystemComponent* ASC = MyCharacter->GetAbilitySystemComponent();
 		if (ASC)
 		{
-			ASC->TryActivateAbilityByClass(SelectedAbilities[0]);
+			ASC->TryActivateAbilityByClass(MyCharacter->SelectedAbilities[0]);
 		}
 	}
 	UE_LOG(LogTemplateCharacter, Log, TEXT("Basic Ability Activated"));

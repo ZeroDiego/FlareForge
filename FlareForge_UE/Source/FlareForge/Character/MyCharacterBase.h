@@ -24,6 +24,9 @@ public:
 	//~End of IAbilitySystemInterface interface
 	virtual UMyCharacterAttributeSet* GetAttributeSet() const;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
+	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
+
 protected:
 	void GiveSelectedAbilities();
 	void InitDefaultAttributes() const;
@@ -33,9 +36,6 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UMyCharacterAttributeSet> AttributeSet;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
-	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Ability")
 	TSubclassOf<UGameplayEffect> DefaultAttributeEffect;
