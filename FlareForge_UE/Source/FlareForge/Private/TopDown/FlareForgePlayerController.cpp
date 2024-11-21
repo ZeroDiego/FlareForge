@@ -177,7 +177,7 @@ void AFlareForgePlayerController::Dash()
 			
 			GetCharacter()->LaunchCharacter(DashVector, false, false);
 			DashOnServer(DashVector);
-			DashTimer = UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()) + 3;
+			DashTimer = UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()) + DashCooldown;
 		}
 	}
 	
