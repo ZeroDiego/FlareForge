@@ -4,23 +4,26 @@
 #include "AttributesWidget.h"
 #include "MyCharacterAttributeSet.h"
 #include "FlareForge/Character/MyPlayerState.h"
-#include "Kismet/GameplayStatics.h"
 
-void UAttributesWidget::BindToAttributes()
+void UAttributesWidget::BindToAttributes(const AMyPlayerState* MyPlayerState)
 {
-	const AMyPlayerState* MyPlayerState = Cast<AMyPlayerState>(GetOwningPlayerState());
-	if(!MyPlayerState) return;
+	if(!MyPlayerState)
+	{
+		if(GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Cast failed!"));
+		return;
+	}
 
-	UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
-	const UMyCharacterAttributeSet* FlareForgeAS = MyPlayerState->GetAttributeSet();
+	UAbilitySystemComponent* AbilitySystemComponent = MyPlayerState->GetAbilitySystemComponent();
+	const UMyCharacterAttributeSet* FlareForgeAttributeSet = MyPlayerState->GetAttributeSet();
 
 	// Initial Attributes
-	HealthPercent = NUMERIC_VALUE(FlareForgeAS, Health) / NUMERIC_VALUE(FlareForgeAS, MaxHealth);
+	HealthPercent = NUMERIC_VALUE(FlareForgeAttributeSet, Health) / NUMERIC_VALUE(FlareForgeAttributeSet, MaxHealth);
 
 	// Attribute Changes
-	ASC->GetGameplayAttributeValueChangeDelegate(FlareForgeAS->GetHealthAttribute()).AddLambda(
-	[this, FlareForgeAS](const FOnAttributeChangeData& Data)
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(FlareForgeAttributeSet->GetHealthAttribute()).AddLambda(
+	[this, FlareForgeAttributeSet](const FOnAttributeChangeData& Data)
 	{
-		HealthPercent = Data.NewValue / NUMERIC_VALUE(FlareForgeAS, MaxHealth);
+		HealthPercent = Data.NewValue / NUMERIC_VALUE(FlareForgeAttributeSet, MaxHealth);
 	});
 }
