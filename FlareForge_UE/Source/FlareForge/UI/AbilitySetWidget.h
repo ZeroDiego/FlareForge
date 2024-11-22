@@ -17,7 +17,7 @@ class FLAREFORGE_API UAbilitySetWidget : public UUserWidget
 public:
 	// Sets the reference to MyCharacterBase
 	UFUNCTION(BlueprintCallable, Category = "Character")
-	void SetCharacterReference(AMyCharacterBase* InCharacter);
+	void SetCharacterReference(AMyCharacterBase* CharacterRef);
 
 protected:
 	// Reference to MyCharacterBase

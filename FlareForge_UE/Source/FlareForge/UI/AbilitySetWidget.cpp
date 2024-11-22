@@ -4,9 +4,9 @@
 #include "AbilitySetWidget.h"
 #include "FlareForge/Character/MyCharacterBase.h"
 
-void UAbilitySetWidget::SetCharacterReference(AMyCharacterBase* InCharacter)
+void UAbilitySetWidget::SetCharacterReference(AMyCharacterBase* CharacterRef)
 {
-	CharacterReference = InCharacter;
+	CharacterReference = CharacterRef;
 }
 
 
