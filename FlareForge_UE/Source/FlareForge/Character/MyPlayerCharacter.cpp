@@ -50,6 +50,8 @@ AMyPlayerCharacter::AMyPlayerCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	bReplicates = true;
 }
 
 void AMyPlayerCharacter::PossessedBy(AController* NewController)
@@ -59,7 +61,10 @@ void AMyPlayerCharacter::PossessedBy(AController* NewController)
 	InitAbilitySystemComponent();
 	GiveDefaultAbilities();
 	InitDefaultAttributes();
-	InitHUD();
+	if(HasAuthority())
+		InitHUD();
+	if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Possess"));
 }
 
 void AMyPlayerCharacter::OnRep_PlayerState()
@@ -69,6 +74,30 @@ void AMyPlayerCharacter::OnRep_PlayerState()
 	InitAbilitySystemComponent();
 	GiveDefaultAbilities();
 	InitDefaultAttributes();
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (PC)
+	{
+		if(GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 150.0f, FColor::Yellow, TEXT("PlayerController is valid"));
+	}
+	else
+	{
+		if(GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 150.0f, FColor::Yellow, TEXT("PlayerController is NULL on the client."));
+	}
+
+	AMyPlayerState* MyPlayerState = PC ? PC->GetPlayerState<AMyPlayerState>() : nullptr;
+	if (MyPlayerState)
+	{
+		if(GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 150.0f, FColor::Yellow, TEXT("PlayerState is valid"));
+	}
+	else
+	{
+		if(GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 150.0f, FColor::Yellow, TEXT("PlayerState is NULL on the client."));
+	}
+	
 	InitHUD();
 }
 
