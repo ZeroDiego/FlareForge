@@ -58,7 +58,7 @@ void AMyCharacterBase::SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbili
 		return;
 	}
 
-	// Ensure that the index is within bounds, or resize if necessary
+	// Ensure that the index is within bounds
 	if (SelectedAbilities.IsValidIndex(Index))
 	{
 		// Replace the existing ability at this index
@@ -66,7 +66,7 @@ void AMyCharacterBase::SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbili
 	}
 	else
 	{
-		// Optionally resize the array to accommodate this new index
+		// resize the array to accommodate new index
 		if (Index >= 0)
 		{
 			SelectedAbilities.SetNum(Index + 1);
