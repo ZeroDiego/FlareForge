@@ -15,12 +15,12 @@ class FLAREFORGE_API UAbilitySetWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	// Sets the reference to MyCharacterBase
-	UFUNCTION(BlueprintCallable, Category = "Character")
-	void SetCharacterReference(AMyCharacterBase* CharacterRef);
+	// Sets the reference to FlareForgePlayerController
+	UFUNCTION(BlueprintCallable, Category = "Controller")
+	void SetControllerReference(AFlareForgePlayerController* ControllerRef);
 
 protected:
-	// Reference to MyCharacterBase
-	UPROPERTY(BlueprintReadOnly, Category = "Character")
-	AMyCharacterBase* CharacterReference;
+	// Reference to FlareForgePlayerController
+	UPROPERTY(BlueprintReadOnly, Category = "Controller")
+	AFlareForgePlayerController* ControllerReference;
 };

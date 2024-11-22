@@ -282,6 +282,45 @@ void AFlareForgePlayerController::RotatePlayerOnServer_Implementation(const FRot
 	this->GetCharacter()->SetActorRotation(PlayerRotation);
 }
 
+void AFlareForgePlayerController::SetPendingAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility)
+{
+	if (!NewAbility)
+	{
+		return; // Ensure ability is valid
+	}
+
+	// Resize array if needed and set ability at index
+	if (PendingAbilities.IsValidIndex(Index))
+	{
+		PendingAbilities[Index] = NewAbility;
+	}
+	else if (Index >= 0)
+	{
+		PendingAbilities.SetNum(Index + 1);
+		PendingAbilities[Index] = NewAbility;
+	}
+}
+
+void AFlareForgePlayerController::TransferAbilitiesToCharacter()
+{
+	AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn());
+	if (!MyCharacter || !MyCharacter->GetAbilitySystemComponent())
+	{
+		return; // Ensure character and ASC are valid
+	}
+
+	for (TSubclassOf<UGameplayAbility> AbilityClass : PendingAbilities)
+	{
+		if (AbilityClass)
+		{
+			const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
+			MyCharacter->GetAbilitySystemComponent()->GiveAbility(AbilitySpec);
+		}
+	}
+
+	PendingAbilities.Empty(); // Clear pending abilities after transfer
+}
+
 void AFlareForgePlayerController::ActivateBasicAbility()
 {
 	AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn());

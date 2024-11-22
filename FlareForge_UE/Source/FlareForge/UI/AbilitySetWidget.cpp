@@ -4,9 +4,10 @@
 #include "AbilitySetWidget.h"
 #include "FlareForge/Character/MyCharacterBase.h"
 
-void UAbilitySetWidget::SetCharacterReference(AMyCharacterBase* CharacterRef)
+void UAbilitySetWidget::SetControllerReference(AFlareForgePlayerController* ControllerRef)
 {
-	CharacterReference = CharacterRef;
+	// Set the controller reference
+	ControllerReference = ControllerRef;
 }
 
 
