@@ -50,3 +50,9 @@ USceneComponent* AHomingStrikeProjectile::FindHomingStrikeTarget() const
 
 	return nullptr;
 }
+
+void AHomingStrikeProjectile::SetDeflectShieldRootComponent(USceneComponent* OtherRootComponent)
+{
+	DeflectShieldRootComponent = OtherRootComponent;
+}
+

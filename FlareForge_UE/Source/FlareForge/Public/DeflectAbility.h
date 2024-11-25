@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DeflectShield.h"
 #include "Abilities/GameplayAbility.h"
-#include "Components/BoxComponent.h"
 #include "DeflectAbility.generated.h"
 
 /**
@@ -16,19 +16,23 @@ class FLAREFORGE_API UDeflectAbility : public UGameplayAbility
 	GENERATED_BODY()
 
 public:
-
-	UDeflectAbility();
 	
 	//Override the ActivateAbility method
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+	UFUNCTION(Server, Reliable)
+	void DeflectAbility(const FVector SpawnDeflectShieldLocation, const FRotator CurrentRotation, FName PlayerName);
+	
 private:
+	
+	/*UPROPERTY(EditAnywhere)
+	float ActiveTime = 5.0f;*/
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ADeflectShield> ShieldBlueprint;
 
 	UPROPERTY(VisibleAnywhere)
-	class UBoxComponent* DeflectBox;
-	
-	UPROPERTY(EditAnywhere)
-	float ActiveTime = 1.0f;
+	ADeflectShield* Shield;
 
 	/*UFUNCTION()
 	void OnDeflectBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
