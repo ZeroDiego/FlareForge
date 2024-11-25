@@ -24,16 +24,16 @@ UMyCharacterAttributeSet* AMyCharacterBase::GetAttributeSet() const
 	return AttributeSet;
 }
 
-void AMyCharacterBase::GetSelectedAbilities()
+const TArray<TSubclassOf<UGameplayAbility>>& AMyCharacterBase::GetSelectedAbilities() const
 {
-const TArray<TSubclassOf<UGameplayAbility>>& AMyCharacterBase::GetSelectedAbilities() const {
-	if (const AMyPlayerState* PS = GetPlayerState<AMyPlayerState>()) {
+	if (const AMyPlayerState* PS = GetPlayerState<AMyPlayerState>())
+	{
 		return PS->SelectedAbilities;
 	}
 
 	static const TArray<TSubclassOf<UGameplayAbility>> EmptyArray;
 	return EmptyArray; // Return an empty array if PlayerState is null
-}
+
 }
 
 void AMyCharacterBase::InitDefaultAttributes() const

@@ -62,7 +62,10 @@ void AMyPlayerCharacter::PossessedBy(AController* NewController)
 		if (!AbilitySystemComponent)
 		{
 			UE_LOG(LogTemp, Error, TEXT("Failed to cast AbilitySystemComponent to ULucasAbilitySystemComponent"));
-		}		AttributeSet = MyPlayerState->GetAttributeSet();
+			return;
+		}
+
+		AttributeSet = MyPlayerState->GetAttributeSet();
 
 		// Initialize ASC with character as avatar
 		if (AbilitySystemComponent)
@@ -72,9 +75,21 @@ void AMyPlayerCharacter::PossessedBy(AController* NewController)
 
 		// Transfer abilities from PlayerState
 		MyPlayerState->TransferAbilitiesToASC();
-        
-		//InitDefaultAttributes();
-		//GiveSelectedAbilities();
+
+		// Use GetSelectedAbilities() to grant abilities directly
+		const TArray<TSubclassOf<UGameplayAbility>>& SelectedAbilities = GetSelectedAbilities();
+		for (TSubclassOf<UGameplayAbility> Ability : SelectedAbilities)
+		{
+			if (Ability && AbilitySystemComponent)
+			{
+				const FGameplayAbilitySpec AbilitySpec(Ability, 1); // Level 1 by default
+				AbilitySystemComponent->GiveAbility(AbilitySpec);
+
+				UE_LOG(LogTemp, Log, TEXT("Granted ability: %s"), *Ability->GetName());
+			}
+		}
+
+		InitDefaultAttributes();
 		InitHUD();
 	}
 }
@@ -83,13 +98,13 @@ void AMyPlayerCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 	
-	InitAbilitySystemComponent();
-	//GiveSelectedAbilities();
-	//InitDefaultAttributes();
+	//InitAbilitySystemComponent();
+	//GetSelectedAbilities();
+	InitDefaultAttributes();
 	InitHUD();
 }
 
-void AMyPlayerCharacter::InitAbilitySystemComponent()
+/*void AMyPlayerCharacter::InitAbilitySystemComponent()
 {
 	AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>();
 	check(MyPlayerState);
@@ -98,7 +113,7 @@ void AMyPlayerCharacter::InitAbilitySystemComponent()
 	AbilitySystemComponent->InitAbilityActorInfo(MyPlayerState, this);
 	AttributeSet = MyPlayerState->GetAttributeSet();
 }
-
+*/
 void AMyPlayerCharacter::InitHUD() const
 {
 	if(const APlayerController* PlayerController = Cast<APlayerController>(GetController()))

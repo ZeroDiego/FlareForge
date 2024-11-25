@@ -39,7 +39,7 @@ public:
 	void RemoveAbility(TSubclassOf<UGameplayAbility> AbilityToRemove);*/
 	
 protected:
-	void GetSelectedAbilities();
+	//void GetSelectedAbilities();
 	void InitDefaultAttributes() const;
 
 	UPROPERTY()

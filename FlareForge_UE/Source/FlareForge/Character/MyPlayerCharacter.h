@@ -26,7 +26,7 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
 private:
-	void InitAbilitySystemComponent();
+	//void InitAbilitySystemComponent();
 	void InitHUD() const;
 
 	/** Top down camera */
