@@ -27,14 +27,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability", meta = (ExposeOnSpawn=true))
 	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
 	
-	// Adds an ability to the SelectedAbilities array
+	/*// Adds an ability to the SelectedAbilities array
 	// Sets an ability at a specific index in the SelectedAbilities array
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	void SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility);
 
 	// Removes an ability from the SelectedAbilities array
 	UFUNCTION(BlueprintCallable, Category = "Ability")
-	void RemoveAbility(TSubclassOf<UGameplayAbility> AbilityToRemove);
+	void RemoveAbility(TSubclassOf<UGameplayAbility> AbilityToRemove);*/
 	
 protected:
 	void GiveSelectedAbilities();

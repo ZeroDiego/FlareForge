@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Abilities/GameplayAbility.h"
 #include "Blueprint/UserWidget.h"
 #include "AbilitySetWidget.generated.h"
 
+class AMyPlayerState;
 /**
  * 
  */
@@ -15,12 +17,15 @@ class FLAREFORGE_API UAbilitySetWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	// Sets the reference to FlareForgePlayerController
+
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	void SetAbilityInPlayerState(int32 Index, TSubclassOf<UGameplayAbility> NewAbility);
+	
+	// Sets reference to PlayerState
 	UFUNCTION(BlueprintCallable, Category = "Controller")
-	void SetControllerReference(AFlareForgePlayerController* ControllerRef);
+	void SetPlayerStateReference(AMyPlayerState* PlayerStateRef);
 
 protected:
-	// Reference to FlareForgePlayerController
 	UPROPERTY(BlueprintReadOnly, Category = "Controller")
-	AFlareForgePlayerController* ControllerReference;
+	AMyPlayerState* PlayerStateReference;
 };

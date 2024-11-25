@@ -11,10 +11,13 @@
 #include "LucasAbilitySystemComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "TeleportAbility.h"
+#include "FlareForge/UI/AbilitySetWidget.h"
+#include "FlareForge/Character/MyPlayerState.h"
 #include "FlareForge/Character/MyCharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
+class AMyPlayerState;
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 // Initialize the static counter to 0
@@ -282,68 +285,34 @@ void AFlareForgePlayerController::RotatePlayerOnServer_Implementation(const FRot
 	this->GetCharacter()->SetActorRotation(PlayerRotation);
 }
 
-void AFlareForgePlayerController::SetPendingAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility)
-{
-	if (!NewAbility)
-	{
-		return; // Ensure ability is valid
-	}
-
-	// Resize array if needed and set ability at index
-	if (PendingAbilities.IsValidIndex(Index))
-	{
-		PendingAbilities[Index] = NewAbility;
-	}
-	else if (Index >= 0)
-	{
-		PendingAbilities.SetNum(Index + 1);
-		PendingAbilities[Index] = NewAbility;
-	}
-}
-
-void AFlareForgePlayerController::TransferAbilitiesToCharacter()
-{
-	AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn());
-	if (!MyCharacter || !MyCharacter->GetAbilitySystemComponent())
-	{
-		return; // Ensure character and ASC are valid
-	}
-
-	for (TSubclassOf<UGameplayAbility> AbilityClass : PendingAbilities)
-	{
-		if (AbilityClass)
-		{
-			const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
-			MyCharacter->GetAbilitySystemComponent()->GiveAbility(AbilitySpec);
-		}
-	}
-
-	PendingAbilities.Empty(); // Clear pending abilities after transfer
-}
-
 void AFlareForgePlayerController::ActivateBasicAbility()
 {
-	AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn());
-	if (MyCharacter && MyCharacter->SelectedAbilities.IsValidIndex(0)) // Assuming BasicAbility is at index 0
+	if (AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn()))
 	{
-		UAbilitySystemComponent* ASC = MyCharacter->GetAbilitySystemComponent();
-		if (ASC)
+		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>())
 		{
-			ASC->TryActivateAbilityByClass(MyCharacter->SelectedAbilities[0]);
+			UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
+			if (ASC && MyCharacter->SelectedAbilities.IsValidIndex(0))
+			{
+				ASC->TryActivateAbilityByClass(MyCharacter->SelectedAbilities[0]);
+			}
 		}
 	}
 	UE_LOG(LogTemplateCharacter, Log, TEXT("Basic Ability Activated"));
+
 }
 
 void AFlareForgePlayerController::ActivateAbility1()
 {
-	AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn());
-	if (MyCharacter && MyCharacter->SelectedAbilities.IsValidIndex(1))
+	if (AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn()))
 	{
-		UAbilitySystemComponent* ASC = MyCharacter->GetAbilitySystemComponent();
-		if (ASC)
+		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>())
 		{
-			ASC->TryActivateAbilityByClass(MyCharacter->SelectedAbilities[1]);
+			UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
+			if (ASC && MyCharacter->SelectedAbilities.IsValidIndex(1))
+			{
+				ASC->TryActivateAbilityByClass(MyCharacter->SelectedAbilities[1]);
+			}
 		}
 	}
 	UE_LOG(LogTemplateCharacter, Log, TEXT("Ability1 Activated"));
@@ -351,13 +320,15 @@ void AFlareForgePlayerController::ActivateAbility1()
 
 void AFlareForgePlayerController::ActivateAbility2()
 {
-	AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn());
-	if (MyCharacter && MyCharacter->SelectedAbilities.IsValidIndex(2))
+	if (AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn()))
 	{
-		UAbilitySystemComponent* ASC = MyCharacter->GetAbilitySystemComponent();
-		if (ASC)
+		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>())
 		{
-			ASC->TryActivateAbilityByClass(MyCharacter->SelectedAbilities[2]);
+			UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
+			if (ASC && MyCharacter->SelectedAbilities.IsValidIndex(2))
+			{
+				ASC->TryActivateAbilityByClass(MyCharacter->SelectedAbilities[2]);
+			}
 		}
 	}
 	UE_LOG(LogTemplateCharacter, Log, TEXT("Ability2 Activated"));
@@ -365,13 +336,15 @@ void AFlareForgePlayerController::ActivateAbility2()
 
 void AFlareForgePlayerController::ActivateAbility3()
 {
-	AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn());
-	if (MyCharacter && MyCharacter->SelectedAbilities.IsValidIndex(3))
+	if (AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn()))
 	{
-		UAbilitySystemComponent* ASC = MyCharacter->GetAbilitySystemComponent();
-		if (ASC)
+		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>())
 		{
-			ASC->TryActivateAbilityByClass(MyCharacter->SelectedAbilities[3]);
+			UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
+			if (ASC && MyCharacter->SelectedAbilities.IsValidIndex(3))
+			{
+				ASC->TryActivateAbilityByClass(MyCharacter->SelectedAbilities[3]);
+			}
 		}
 	}
 	UE_LOG(LogTemplateCharacter, Log, TEXT("Ability3 Activated"));

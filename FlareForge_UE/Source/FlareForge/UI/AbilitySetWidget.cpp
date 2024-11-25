@@ -2,12 +2,17 @@
 
 
 #include "AbilitySetWidget.h"
-#include "FlareForge/Character/MyCharacterBase.h"
+#include "FlareForge/Character/MyPlayerState.h"
 
-void UAbilitySetWidget::SetControllerReference(AFlareForgePlayerController* ControllerRef)
+void UAbilitySetWidget::SetPlayerStateReference(AMyPlayerState* PlayerStateRef)
 {
-	// Set the controller reference
-	ControllerReference = ControllerRef;
+	PlayerStateReference = PlayerStateRef;
 }
 
-
+void UAbilitySetWidget::SetAbilityInPlayerState(int32 Index, TSubclassOf<UGameplayAbility> NewAbility)
+{
+	if (PlayerStateReference)
+	{
+		PlayerStateReference->SetAbilityAtIndex(Index, NewAbility);
+	}
+}

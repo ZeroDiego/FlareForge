@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
+#include "FlareForge/UI/AbilitySetWidget.h"
 #include "Templates/SubclassOf.h"
 #include "GameFramework/PlayerController.h"
 #include "FlareForgePlayerController.generated.h"
@@ -92,7 +93,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void DashOnServer(const FVector& DashVector) const;
 
-
+	
 	//Ability functions
 	UFUNCTION()
 	void ActivateBasicAbility();
@@ -114,17 +115,6 @@ public:
 	// So the first instance is 0 and the one after is 1 and so on
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int32 InstanceID = 0;
-
-	// Temporarily store abilities before character possession
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
-	TArray<TSubclassOf<UGameplayAbility>> PendingAbilities;
-
-	// Sets an ability at a specific index in PendingAbilities
-	UFUNCTION(BlueprintCallable, Category = "Ability")
-	void SetPendingAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility);
-
-	// Transfers PendingAbilities to the possessed character
-	void TransferAbilitiesToCharacter();
 	
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */

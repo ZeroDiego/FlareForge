@@ -55,11 +55,28 @@ AMyPlayerCharacter::AMyPlayerCharacter()
 void AMyPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	    
-	InitAbilitySystemComponent();
-	GiveSelectedAbilities();
-	InitDefaultAttributes();
-	InitHUD();
+
+	if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>())
+	{
+		AbilitySystemComponent = Cast<ULucasAbilitySystemComponent>(MyPlayerState->GetAbilitySystemComponent());
+		if (!AbilitySystemComponent)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to cast AbilitySystemComponent to ULucasAbilitySystemComponent"));
+		}		AttributeSet = MyPlayerState->GetAttributeSet();
+
+		// Initialize ASC with character as avatar
+		if (AbilitySystemComponent)
+		{
+			AbilitySystemComponent->InitAbilityActorInfo(MyPlayerState, this);
+		}
+
+		// Transfer abilities from PlayerState
+		MyPlayerState->TransferAbilitiesToASC();
+        
+		InitDefaultAttributes();
+		GiveSelectedAbilities();
+		InitHUD();
+	}
 }
 
 void AMyPlayerCharacter::OnRep_PlayerState()

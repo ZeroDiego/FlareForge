@@ -49,7 +49,7 @@ void AMyCharacterBase::InitDefaultAttributes() const
 		AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());			
 	}
 }
-
+/*
 void AMyCharacterBase::SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility)
 {
 	// Check if we have authority and if NewAbility is valid
@@ -89,4 +89,4 @@ void AMyCharacterBase::RemoveAbility(TSubclassOf<UGameplayAbility> AbilityToRemo
 		// Remove the ability from the array
 		SelectedAbilities.Remove(AbilityToRemove);
 	}
-}
+}*/
