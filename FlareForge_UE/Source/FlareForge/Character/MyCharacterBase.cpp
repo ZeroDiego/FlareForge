@@ -24,17 +24,17 @@ UMyCharacterAttributeSet* AMyCharacterBase::GetAttributeSet() const
 	return AttributeSet;
 }
 
-const TArray<TSubclassOf<UGameplayAbility>>& AMyCharacterBase::GetSelectedAbilities() const {
-	if (const AMyPlayerState* PS = GetPlayerState<AMyPlayerState>()) {
-		return PS->SelectedAbilities;
-	}
+//const TArray<TSubclassOf<UGameplayAbility>>& AMyCharacterBase::GetSelectedAbilities() const {
+	//if (const AMyPlayerState* PS = GetPlayerState<AMyPlayerState>()) {
+	//	return PS->SelectedAbilities;
+	//}
 
 	static const TArray<TSubclassOf<UGameplayAbility>> EmptyArray;
 	return EmptyArray; // Return an empty array if PlayerState is null
 }
 
-/*
-void AMyCharacterBase::GiveSelectedAbilities()
+
+void AMyCharacterBase::GetSelectedAbilities()
 {
 const TArray<TSubclassOf<UGameplayAbility>>& AMyCharacterBase::GetSelectedAbilities() const {
 	if (const AMyPlayerState* PS = GetPlayerState<AMyPlayerState>()) {
@@ -46,7 +46,7 @@ const TArray<TSubclassOf<UGameplayAbility>>& AMyCharacterBase::GetSelectedAbilit
 }
 	}
 }
-
+*/
 void AMyCharacterBase::InitDefaultAttributes() const
 {
 	if(!AbilitySystemComponent || !DefaultAttributeEffect) { return; }
@@ -61,7 +61,7 @@ void AMyCharacterBase::InitDefaultAttributes() const
 		AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());			
 	}
 }
-
+/*
 void AMyCharacterBase::SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility)
 {
 	// Check if we have authority and if NewAbility is valid

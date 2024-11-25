@@ -39,8 +39,8 @@ public:
 	void RemoveAbility(TSubclassOf<UGameplayAbility> AbilityToRemove);*/
 	
 protected:
-	//void GiveSelectedAbilities();
-	//void InitDefaultAttributes() const;
+	void GetSelectedAbilities();
+	void InitDefaultAttributes() const;
 
 	UPROPERTY()
 	TObjectPtr<ULucasAbilitySystemComponent> AbilitySystemComponent;
