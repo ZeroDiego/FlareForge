@@ -23,10 +23,12 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	//~End of IAbilitySystemInterface interface
 	virtual UMyCharacterAttributeSet* GetAttributeSet() const;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability", meta = (ExposeOnSpawn=true))
-	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
 	
+	const TArray<TSubclassOf<UGameplayAbility>>& GetSelectedAbilities() const;
+	
+	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability", meta = (ExposeOnSpawn=true))
+	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
+	*/
 	/*// Adds an ability to the SelectedAbilities array
 	// Sets an ability at a specific index in the SelectedAbilities array
 	UFUNCTION(BlueprintCallable, Category = "Ability")
@@ -37,8 +39,8 @@ public:
 	void RemoveAbility(TSubclassOf<UGameplayAbility> AbilityToRemove);*/
 	
 protected:
-	void GiveSelectedAbilities();
-	void InitDefaultAttributes() const;
+	//void GiveSelectedAbilities();
+	//void InitDefaultAttributes() const;
 
 	UPROPERTY()
 	TObjectPtr<ULucasAbilitySystemComponent> AbilitySystemComponent;

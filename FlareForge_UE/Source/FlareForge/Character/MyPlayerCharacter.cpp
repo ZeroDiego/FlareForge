@@ -73,8 +73,8 @@ void AMyPlayerCharacter::PossessedBy(AController* NewController)
 		// Transfer abilities from PlayerState
 		MyPlayerState->TransferAbilitiesToASC();
         
-		InitDefaultAttributes();
-		GiveSelectedAbilities();
+		//InitDefaultAttributes();
+		//GiveSelectedAbilities();
 		InitHUD();
 	}
 }
@@ -84,8 +84,8 @@ void AMyPlayerCharacter::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 	
 	InitAbilitySystemComponent();
-	GiveSelectedAbilities();
-	InitDefaultAttributes();
+	//GiveSelectedAbilities();
+	//InitDefaultAttributes();
 	InitHUD();
 }
 

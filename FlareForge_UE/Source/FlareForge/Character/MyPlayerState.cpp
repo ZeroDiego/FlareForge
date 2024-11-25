@@ -31,14 +31,29 @@ void AMyPlayerState::SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility
 
 	if (SelectedAbilities.IsValidIndex(Index))
 	{
-		// Replace existing ability at index
 		SelectedAbilities[Index] = NewAbility;
 	}
 	else if (Index >= 0)
 	{
-		// Resize array if index is out of bounds and set ability
 		SelectedAbilities.SetNum(Index + 1);
 		SelectedAbilities[Index] = NewAbility;
+	}
+
+	// Automatically grant ability if AbilitySystemComponent exists
+	if (AbilitySystemComponent && NewAbility)
+	{
+		const FGameplayAbilitySpec AbilitySpec(NewAbility, 1);
+		FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(AbilitySpec);
+
+		// Log success
+		if (Handle.IsValid())
+		{
+			UE_LOG(LogTemp, Log, TEXT("Successfully granted ability: %s"), *NewAbility->GetName());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to grant ability: %s"), *NewAbility->GetName());
+		}
 	}
 }
 
@@ -60,8 +75,10 @@ void AMyPlayerState::TransferAbilitiesToASC()
 		{
 			const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
 			AbilitySystemComponent->GiveAbility(AbilitySpec);
+
+			// Log ability assignment for debugging
+			UE_LOG(LogTemp, Log, TEXT("Granted Ability: %s"), *AbilityClass->GetName());
 		}
 	}
-
-	SelectedAbilities.Empty(); // Clear after transferring
+	SelectedAbilities.Empty();
 }

@@ -285,69 +285,67 @@ void AFlareForgePlayerController::RotatePlayerOnServer_Implementation(const FRot
 	this->GetCharacter()->SetActorRotation(PlayerRotation);
 }
 
-void AFlareForgePlayerController::ActivateBasicAbility()
-{
-	if (AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn()))
-	{
-		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>())
-		{
+void AFlareForgePlayerController::ActivateBasicAbility() {
+	if (AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn())) {
+		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>()) {
 			UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
-			if (ASC && MyCharacter->SelectedAbilities.IsValidIndex(0))
-			{
-				ASC->TryActivateAbilityByClass(MyCharacter->SelectedAbilities[0]);
+			if (ASC) {
+				// Get the SelectedAbilities array from MyCharacter
+				const TArray<TSubclassOf<UGameplayAbility>>& Abilities = MyCharacter->GetSelectedAbilities();
+
+				// Check if index 0 is valid
+				if (Abilities.IsValidIndex(0)) {
+					ASC->TryActivateAbilityByClass(Abilities[0]);
+				}
 			}
 		}
 	}
 	UE_LOG(LogTemplateCharacter, Log, TEXT("Basic Ability Activated"));
-
 }
 
-void AFlareForgePlayerController::ActivateAbility1()
-{
-	if (AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn()))
-	{
-		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>())
-		{
+void AFlareForgePlayerController::ActivateAbility1() {
+	if (AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn())) {
+		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>()) {
 			UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
-			if (ASC && MyCharacter->SelectedAbilities.IsValidIndex(1))
-			{
-				ASC->TryActivateAbilityByClass(MyCharacter->SelectedAbilities[1]);
+			if (ASC) {
+				const TArray<TSubclassOf<UGameplayAbility>>& Abilities = MyCharacter->GetSelectedAbilities();
+				if (Abilities.IsValidIndex(1)) {
+					ASC->TryActivateAbilityByClass(Abilities[1]);
+				}
 			}
 		}
 	}
-	UE_LOG(LogTemplateCharacter, Log, TEXT("Ability1 Activated"));
+	UE_LOG(LogTemplateCharacter, Log, TEXT("Ability 1 Activated"));
 }
 
-void AFlareForgePlayerController::ActivateAbility2()
-{
-	if (AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn()))
-	{
-		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>())
-		{
+void AFlareForgePlayerController::ActivateAbility2() {
+	if (AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn())) {
+		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>()) {
 			UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
-			if (ASC && MyCharacter->SelectedAbilities.IsValidIndex(2))
-			{
-				ASC->TryActivateAbilityByClass(MyCharacter->SelectedAbilities[2]);
+			if (ASC) {
+				const TArray<TSubclassOf<UGameplayAbility>>& Abilities = MyCharacter->GetSelectedAbilities();
+				if (Abilities.IsValidIndex(2)) {
+					ASC->TryActivateAbilityByClass(Abilities[2]);
+				}
 			}
 		}
 	}
-	UE_LOG(LogTemplateCharacter, Log, TEXT("Ability2 Activated"));
+	UE_LOG(LogTemplateCharacter, Log, TEXT("Ability 2 Activated"));
 }
 
-void AFlareForgePlayerController::ActivateAbility3()
-{
-	if (AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn()))
-	{
-		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>())
-		{
+void AFlareForgePlayerController::ActivateAbility3() {
+	if (AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn())) {
+		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>()) {
 			UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
-			if (ASC && MyCharacter->SelectedAbilities.IsValidIndex(3))
-			{
-				ASC->TryActivateAbilityByClass(MyCharacter->SelectedAbilities[3]);
+			if (ASC) {
+				const TArray<TSubclassOf<UGameplayAbility>>& Abilities = MyCharacter->GetSelectedAbilities();
+				if (Abilities.IsValidIndex(3)) {
+					ASC->TryActivateAbilityByClass(Abilities[3]);
+				}
 			}
 		}
 	}
-	UE_LOG(LogTemplateCharacter, Log, TEXT("Ability3 Activated"));
+	UE_LOG(LogTemplateCharacter, Log, TEXT("Ability 3 Activated"));
 }
 
 

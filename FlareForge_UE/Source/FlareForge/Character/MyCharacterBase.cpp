@@ -4,6 +4,7 @@
 #include "MyCharacterBase.h"
 #include "LucasAbilitySystemComponent.h"
 #include "MyCharacterAttributeSet.h"
+#include "FlareForge/Character/MyPlayerState.h"
 
 
 // Sets default values
@@ -23,15 +24,26 @@ UMyCharacterAttributeSet* AMyCharacterBase::GetAttributeSet() const
 	return AttributeSet;
 }
 
+const TArray<TSubclassOf<UGameplayAbility>>& AMyCharacterBase::GetSelectedAbilities() const {
+	if (const AMyPlayerState* PS = GetPlayerState<AMyPlayerState>()) {
+		return PS->SelectedAbilities;
+	}
+
+	static const TArray<TSubclassOf<UGameplayAbility>> EmptyArray;
+	return EmptyArray; // Return an empty array if PlayerState is null
+}
+
+/*
 void AMyCharacterBase::GiveSelectedAbilities()
 {
-	check(AbilitySystemComponent);
-	if(!HasAuthority()) return;
+const TArray<TSubclassOf<UGameplayAbility>>& AMyCharacterBase::GetSelectedAbilities() const {
+	if (const AMyPlayerState* PS = GetPlayerState<AMyPlayerState>()) {
+		return PS->SelectedAbilities;
+	}
 
-	for(TSubclassOf<UGameplayAbility> AbilityClass : SelectedAbilities)
-	{
-		const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
-		AbilitySystemComponent->GiveAbility(AbilitySpec);
+	static const TArray<TSubclassOf<UGameplayAbility>> EmptyArray;
+	return EmptyArray; // Return an empty array if PlayerState is null
+}
 	}
 }
 
@@ -49,7 +61,7 @@ void AMyCharacterBase::InitDefaultAttributes() const
 		AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());			
 	}
 }
-/*
+
 void AMyCharacterBase::SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility)
 {
 	// Check if we have authority and if NewAbility is valid
