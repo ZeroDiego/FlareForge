@@ -25,14 +25,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void SetPlayerName(FName OtherName);
+	//void SetPlayerName(FName OtherName);
 
 private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess = "true"))
 	UBoxComponent* BoxComponent;
 
-	UFUNCTION()
+	/*UFUNCTION()
 	void OnBoxOverlap(UPrimitiveComponent* OverlappedComp, 
 		AActor* OtherActor, 
 		UPrimitiveComponent* OtherComp, 
@@ -42,5 +42,5 @@ private:
 
 	void DeflectProjectile(AActor* Projectile, const FVector& HitLocation);
 
-	FName PlayerName;
+	FName PlayerName;*/
 };

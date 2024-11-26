@@ -15,8 +15,8 @@ ADeflectShield::ADeflectShield()
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
 	RootComponent = BoxComponent;
 
-	BoxComponent->SetCollisionProfileName(TEXT("ProjectileTrigger"));
-	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ADeflectShield::OnBoxOverlap);
+	/*BoxComponent->SetCollisionProfileName(TEXT("ProjectileTrigger"));
+	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ADeflectShield::OnBoxOverlap);*/
 
 }
 
@@ -32,7 +32,7 @@ void ADeflectShield::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ADeflectShield::OnBoxOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+/*void ADeflectShield::OnBoxOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Overlap"));
 	//UE_LOG(LogTemp, Warning, TEXT("trace channel: %d"), OtherActor->GetRootComponent()->GetCollisionObjectType());
@@ -86,13 +86,26 @@ void ADeflectShield::DeflectProjectile(AActor* Projectile, const FVector& HitLoc
 			UE_LOG(LogTemp, Warning, TEXT("hitlocation: %s"), *HitLocation.ToString());
 			ProjectileMovement->Velocity = ReflectedVelocity;
 		}
+
+		FTimerHandle TimerHandle;
+		NewProjectile->SetActorEnableCollision(false);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle,[NewProjectile]()
+		{
+			if (NewProjectile)
+			{
+				NewProjectile->SetActorEnableCollision(true);
+			}
+		},
+		0.5f, // Cooldown duration
+	false
+		);
 	}
 }
 
 void ADeflectShield::SetPlayerName(FName OtherName)
 {
 	PlayerName = OtherName;
-}
+}*/
 
 
 

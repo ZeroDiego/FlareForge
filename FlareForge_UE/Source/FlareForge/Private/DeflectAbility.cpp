@@ -17,8 +17,8 @@ void UDeflectAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, c
 			UE_LOG(LogTemp, Warning, TEXT("forward vector: %s"), *Character->GetActorForwardVector().ToString());
 			//const FVector CurrentVector = Character->GetActorForwardVector() * 2;
 			const FRotator CurrentRotation = Character->GetActorRotation();
-			FName PlayerName = Character->GetFName();
-			DeflectAbility(SpawnDeflectShieldLocation, CurrentRotation, PlayerName);
+			//FName PlayerName = Character->GetFName();
+			DeflectAbility(SpawnDeflectShieldLocation, CurrentRotation);
 		}
 	}
 	
@@ -28,14 +28,14 @@ void UDeflectAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, c
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 }
 
-void UDeflectAbility::DeflectAbility_Implementation(const FVector SpawnDeflectShieldLocation, const FRotator CurrentRotation, FName PlayerName)
+void UDeflectAbility::DeflectAbility_Implementation(const FVector SpawnDeflectShieldLocation, const FRotator CurrentRotation)
 {
 	const FActorSpawnParameters SpawnParameters;
 	Shield = GetWorld()->SpawnActor<ADeflectShield>(ShieldBlueprint, SpawnDeflectShieldLocation, CurrentRotation, SpawnParameters);
-	if(Shield)
+	/*if(Shield)
 	{
 		Shield->SetPlayerName(PlayerName);
-	}
+	}*/
 	//UE_LOG(LogTemp, Warning, TEXT("Spawn shield"));
 }
 
