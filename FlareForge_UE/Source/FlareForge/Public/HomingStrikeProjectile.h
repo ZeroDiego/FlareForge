@@ -29,6 +29,12 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* SpawningRootComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	USceneComponent* DeflectShieldRootComponent;
+
+	UFUNCTION()
+	void SetDeflectShieldRootComponent(USceneComponent* OtherRootComponent);
+
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void LockOn(USceneComponent* TargetComponent, USceneComponent* PlayerSpawningRootComponent);
 
