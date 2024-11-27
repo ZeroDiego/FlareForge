@@ -13,6 +13,7 @@ AMyPlayerState::AMyPlayerState()
 	AbilitySystemComponent = CreateDefaultSubobject<ULucasAbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 	AttributeSet = CreateDefaultSubobject<UMyCharacterAttributeSet>("AttributeSet");
+	bReplicates = true;
 }
 
 UAbilitySystemComponent* AMyPlayerState::GetAbilitySystemComponent() const

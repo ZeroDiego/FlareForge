@@ -36,8 +36,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	float ShortPressThreshold;
 
-	UPROPERTY(EditAnywhere, Blueprintable)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DashSpeed = 100.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DashCooldown = 3.0f;
 
 	/** FX Class that we will spawn when clicking */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
@@ -79,12 +82,12 @@ public:
 
 	// Keeps track of the number of instances that
 	// have been created of this class thus far
-	static int32 InstanceCounter;
+	//static int32 InstanceCounter;
 
 	// Instance ID that increments after a new instance is created
 	// So the first instance is 0 and the one after is 1 and so on
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	int32 InstanceID = 0;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	//int32 InstanceID = 0;
 	
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
@@ -129,7 +132,6 @@ private:
 	FVector2D InputVector = FVector2D::ZeroVector;
 	
 	float DashTimer = 0.0f;
-	
 };
 
 
