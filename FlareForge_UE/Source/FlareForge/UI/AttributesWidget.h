@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "FlareForge/Character/MyPlayerState.h"
 #include "UObject/Object.h"
 #include "AttributesWidget.generated.h"
 
@@ -16,12 +17,10 @@ class FLAREFORGE_API UAttributesWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void BindToAttributes();
+	UFUNCTION()
+	void BindToAttributes(const AMyPlayerState* MyPlayerState);
 
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	float HealthPercent;
-
-	UPROPERTY(BlueprintReadOnly)
-	float Player2HealthPercent;
 };
