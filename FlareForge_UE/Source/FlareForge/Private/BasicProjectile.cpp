@@ -25,3 +25,7 @@ void ABasicProjectile::Tick(float DeltaTime)
 
 }
 
+void ABasicProjectile::SetDeflectShieldRootComponent(USceneComponent* OtherRootComponent)
+{
+	DeflectShieldRootComponent = OtherRootComponent;
+}
