@@ -34,6 +34,7 @@ public:
 	void RemoveAbility(TSubclassOf<UGameplayAbility> AbilityToRemove);
 
 	// Transfers SelectedAbilities to the Ability System Component (ASC)
+	UFUNCTION(BlueprintCallable, Category = "Ability")
 	void TransferAbilitiesToASC();
 	
 	//~IAbilitySystemInterface interface

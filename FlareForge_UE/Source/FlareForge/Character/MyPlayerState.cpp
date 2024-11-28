@@ -28,40 +28,40 @@ UMyCharacterAttributeSet* AMyPlayerState::GetAttributeSet() const
 
 void AMyPlayerState::SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility)
 {
-	if (!NewAbility) return;
+	if (!HasAuthority() || !NewAbility)
+	{
+		return;
+	}
 
+	// Ensure that the index is within bounds
 	if (SelectedAbilities.IsValidIndex(Index))
 	{
+		// Replace the existing ability at this index
 		SelectedAbilities[Index] = NewAbility;
 	}
-	else if (Index >= 0)
+	else
 	{
-		SelectedAbilities.SetNum(Index + 1);
-		SelectedAbilities[Index] = NewAbility;
-	}
-
-	// Automatically grant ability if AbilitySystemComponent exists
-	if (AbilitySystemComponent && NewAbility)
-	{
-		const FGameplayAbilitySpec AbilitySpec(NewAbility, 1);
-		FGameplayAbilitySpecHandle Handle = AbilitySystemComponent->GiveAbility(AbilitySpec);
-
-		// Log success
-		if (Handle.IsValid())
+		// Resize the array to accommodate new index
+		if (Index >= 0)
 		{
-			UE_LOG(LogTemp, Log, TEXT("Successfully granted ability: %s"), *NewAbility->GetName());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to grant ability: %s"), *NewAbility->GetName());
+			SelectedAbilities.SetNum(Index + 1);
+			SelectedAbilities[Index] = NewAbility;
 		}
 	}
 }
 
 void AMyPlayerState::RemoveAbility(TSubclassOf<UGameplayAbility> AbilityToRemove)
 {
+	// Check if AbilitySystemComponent is valid and we have authority
+	if (!HasAuthority() || !AbilityToRemove)
+	{
+		return;
+	}
+
+	// Check if the ability exists in the SelectedAbilities array
 	if (SelectedAbilities.Contains(AbilityToRemove))
 	{
+		// Remove the ability from the array
 		SelectedAbilities.Remove(AbilityToRemove);
 	}
 }
@@ -70,16 +70,20 @@ void AMyPlayerState::TransferAbilitiesToASC()
 {
 	if (!AbilitySystemComponent) return;
 
-	for (TSubclassOf<UGameplayAbility> AbilityClass : SelectedAbilities)
+	// Iterate over the first four indices: 0, 1, 2, and 3
+	for (int32 Index = 0; Index < 4; ++Index)
 	{
-		if (AbilityClass)
+		if (SelectedAbilities.IsValidIndex(Index))
 		{
-			const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
-			AbilitySystemComponent->GiveAbility(AbilitySpec);
+			TSubclassOf<UGameplayAbility> AbilityClass = SelectedAbilities[Index];
+			if (AbilityClass)
+			{
+				const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
+				AbilitySystemComponent->GiveAbility(AbilitySpec);
 
-			// Log ability assignment for debugging
-			UE_LOG(LogTemp, Log, TEXT("Granted Ability: %s"), *AbilityClass->GetName());
+				// Log ability assignment for debugging
+				UE_LOG(LogTemp, Log, TEXT("Granted Ability: %s"), *AbilityClass->GetName());
+			}
 		}
 	}
-	SelectedAbilities.Empty();
 }

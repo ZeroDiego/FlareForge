@@ -59,7 +59,7 @@ void AMyPlayerCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 	    
 	InitAbilitySystemComponent();
-	GiveDefaultAbilities();
+	//GiveDefaultAbilities();
 	InitDefaultAttributes();
 	if(HasAuthority())
 		InitHUD();
@@ -72,7 +72,7 @@ void AMyPlayerCharacter::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 	
 	InitAbilitySystemComponent();
-	GiveDefaultAbilities();
+	//GiveDefaultAbilities();
 	InitDefaultAttributes();
 	APlayerController* PC = Cast<APlayerController>(GetController());
 	if (PC)

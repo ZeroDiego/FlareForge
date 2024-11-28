@@ -24,19 +24,8 @@ public:
 	//~End of IAbilitySystemInterface interface
 	virtual UMyCharacterAttributeSet* GetAttributeSet() const;
 	
-	const TArray<TSubclassOf<UGameplayAbility>>& GetSelectedAbilities() const;
-	
 	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability", meta = (ExposeOnSpawn=true))
-	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
-	*/
-	/*// Adds an ability to the SelectedAbilities array
-	// Sets an ability at a specific index in the SelectedAbilities array
-	UFUNCTION(BlueprintCallable, Category = "Ability")
-	void SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility);
-
-	// Removes an ability from the SelectedAbilities array
-	UFUNCTION(BlueprintCallable, Category = "Ability")
-	void RemoveAbility(TSubclassOf<UGameplayAbility> AbilityToRemove);*/
+	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities; */
 	
 protected:
 	//void GetSelectedAbilities();

@@ -300,7 +300,8 @@ void AFlareForgePlayerController::ActivateBasicAbility() {
 			}
 		}
 	}
-	UE_LOG(LogTemplateCharacter, Log, TEXT("Basic Ability Activated"));
+	// Log the name of the ability at index 0
+	UE_LOG(LogTemplateCharacter, Log, TEXT("Basic Ability Activated: %s"), *Abilities[0]->GetName());
 }
 
 void AFlareForgePlayerController::ActivateAbility1() {
