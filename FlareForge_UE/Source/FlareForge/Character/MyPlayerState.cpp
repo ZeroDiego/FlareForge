@@ -87,3 +87,8 @@ void AMyPlayerState::TransferAbilitiesToASC()
 		}
 	}
 }
+
+const TArray<TSubclassOf<UGameplayAbility>>& AMyPlayerState::GetSelectedAbilities() const
+{
+	return SelectedAbilities;
+}

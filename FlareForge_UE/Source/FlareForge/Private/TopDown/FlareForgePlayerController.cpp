@@ -291,7 +291,7 @@ void AFlareForgePlayerController::ActivateBasicAbility() {
 			UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
 			if (ASC) {
 				// Get the SelectedAbilities array from MyCharacter
-				const TArray<TSubclassOf<UGameplayAbility>>& Abilities = MyCharacter->GetSelectedAbilities();
+				const TArray<TSubclassOf<UGameplayAbility>>& Abilities = MyPlayerState->GetSelectedAbilities();
 
 				// Check if index 0 is valid
 				if (Abilities.IsValidIndex(0)) {
@@ -301,7 +301,7 @@ void AFlareForgePlayerController::ActivateBasicAbility() {
 		}
 	}
 	// Log the name of the ability at index 0
-	UE_LOG(LogTemplateCharacter, Log, TEXT("Basic Ability Activated: %s"), *Abilities[0]->GetName());
+	UE_LOG(LogTemplateCharacter, Log, TEXT("Basic Ability Activated"));
 }
 
 void AFlareForgePlayerController::ActivateAbility1() {
@@ -309,7 +309,7 @@ void AFlareForgePlayerController::ActivateAbility1() {
 		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>()) {
 			UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
 			if (ASC) {
-				const TArray<TSubclassOf<UGameplayAbility>>& Abilities = MyCharacter->GetSelectedAbilities();
+				const TArray<TSubclassOf<UGameplayAbility>>& Abilities = MyPlayerState->GetSelectedAbilities();
 				if (Abilities.IsValidIndex(1)) {
 					ASC->TryActivateAbilityByClass(Abilities[1]);
 				}
@@ -324,7 +324,7 @@ void AFlareForgePlayerController::ActivateAbility2() {
 		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>()) {
 			UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
 			if (ASC) {
-				const TArray<TSubclassOf<UGameplayAbility>>& Abilities = MyCharacter->GetSelectedAbilities();
+				const TArray<TSubclassOf<UGameplayAbility>>& Abilities = MyPlayerState->GetSelectedAbilities();
 				if (Abilities.IsValidIndex(2)) {
 					ASC->TryActivateAbilityByClass(Abilities[2]);
 				}
@@ -339,7 +339,7 @@ void AFlareForgePlayerController::ActivateAbility3() {
 		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>()) {
 			UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
 			if (ASC) {
-				const TArray<TSubclassOf<UGameplayAbility>>& Abilities = MyCharacter->GetSelectedAbilities();
+				const TArray<TSubclassOf<UGameplayAbility>>& Abilities = MyPlayerState->GetSelectedAbilities();
 				if (Abilities.IsValidIndex(3)) {
 					ASC->TryActivateAbilityByClass(Abilities[3]);
 				}

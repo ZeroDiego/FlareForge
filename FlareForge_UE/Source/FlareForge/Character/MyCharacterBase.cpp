@@ -16,12 +16,38 @@ AMyCharacterBase::AMyCharacterBase()
 
 UAbilitySystemComponent* AMyCharacterBase::GetAbilitySystemComponent() const
 {
-	return AbilitySystemComponent;
+	AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>();
+	if (MyPlayerState)
+	{
+		return MyPlayerState->GetAbilitySystemComponent();
+	}
+	return nullptr;
 }
 
 UMyCharacterAttributeSet* AMyCharacterBase::GetAttributeSet() const
 {
 	return AttributeSet;
+}
+
+void AMyCharacterBase::GrantSelectedAbilities()
+{
+	AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>();
+	if (MyPlayerState)
+	{
+		UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
+		if (ASC)
+		{
+			const TArray<TSubclassOf<UGameplayAbility>>& SelectedAbilities = MyPlayerState->GetSelectedAbilities();
+			for (TSubclassOf<UGameplayAbility> AbilityClass : SelectedAbilities)
+			{
+				if (AbilityClass)
+				{
+					FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
+					ASC->GiveAbility(AbilitySpec);
+				}
+			}
+		}
+	}
 }
 
 void AMyCharacterBase::InitDefaultAttributes() const

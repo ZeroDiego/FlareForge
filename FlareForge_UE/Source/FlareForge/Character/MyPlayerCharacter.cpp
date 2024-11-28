@@ -59,7 +59,7 @@ void AMyPlayerCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 	    
 	InitAbilitySystemComponent();
-	//GiveDefaultAbilities();
+	//GiveDefaultAbilities()
 	InitDefaultAttributes();
 	if(HasAuthority())
 		InitHUD();

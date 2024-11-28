@@ -28,7 +28,7 @@ public:
 	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities; */
 	
 protected:
-	//void GetSelectedAbilities();
+	void GrantSelectedAbilities();
 	void InitDefaultAttributes() const;
 
 	UPROPERTY()

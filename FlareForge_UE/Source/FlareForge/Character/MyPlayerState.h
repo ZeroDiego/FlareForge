@@ -21,6 +21,8 @@ class FLAREFORGE_API AMyPlayerState : public APlayerState, public IAbilitySystem
 public:
 	AMyPlayerState();
 
+	const TArray<TSubclassOf<UGameplayAbility>>& GetSelectedAbilities() const;
+	
 	// Pending abilities to be granted to the player
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
 	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
