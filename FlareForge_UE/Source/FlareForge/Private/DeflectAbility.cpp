@@ -19,7 +19,6 @@ void UDeflectAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, c
 			const FRotator CurrentRotation = Character->GetActorRotation();
 			//FName PlayerName = Character->GetFName();
 			DeflectAbility(SpawnDeflectShieldLocation, CurrentRotation);
-			Shield->GetDeflectPlayerReference(Character->GetRootComponent());
 		}
 	}
 	

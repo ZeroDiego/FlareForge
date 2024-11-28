@@ -25,9 +25,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void GetDeflectPlayerReference(USceneComponent* PlayerSpawningRootComponent);
-
 	//void SetPlayerName(FName OtherName);
 
 private:
