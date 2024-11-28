@@ -103,12 +103,46 @@ void AMyPlayerCharacter::OnRep_PlayerState()
 
 void AMyPlayerCharacter::InitAbilitySystemComponent()
 {
+	/*
 	AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>();
 	check(MyPlayerState);
 	AbilitySystemComponent =  CastChecked<ULucasAbilitySystemComponent>(
 		MyPlayerState->GetAbilitySystemComponent());
 	AbilitySystemComponent->InitAbilityActorInfo(MyPlayerState, this);
-	AttributeSet = MyPlayerState->GetAttributeSet();
+	AttributeSet = MyPlayerState->GetAttributeSet(); */
+
+	if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>())
+	{
+		AbilitySystemComponent = Cast<ULucasAbilitySystemComponent>(MyPlayerState->GetAbilitySystemComponent());
+		if (!AbilitySystemComponent)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to cast AbilitySystemComponent to ULucasAbilitySystemComponent"));
+			return;
+		}
+
+		AttributeSet = MyPlayerState->GetAttributeSet();
+
+		// Initialize ASC with character as avatar
+		if (AbilitySystemComponent)
+		{
+			AbilitySystemComponent->InitAbilityActorInfo(MyPlayerState, this);
+		}
+
+		// Transfer abilities from PlayerState
+		MyPlayerState->TransferAbilitiesToASC();
+/*
+		// Use GetSelectedAbilities() to grant abilities directly
+		const TArray<TSubclassOf<UGameplayAbility>>& SelectedAbilities = GetSelectedAbilities();
+		for (TSubclassOf<UGameplayAbility> Ability : SelectedAbilities)
+		{
+			if (Ability && AbilitySystemComponent)
+			{
+				const FGameplayAbilitySpec AbilitySpec(Ability, 1); // Level 1 by default
+				AbilitySystemComponent->GiveAbility(AbilitySpec);
+
+				UE_LOG(LogTemp, Log, TEXT("Granted ability: %s"), *Ability->GetName());
+			} */
+		}
 }
 
 void AMyPlayerCharacter::InitHUD() const
