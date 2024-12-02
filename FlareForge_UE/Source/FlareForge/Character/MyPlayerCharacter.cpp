@@ -63,8 +63,8 @@ void AMyPlayerCharacter::PossessedBy(AController* NewController)
 	InitDefaultAttributes();
 	if(HasAuthority())
 		InitHUD();
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Possess"));
+	/*if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Possess"));*/
 }
 
 void AMyPlayerCharacter::OnRep_PlayerState()
@@ -75,7 +75,7 @@ void AMyPlayerCharacter::OnRep_PlayerState()
 	//GiveDefaultAbilities();
 	InitDefaultAttributes();
 	APlayerController* PC = Cast<APlayerController>(GetController());
-	if (PC)
+	/*if (PC)
 	{
 		if(GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 150.0f, FColor::Yellow, TEXT("PlayerController is valid"));
@@ -96,7 +96,7 @@ void AMyPlayerCharacter::OnRep_PlayerState()
 	{
 		if(GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 150.0f, FColor::Yellow, TEXT("PlayerState is NULL on the client."));
-	}
+	}*/
 	
 	InitHUD();
 }
