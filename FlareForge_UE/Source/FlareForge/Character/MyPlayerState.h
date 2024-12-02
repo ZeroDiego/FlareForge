@@ -32,7 +32,11 @@ public:
 	// Adds or sets an ability at a specific index in SelectedAbilities
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	void SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility);
-
+	
+	// Gets an ability from a specific index in SelectedAbilities
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	TSubclassOf<UGameplayAbility> GetAbilityAtIndex(int32 Index) const;
+	
 	// Removes an ability from SelectedAbilities
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	void RemoveAbility(TSubclassOf<UGameplayAbility> AbilityToRemove);

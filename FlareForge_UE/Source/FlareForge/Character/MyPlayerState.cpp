@@ -75,6 +75,19 @@ void AMyPlayerState::SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility
 	}
 }
 
+TSubclassOf<UGameplayAbility> AMyPlayerState::GetAbilityAtIndex(int32 Index) const
+{
+	// Check if the index is valid
+	if (SelectedAbilities.IsValidIndex(Index))
+	{
+		// Return the ability at the specified index
+		return SelectedAbilities[Index];
+	}
+
+	// Return nullptr or a default value if the index is invalid
+	return nullptr;
+}
+
 void AMyPlayerState::RemoveAbility(TSubclassOf<UGameplayAbility> AbilityToRemove)
 {
 	// Check if AbilitySystemComponent is valid and we have authority
