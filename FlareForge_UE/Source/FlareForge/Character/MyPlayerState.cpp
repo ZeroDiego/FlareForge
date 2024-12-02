@@ -4,16 +4,41 @@
 #include "MyPlayerState.h"
 #include "LucasAbilitySystemComponent.h"
 #include "MyCharacterAttributeSet.h"
+#include "NetworkGameInstance.h"
 
 
 AMyPlayerState::AMyPlayerState()
 {
 	NetUpdateFrequency = 100.f;
 
-	AbilitySystemComponent = CreateDefaultSubobject<ULucasAbilitySystemComponent>("AbilitySystemComponent");
+	AbilitySystemComponent = CreateDefaultSubobject<ULucasAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
-	AttributeSet = CreateDefaultSubobject<UMyCharacterAttributeSet>("AttributeSet");
+	AttributeSet = CreateDefaultSubobject<UMyCharacterAttributeSet>(TEXT("AttributeSet"));
 	bReplicates = true;
+}
+
+void AMyPlayerState::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	if(const UWorld* World = GetWorld())
+	{
+		if (UGameInstance* GameInstance = World->GetGameInstance())
+		{
+			if (const UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
+			{
+				if (const FGameplayAbilitySpec CurrentGameplayAbilitySpec = NetworkGI->GetGameplayAbilitySpec(); CurrentGameplayAbilitySpec.Ability)
+				{
+					AbilitySystemComponent->GiveAbility(CurrentGameplayAbilitySpec);
+				
+					if(GEngine)
+					{
+						GEngine->AddOnScreenDebugMessage(-1, 150.0f, FColor::Yellow, FString::Printf(TEXT("Granted Ability: %s"), *CurrentGameplayAbilitySpec.Ability->GetName()));
+					}
+				}
+			}
+		}
+	}
 }
 
 UAbilitySystemComponent* AMyPlayerState::GetAbilitySystemComponent() const
@@ -69,20 +94,30 @@ void AMyPlayerState::RemoveAbility(TSubclassOf<UGameplayAbility> AbilityToRemove
 void AMyPlayerState::TransferAbilitiesToASC()
 {
 	if (!AbilitySystemComponent) return;
-
+	
 	// Iterate over the first four indices: 0, 1, 2, and 3
-	for (int32 Index = 0; Index < 4; ++Index)
+	for (int32 Index = 0; Index < SelectedAbilities.Num(); ++Index)
 	{
 		if (SelectedAbilities.IsValidIndex(Index))
 		{
-			TSubclassOf<UGameplayAbility> AbilityClass = SelectedAbilities[Index];
-			if (AbilityClass)
+			if (const TSubclassOf<UGameplayAbility> AbilityClass = SelectedAbilities[Index])
 			{
 				const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
 				AbilitySystemComponent->GiveAbility(AbilitySpec);
-
-				// Log ability assignment for debugging
-				UE_LOG(LogTemp, Log, TEXT("Granted Ability: %s"), *AbilityClass->GetName());
+				
+				if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
+				{
+					if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
+					{
+						NetworkGI->SetGameplayAbilitySpec(AbilitySpec);
+						FGameplayAbilitySpec CurrentGameplayAbilitySpec = NetworkGI->GetGameplayAbilitySpec();
+						
+						if(GEngine)
+						{
+							GEngine->AddOnScreenDebugMessage(-1, 150.0f, FColor::Yellow, FString::Printf(TEXT("Granted Ability: %s"), *CurrentGameplayAbilitySpec.Ability->GetName()));
+						}
+					}
+				}
 			}
 		}
 	}

@@ -20,6 +20,8 @@ class FLAREFORGE_API AMyPlayerState : public APlayerState, public IAbilitySystem
 
 public:
 	AMyPlayerState();
+	
+	virtual void BeginPlay() override;
 
 	const TArray<TSubclassOf<UGameplayAbility>>& GetSelectedAbilities() const;
 	
