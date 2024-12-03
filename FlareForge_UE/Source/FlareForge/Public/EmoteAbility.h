@@ -3,33 +3,33 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BasicProjectile.h"
 #include "Abilities/GameplayAbility.h"
-#include "BasicProjectileAbility.generated.h"
+#include "EmoteAbility.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class FLAREFORGE_API UBasicProjectileAbility : public UGameplayAbility
+class FLAREFORGE_API UEmoteAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
 
 public:
-
+	
 	//Override the ActivateAbility method
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	UFUNCTION(Server, Reliable)
-	void BasicProjectileAbility(const FVector SpawnProjectileLocation, const FRotator CurrentRotation);
+	void Play_HelloEmote_Anim_OnServer(ACharacter* Character);
+
+	UFUNCTION(Server, Reliable)
+	void Play_TBagEmote_Anim_OnServer(ACharacter* Character);
+	
 private:
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<ABasicProjectile> BasicProjectileBlueprint;
-
-	UPROPERTY(VisibleAnywhere)
-	ABasicProjectile* BasicProjectile;
-
+	UAnimMontage* HelloEmote_Anim;
+	
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UGameplayEffect> AnimDelay_Attack_Blueprint;
+	UAnimMontage* TBagEmote_Anim;
 };
