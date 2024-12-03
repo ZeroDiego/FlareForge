@@ -91,19 +91,19 @@ TSubclassOf<UGameplayAbility> AMyPlayerState::GetAbilityAtIndex(int32 Index) con
 	return nullptr;
 }
 
-void AMyPlayerState::RemoveAbility(TSubclassOf<UGameplayAbility> AbilityToRemove)
+void AMyPlayerState::RemoveAbilityAtIndex(int32 Index)
 {
 	// Check if AbilitySystemComponent is valid and we have authority
-	if (!HasAuthority() || !AbilityToRemove)
+	if (!HasAuthority())
 	{
 		return;
 	}
 
-	// Check if the ability exists in the SelectedAbilities array
-	if (SelectedAbilities.Contains(AbilityToRemove))
+	// Ensure that the index is within bounds
+	if (SelectedAbilities.IsValidIndex(Index))
 	{
-		// Remove the ability from the array
-		SelectedAbilities.Remove(AbilityToRemove);
+		// Remove the ability at the specified index
+		SelectedAbilities.RemoveAt(Index);
 	}
 }
 

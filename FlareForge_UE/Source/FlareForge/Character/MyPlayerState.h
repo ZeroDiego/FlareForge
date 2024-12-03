@@ -37,9 +37,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	TSubclassOf<UGameplayAbility> GetAbilityAtIndex(int32 Index) const;
 	
-	// Removes an ability from SelectedAbilities
+	// Removes an ability from a specific index in SelectedAbilities
 	UFUNCTION(BlueprintCallable, Category = "Ability")
-	void RemoveAbility(TSubclassOf<UGameplayAbility> AbilityToRemove);
+	void RemoveAbilityAtIndex(int32 Index);
 
 	// Transfers SelectedAbilities to the Ability System Component (ASC)
 	UFUNCTION(BlueprintCallable, Category = "Ability")
