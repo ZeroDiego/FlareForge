@@ -21,6 +21,11 @@ void UBasicProjectileAbility::ActivateAbility(const FGameplayAbilitySpecHandle H
 	}
 
 	CommitAbilityCooldown(Handle, ActorInfo, ActivationInfo, true, nullptr);
+	if (GEngine)
+	{
+		const FActiveGameplayEffectHandle EffectHandle = ApplyGameplayEffectToOwner(Handle, ActorInfo, ActivationInfo, AnimDelay_Attack_Blueprint.GetDefaultObject(), 1.0f);
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("EffectHandle %s"), *EffectHandle.ToString()));
+	}
 	
 	// End the ability
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);

@@ -25,6 +25,9 @@ public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bHello;
+	
 private:
 	void InitAbilitySystemComponent();
 	void InitHUD() const;
