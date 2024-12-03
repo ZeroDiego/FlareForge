@@ -3,6 +3,7 @@
 
 #include "EmoteAbility.h"
 
+#include "FlareForge/Character/MyPlayerCharacter.h"
 #include "GameFramework/Character.h"
 
 void UEmoteAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -10,9 +11,12 @@ void UEmoteAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 
 	if(AActor* Actor = GetAvatarActorFromActorInfo())
 	{
-		if (ACharacter* Character = Cast<ACharacter>(Actor))
+		if (AMyPlayerCharacter* Character = Cast<AMyPlayerCharacter>(Actor))
 		{
-			Play_HelloEmote_Anim_OnServer(Character);
+			if (Character->bHello)
+				Play_HelloEmote_Anim_OnServer(Character);
+			else
+				Play_TBagEmote_Anim_OnServer_Implementation(Character);
 		}
 	}
 	
@@ -25,4 +29,9 @@ void UEmoteAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 void UEmoteAbility::Play_HelloEmote_Anim_OnServer_Implementation(ACharacter* Character)
 {
 	Character->PlayAnimMontage(HelloEmote_Anim);
+}
+
+void UEmoteAbility::Play_TBagEmote_Anim_OnServer_Implementation(ACharacter* Character)
+{
+	Character->PlayAnimMontage(TBagEmote_Anim);
 }

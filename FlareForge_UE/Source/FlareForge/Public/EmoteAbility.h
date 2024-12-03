@@ -21,9 +21,15 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void Play_HelloEmote_Anim_OnServer(ACharacter* Character);
+
+	UFUNCTION(Server, Reliable)
+	void Play_TBagEmote_Anim_OnServer(ACharacter* Character);
 	
 private:
 
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* HelloEmote_Anim;
+	
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* TBagEmote_Anim;
 };
