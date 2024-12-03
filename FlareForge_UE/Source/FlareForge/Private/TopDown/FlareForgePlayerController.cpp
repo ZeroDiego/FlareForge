@@ -10,6 +10,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
 #include "TeleportAbility.h"
+#include "FlareForge/UI/FlareForgeHUD.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -38,6 +39,27 @@ void AFlareForgePlayerController::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 	
+}
+
+void AFlareForgePlayerController::ClientRestart_Implementation(APawn* NewPawn)
+{
+	Super::ClientRestart_Implementation(NewPawn);
+
+	if (GetHUD())
+	{
+		if (AFlareForgeHUD* FlareForgeHUD = Cast<AFlareForgeHUD>(GetHUD()))
+		{
+			FlareForgeHUD->Init();
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("HUD is not of type FlareForgeHUD in ClientRestart!"));
+		}
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("HUD is NULL in ClientRestart!"));
+	}
 }
 
 void AFlareForgePlayerController::Tick(const float DeltaSeconds)

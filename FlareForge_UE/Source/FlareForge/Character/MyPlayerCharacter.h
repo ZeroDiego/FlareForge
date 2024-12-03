@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MyCharacterBase.h"
+#include "FlareForge/UI/FlareForgeHUD.h"
 #include "MyPlayerCharacter.generated.h"
 
 UCLASS()
@@ -30,7 +31,6 @@ public:
 	
 private:
 	void InitAbilitySystemComponent();
-	void InitHUD() const;
 
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -39,4 +39,7 @@ private:
 	/** Camera boom positioning the camera above the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AFlareForgeHUD> NorseForgeHUD;
 };
