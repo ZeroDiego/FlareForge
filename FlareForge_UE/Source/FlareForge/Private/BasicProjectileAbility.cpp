@@ -24,7 +24,7 @@ void UBasicProjectileAbility::ActivateAbility(const FGameplayAbilitySpecHandle H
 	if (GEngine)
 	{
 		const FActiveGameplayEffectHandle EffectHandle = ApplyGameplayEffectToOwner(Handle, ActorInfo, ActivationInfo, AnimDelay_Attack_Blueprint.GetDefaultObject(), 1.0f);
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("EffectHandle %s"), *EffectHandle.ToString()));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("EffectHandle %s"), *EffectHandle.ToString()));
 	}
 	
 	// End the ability
