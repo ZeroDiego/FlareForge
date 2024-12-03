@@ -27,13 +27,16 @@ void AMyPlayerState::BeginPlay()
 		{
 			if (const UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
 			{
-				if (const FGameplayAbilitySpec CurrentGameplayAbilitySpec = NetworkGI->GetGameplayAbilitySpec(); CurrentGameplayAbilitySpec.Ability)
+				for (TArray<FGameplayAbilitySpec> CurrentGameplayAbilitySpec = NetworkGI->GetGameplayAbilitySpec(); const FGameplayAbilitySpec GameplayAbilitySpec : CurrentGameplayAbilitySpec)
 				{
-					AbilitySystemComponent->GiveAbility(CurrentGameplayAbilitySpec);
-				
-					if(GEngine)
+					if (GameplayAbilitySpec.Ability)
 					{
-						GEngine->AddOnScreenDebugMessage(-1, 150.0f, FColor::Yellow, FString::Printf(TEXT("Granted Ability: %s"), *CurrentGameplayAbilitySpec.Ability->GetName()));
+						AbilitySystemComponent->GiveAbility(GameplayAbilitySpec);
+					}
+
+					if (GEngine)
+					{
+						GEngine->AddOnScreenDebugMessage(-1, 150.0f, FColor::Yellow, FString::Printf(TEXT("BeginPlay: %s"), *GameplayAbilitySpec.Ability->GetName()));
 					}
 				}
 			}
@@ -122,13 +125,7 @@ void AMyPlayerState::TransferAbilitiesToASC()
 				{
 					if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
 					{
-						NetworkGI->SetGameplayAbilitySpec(AbilitySpec);
-						FGameplayAbilitySpec CurrentGameplayAbilitySpec = NetworkGI->GetGameplayAbilitySpec();
-						
-						if(GEngine)
-						{
-							GEngine->AddOnScreenDebugMessage(-1, 150.0f, FColor::Yellow, FString::Printf(TEXT("Granted Ability: %s"), *CurrentGameplayAbilitySpec.Ability->GetName()));
-						}
+						NetworkGI->SetGameplayAbilitySpecAtIndex(AbilitySpec, Index);
 					}
 				}
 			}

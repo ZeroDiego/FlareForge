@@ -18,11 +18,11 @@ class FLAREFORGE_API UNetworkGameInstance : public UAdvancedFriendsGameInstance
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FGameplayAbilitySpec GameplayAbilitySpec;
+	TArray<FGameplayAbilitySpec> GameplayAbilitySpec;
 
 	UFUNCTION(BlueprintCallable)
-	void SetGameplayAbilitySpec(const FGameplayAbilitySpec NewGameplayAbilitySpec);
+	void SetGameplayAbilitySpecAtIndex(const FGameplayAbilitySpec NewGameplayAbilitySpec, const int32 AtIndex);
 
 	UFUNCTION(BlueprintCallable)
-	FGameplayAbilitySpec GetGameplayAbilitySpec() const;
+	TArray<FGameplayAbilitySpec> GetGameplayAbilitySpec() const;
 };

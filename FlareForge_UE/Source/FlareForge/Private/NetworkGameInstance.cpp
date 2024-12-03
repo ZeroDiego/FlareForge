@@ -3,12 +3,12 @@
 
 #include "NetworkGameInstance.h"
 
-void UNetworkGameInstance::SetGameplayAbilitySpec(const FGameplayAbilitySpec NewGameplayAbilitySpec)
+void UNetworkGameInstance::SetGameplayAbilitySpecAtIndex(const FGameplayAbilitySpec NewGameplayAbilitySpec, const int32 AtIndex)
 {
-	GameplayAbilitySpec = NewGameplayAbilitySpec;
+	GameplayAbilitySpec.Insert(NewGameplayAbilitySpec, AtIndex);
 }
 
-FGameplayAbilitySpec UNetworkGameInstance::GetGameplayAbilitySpec() const
+TArray<FGameplayAbilitySpec> UNetworkGameInstance::GetGameplayAbilitySpec() const
 {
 	return GameplayAbilitySpec;
 }
