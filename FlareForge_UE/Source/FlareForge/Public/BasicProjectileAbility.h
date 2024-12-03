@@ -29,4 +29,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	ABasicProjectile* BasicProjectile;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UGameplayEffect> AnimDelay_Attack_Blueprint;
 };
