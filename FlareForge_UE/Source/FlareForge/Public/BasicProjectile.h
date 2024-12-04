@@ -25,10 +25,4 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void PlayerSpawningRootComponent(USceneComponent* PlayerSpawningComponent);
-
-	UFUNCTION()
-	void SetDeflectShieldRootComponent(USceneComponent* OtherRootComponent);
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	USceneComponent* DeflectShieldRootComponent;
 };

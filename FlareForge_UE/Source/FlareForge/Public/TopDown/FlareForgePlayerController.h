@@ -42,6 +42,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DashCooldown = 3.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector AnimationVelocity;
+
 	/** FX Class that we will spawn when clicking */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UNiagaraSystem* FXCursor;
@@ -79,6 +82,8 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void DashOnServer(const FVector& DashVector) const;
+	
+	FVector GetAnimationVelocity();
 
 	// Keeps track of the number of instances that
 	// have been created of this class thus far
@@ -99,6 +104,8 @@ protected:
 	
 	// To add mapping context
 	virtual void BeginPlay();
+	
+	virtual void ClientRestart_Implementation(APawn* NewPawn) override;
 
 	/** Input handlers for SetDestination action. */
 	void OnInputStarted();

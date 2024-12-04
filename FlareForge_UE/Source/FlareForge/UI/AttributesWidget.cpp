@@ -9,13 +9,9 @@ void UAttributesWidget::BindToAttributes(const AMyPlayerState* MyPlayerState)
 {
 	if(!MyPlayerState)
 	{
-		/*
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Cast failed!"));
-			*/
 		return;
 	}
-
+	
 	UAbilitySystemComponent* AbilitySystemComponent = MyPlayerState->GetAbilitySystemComponent();
 	const UMyCharacterAttributeSet* FlareForgeAttributeSet = MyPlayerState->GetAttributeSet();
 
