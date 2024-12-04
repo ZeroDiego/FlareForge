@@ -82,7 +82,8 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void DashOnServer(const FVector& DashVector) const;
-	
+
+	UFUNCTION(BlueprintCallable)
 	FVector GetAnimationVelocity();
 
 	// Keeps track of the number of instances that
