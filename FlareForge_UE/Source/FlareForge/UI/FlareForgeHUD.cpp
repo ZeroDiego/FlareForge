@@ -5,10 +5,9 @@
 #include "FlareForge/Character/MyPlayerState.h"
 #include "FlareForge/UI/AttributesWidget.h"
 
-void AFlareForgeHUD::Init(){
-
+void AFlareForgeHUD::Init()
+{
 	AttributeWidget = CreateWidget<UAttributesWidget>(GetOwningPlayerController(), AttributeWidgetClass);
 	AttributeWidget->BindToAttributes(GetOwningPlayerController()->GetPlayerState<AMyPlayerState>());
 	AttributeWidget->AddToViewport();
-	
-	}
+}
