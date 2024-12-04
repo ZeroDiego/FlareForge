@@ -180,23 +180,20 @@ void AFlareForgePlayerController::ApplyMovement()
 FVector AFlareForgePlayerController::GetAnimationVelocity()
 {
 	FVector Velocity = GetCharacter()->GetVelocity();
-
+	
 	FVector NormalizedVelocity = Velocity.GetSafeNormal();
 	
 	FVector CurrentForwardVector = GetCharacter()->GetActorForwardVector();
 	FVector CurrentRightVector = GetCharacter()->GetActorRightVector();
-
+	
 	float ForwardVelocity = FVector::DotProduct(NormalizedVelocity, CurrentForwardVector);
 	float RightVelocity = FVector::DotProduct(NormalizedVelocity, CurrentRightVector);
 	
 	AnimationVelocity = FVector(ForwardVelocity, RightVelocity, 0.0f);
-	UE_LOG(LogTemp, Warning, TEXT("Vector: %s"), *AnimationVelocity.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("Vector: %s"), *AnimationVelocity.ToString());
 	
 	return AnimationVelocity;
 }
-
-
-
 
 void AFlareForgePlayerController::Dash()
 {
