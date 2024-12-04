@@ -25,12 +25,18 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void GetDeflectPlayerReference(USceneComponent* PlayerSpawningRootComponent);
+
+
 	//void SetPlayerName(FName OtherName);
 
 private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess = "true"))
 	UBoxComponent* BoxComponent;
+
+	
 
 	/*UFUNCTION()
 	void OnBoxOverlap(UPrimitiveComponent* OverlappedComp, 
