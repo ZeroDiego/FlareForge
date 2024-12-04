@@ -131,6 +131,14 @@ void AMyPlayerState::TransferAbilitiesToASC()
 			}
 		}
 	}
+
+	if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
+	{
+		if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
+		{
+			NetworkGI->SetSelectedAbilities(SelectedAbilities);
+		}
+	}
 }
 
 const TArray<TSubclassOf<UGameplayAbility>>& AMyPlayerState::GetSelectedAbilities() const

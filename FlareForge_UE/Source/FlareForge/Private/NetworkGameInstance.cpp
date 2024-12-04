@@ -12,3 +12,21 @@ TArray<FGameplayAbilitySpec> UNetworkGameInstance::GetGameplayAbilitySpec() cons
 {
 	return GameplayAbilitySpec;
 }
+
+void UNetworkGameInstance::SetSelectedAbilities(TArray<TSubclassOf<UGameplayAbility>> NewSelectedAbilities)
+{
+	SelectedAbilities = NewSelectedAbilities;
+}
+
+TSubclassOf<UGameplayAbility> UNetworkGameInstance::GetAbilityAtIndex(const int32 Index) const
+{
+	// Check if the index is valid
+	if (SelectedAbilities.IsValidIndex(Index))
+	{
+		// Return the ability at the specified index
+		return SelectedAbilities[Index];
+	}
+
+	// Return nullptr or a default value if the index is invalid
+	return nullptr;
+}
