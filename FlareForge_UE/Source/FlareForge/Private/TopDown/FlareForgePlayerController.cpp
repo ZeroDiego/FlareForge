@@ -69,7 +69,7 @@ void AFlareForgePlayerController::Tick(const float DeltaSeconds)
 	//if (!ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer())->HasMappingContext(GamepadMappingContext))
 	//{
 	RotatePlayerTowardsMouse();
-	//GetAnimationVelocity();
+	GetAnimationVelocity();
 	//}
 }
 
