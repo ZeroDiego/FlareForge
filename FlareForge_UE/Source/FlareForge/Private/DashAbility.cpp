@@ -18,62 +18,22 @@ void UDashAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 		{
 			if (AFlareForgePlayerController* PlayerController = Cast<AFlareForgePlayerController>(Pawn->GetController()))
 			{
-				PlayerController->Dash(DashSpeed);
+				//CallDashOnServer(PlayerController);
+				//UE_LOG(LogTemp, Display, TEXT("Dash"));
 			}
 		}
 	}
 	
-	/*if (AActor* Actor = GetAvatarActorFromActorInfo())
-	{
-		
-		if (AFlareForgePlayerController* PlayerController = Cast<AFlareForgePlayerController>(Actor))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Controller"));
-			if (ACharacter* Character = Cast<ACharacter>(PlayerController->GetPawn()))
-			{
-				//bUseDash = true;
-				UE_LOG(LogTemp, Warning, TEXT("Dash Ability"));
-				PlayerController->Dash();
-				
-				
-				/*const FVector MoveDirection = Character->GetCharacterMovement()->GetLastInputVector();
-		
-				//double MaxMoveSpeed = GetCharacter()->GetCharacterMovement()->MaxWalkSpeed;
-				FVector DashVector;
-		
-				if(MoveDirection.IsZero())
-				{
-					DashVector = FVector(DashSpeed * Character->GetActorForwardVector());
-				}
-				else
-				{
-					DashVector = FVector(DashSpeed * MoveDirection);
-				}
-			
-				Character->LaunchCharacter(DashVector, false, false);
-				//DashOnServer(Character, DashVector);
-				//DashTimer = UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()) + DashCooldown;
-			}
-		}
-	}*/
-
-
 	CommitAbilityCooldown(Handle, ActorInfo, ActivationInfo, true, nullptr);
 	
 	// End the ability
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
-
 	
 }
 
-/*bool UDashAbility::DashAbilityIsActive() const
+/*void UDashAbility::CallDashOnServer_Implementation(AFlareForgePlayerController* PlayerController)
 {
-	return bUseDash;
+	PlayerController->Dash(DashSpeed);
 }*/
 
-
-/*void UDashAbility::DashOnServer_Implementation(ACharacter* Character, const FVector& DashVector) const
-{
-	Character->LaunchCharacter(DashVector, false, false);
-}*/
 

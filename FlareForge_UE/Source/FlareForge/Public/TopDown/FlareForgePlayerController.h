@@ -36,11 +36,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	float ShortPressThreshold;
 
-	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DashSpeed = 100.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float DashCooldown = 3.0f;*/
+	float DashCooldown = 3.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector AnimationVelocity;
@@ -78,7 +78,7 @@ public:
 	UInputAction* ControllerRotationAction;
 
 	// Dash functions
-	void Dash(float DashSpeed);
+	void Dash();
 
 	UFUNCTION(Server, Reliable)
 	void DashOnServer(const FVector& DashVector) const;
@@ -141,5 +141,3 @@ private:
 	
 	float DashTimer = 0.0f;
 };
-
-
