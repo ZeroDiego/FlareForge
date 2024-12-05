@@ -141,5 +141,3 @@ private:
 	
 	float DashTimer = 0.0f;
 };
-
-
