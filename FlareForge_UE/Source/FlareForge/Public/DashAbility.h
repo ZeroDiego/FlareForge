@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "TopDown/FlareForgePlayerController.h"
 #include "DashAbility.generated.h"
 
 /**
@@ -15,13 +16,14 @@ class FLAREFORGE_API UDashAbility : public UGameplayAbility
 	GENERATED_BODY()
 
 public:
+
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DashSpeed = 1000.0f;*/
 	
 	//Override the ActivateAbility method
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-	//UPROPERTY(EditAnywhere)
-	//FVector DashDistance;
-
-	UPROPERTY(EditAnywhere)
-	float DashDistance = 5000.0f;
+	/*UFUNCTION(Server, Reliable)
+	void CallDashOnServer(AFlareForgePlayerController* FlareForgePlayerController);*/
+	
 };

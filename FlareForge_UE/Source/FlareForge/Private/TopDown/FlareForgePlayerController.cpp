@@ -8,16 +8,12 @@
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
-#include "LucasAbilitySystemComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "TeleportAbility.h"
-#include "FlareForge/UI/AbilitySetWidget.h"
-#include "FlareForge/Character/MyPlayerState.h"
-#include "FlareForge/Character/MyCharacterBase.h"
+#include "FlareForge/UI/FlareForgeHUD.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
-class AMyPlayerState;
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 // Initialize the static counter to 0
@@ -36,30 +32,6 @@ AFlareForgePlayerController::AFlareForgePlayerController()
 	CachedDestination = FVector::ZeroVector;
 	FollowTime = 0.f;
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> LMBActionObj(TEXT("/Game/TopDown/Input/Actions/AbilityInput/IA_LMBAbility.IA_LMBAbility"));
-	if (LMBActionObj.Succeeded())
-	{
-		BasicAbility = LMBActionObj.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<UInputAction> RMBActionObj(TEXT("/Game/TopDown/Input/Actions/AbilityInput/IA_RMBAbility.IA_RMBAbility"));
-	if (RMBActionObj.Succeeded())
-	{
-		Ability1 = RMBActionObj.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<UInputAction> ShiftActionObj(TEXT("/Game/TopDown/Input/Actions/AbilityInput/IA_ShiftAbility.IA_ShiftAbility"));
-	if (ShiftActionObj.Succeeded())
-	{
-		Ability2 = ShiftActionObj.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<UInputAction> SpaceActionObj(TEXT("/Game/TopDown/Input/Actions/AbilityInput/IA_SpaceAbility.IA_SpaceAbility"));
-	if (SpaceActionObj.Succeeded())
-	{
-		Ability3 = SpaceActionObj.Object;
-	}
-
 }
 
 void AFlareForgePlayerController::BeginPlay()
@@ -69,13 +41,35 @@ void AFlareForgePlayerController::BeginPlay()
 	
 }
 
+void AFlareForgePlayerController::ClientRestart_Implementation(APawn* NewPawn)
+{
+	Super::ClientRestart_Implementation(NewPawn);
+
+	if (GetHUD())
+	{
+		if (AFlareForgeHUD* FlareForgeHUD = Cast<AFlareForgeHUD>(GetHUD()))
+		{
+			FlareForgeHUD->Init();
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("HUD is not of type FlareForgeHUD in ClientRestart!"));
+		}
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("HUD is NULL in ClientRestart!"));
+	}
+}
+
 void AFlareForgePlayerController::Tick(const float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	
 	//if (!ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer())->HasMappingContext(GamepadMappingContext))
 	//{
-	RotatePlayerTowardsMouse();	
+	RotatePlayerTowardsMouse();
+	//GetAnimationVelocity();
 	//}
 }
 
@@ -104,18 +98,7 @@ void AFlareForgePlayerController::SetupInputComponent()
 
 			// Dash Setup
 			EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::Dash);
-
-			// Bind LMB to Basic Ability
-			EnhancedInputComponent->BindAction(BasicAbility, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::ActivateBasicAbility);
-
-			// Bind RMB to Ability 1
-			EnhancedInputComponent->BindAction(Ability1, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::ActivateAbility1);
-
-			// Bind Space to Ability 2
-			EnhancedInputComponent->BindAction(Ability2, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::ActivateAbility2);
-
-			// Bind Shift to Ability 3
-			EnhancedInputComponent->BindAction(Ability3, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::ActivateAbility3);
+			
 		}
 		else
 		{
@@ -139,7 +122,7 @@ void AFlareForgePlayerController::SetupInputComponent()
 
 			// Dash Setup
 			EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::Dash);
-			
+
 			// Controller Rotation Setup
 			EnhancedInputComponent->BindAction(ControllerRotationAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::RotatePlayerTowardsJoystick);
 			
@@ -194,6 +177,23 @@ void AFlareForgePlayerController::ApplyMovement()
 	InputVector = FVector2D::ZeroVector;
 }
 
+FVector AFlareForgePlayerController::GetAnimationVelocity()
+{
+	FVector Velocity = GetCharacter()->GetVelocity();
+	
+	FVector NormalizedVelocity = Velocity.GetSafeNormal();
+	
+	FVector CurrentForwardVector = GetCharacter()->GetActorForwardVector();
+	FVector CurrentRightVector = GetCharacter()->GetActorRightVector();
+	
+	float ForwardVelocity = FVector::DotProduct(NormalizedVelocity, CurrentForwardVector);
+	float RightVelocity = FVector::DotProduct(NormalizedVelocity, CurrentRightVector);
+	
+	AnimationVelocity = FVector(ForwardVelocity, RightVelocity, 0.0f);
+	//UE_LOG(LogTemp, Warning, TEXT("Vector: %s"), *AnimationVelocity.ToString());
+	
+	return AnimationVelocity;
+}
 
 void AFlareForgePlayerController::Dash()
 {
@@ -284,71 +284,6 @@ void AFlareForgePlayerController::RotatePlayerOnServer_Implementation(const FRot
 {
 	this->GetCharacter()->SetActorRotation(PlayerRotation);
 }
-
-void AFlareForgePlayerController::ActivateBasicAbility() {
-	if (AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn())) {
-		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>()) {
-			UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
-			if (ASC) {
-				// Get the SelectedAbilities array from MyCharacter
-				const TArray<TSubclassOf<UGameplayAbility>>& Abilities = MyPlayerState->GetSelectedAbilities();
-
-				// Check if index 0 is valid
-				if (Abilities.IsValidIndex(0)) {
-					ASC->TryActivateAbilityByClass(Abilities[0]);
-				}
-			}
-		}
-	}
-	// Log the name of the ability at index 0
-	UE_LOG(LogTemplateCharacter, Log, TEXT("Basic Ability Activated"));
-}
-
-void AFlareForgePlayerController::ActivateAbility1() {
-	if (AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn())) {
-		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>()) {
-			UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
-			if (ASC) {
-				const TArray<TSubclassOf<UGameplayAbility>>& Abilities = MyPlayerState->GetSelectedAbilities();
-				if (Abilities.IsValidIndex(1)) {
-					ASC->TryActivateAbilityByClass(Abilities[1]);
-				}
-			}
-		}
-	}
-	UE_LOG(LogTemplateCharacter, Log, TEXT("Ability 1 Activated"));
-}
-
-void AFlareForgePlayerController::ActivateAbility2() {
-	if (AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn())) {
-		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>()) {
-			UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
-			if (ASC) {
-				const TArray<TSubclassOf<UGameplayAbility>>& Abilities = MyPlayerState->GetSelectedAbilities();
-				if (Abilities.IsValidIndex(2)) {
-					ASC->TryActivateAbilityByClass(Abilities[2]);
-				}
-			}
-		}
-	}
-	UE_LOG(LogTemplateCharacter, Log, TEXT("Ability 2 Activated"));
-}
-
-void AFlareForgePlayerController::ActivateAbility3() {
-	if (AMyCharacterBase* MyCharacter = Cast<AMyCharacterBase>(GetPawn())) {
-		if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>()) {
-			UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
-			if (ASC) {
-				const TArray<TSubclassOf<UGameplayAbility>>& Abilities = MyPlayerState->GetSelectedAbilities();
-				if (Abilities.IsValidIndex(3)) {
-					ASC->TryActivateAbilityByClass(Abilities[3]);
-				}
-			}
-		}
-	}
-	UE_LOG(LogTemplateCharacter, Log, TEXT("Ability 3 Activated"));
-}
-
 
 /*
 void AFlareForgePlayerController::OnInputStarted()

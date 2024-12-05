@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
-#include "FlareForge/UI/AbilitySetWidget.h"
 #include "Templates/SubclassOf.h"
 #include "GameFramework/PlayerController.h"
 #include "FlareForgePlayerController.generated.h"
@@ -25,9 +24,6 @@ enum class EFlareForgeAbilityInputID : uint8
 	Cancel UMETA(DisplayName = "Cancel")
 };
 */
-
-class UGameplayAbility;
-
 UCLASS()
 class AFlareForgePlayerController : public APlayerController
 {
@@ -45,6 +41,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DashCooldown = 3.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector AnimationVelocity;
 
 	/** FX Class that we will spawn when clicking */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
@@ -78,38 +77,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* ControllerRotationAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* Ability1;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* Ability2;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* Ability3;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* BasicAbility;
-
 	// Dash functions
 	void Dash();
 
 	UFUNCTION(Server, Reliable)
 	void DashOnServer(const FVector& DashVector) const;
 
-	
-	//Ability functions
-	UFUNCTION()
-	void ActivateBasicAbility();
+	UFUNCTION(BlueprintCallable)
+	FVector GetAnimationVelocity();
 
-	UFUNCTION()
-	void ActivateAbility1();
-	
-	UFUNCTION()
-	void ActivateAbility2();
-	
-	UFUNCTION()
-	void ActivateAbility3();
-	
 	// Keeps track of the number of instances that
 	// have been created of this class thus far
 	//static int32 InstanceCounter;
@@ -129,6 +105,8 @@ protected:
 	
 	// To add mapping context
 	virtual void BeginPlay();
+	
+	virtual void ClientRestart_Implementation(APawn* NewPawn) override;
 
 	/** Input handlers for SetDestination action. */
 	void OnInputStarted();
@@ -163,5 +141,3 @@ private:
 	
 	float DashTimer = 0.0f;
 };
-
-

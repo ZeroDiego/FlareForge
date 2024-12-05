@@ -60,10 +60,6 @@ void AMyPlayerCharacter::PossessedBy(AController* NewController)
 	    
 	InitAbilitySystemComponent();
 	InitDefaultAttributes();
-	if(HasAuthority())
-		InitHUD();
-	/*if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Possess"));*/
 }
 
 void AMyPlayerCharacter::OnRep_PlayerState()
@@ -72,31 +68,6 @@ void AMyPlayerCharacter::OnRep_PlayerState()
 	
 	InitAbilitySystemComponent();
 	InitDefaultAttributes();
-	APlayerController* PC = Cast<APlayerController>(GetController());
-	/*if (PC)
-	{
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 150.0f, FColor::Yellow, TEXT("PlayerController is valid"));
-	}
-	else
-	{
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 150.0f, FColor::Yellow, TEXT("PlayerController is NULL on the client."));
-	}
-
-	AMyPlayerState* MyPlayerState = PC ? PC->GetPlayerState<AMyPlayerState>() : nullptr;
-	if (MyPlayerState)
-	{
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 150.0f, FColor::Yellow, TEXT("PlayerState is valid"));
-	}
-	else
-	{
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 150.0f, FColor::Yellow, TEXT("PlayerState is NULL on the client."));
-	}*/
-	
-	InitHUD();
 }
 
 void AMyPlayerCharacter::InitAbilitySystemComponent()
@@ -116,17 +87,6 @@ void AMyPlayerCharacter::InitAbilitySystemComponent()
 		if (AbilitySystemComponent)
 		{
 			AbilitySystemComponent->InitAbilityActorInfo(MyPlayerState, this);
-		}
-	}
-}
-
-void AMyPlayerCharacter::InitHUD() const
-{
-	if(const APlayerController* PlayerController = Cast<APlayerController>(GetController()))
-	{
-		if(AFlareForgeHUD* FlareForgeHUD = Cast<AFlareForgeHUD>(PlayerController->GetHUD()))
-		{
-			FlareForgeHUD->Init();
 		}
 	}
 }
