@@ -9,8 +9,11 @@ void UAttributesWidget::BindToAttributes(const AMyPlayerState* MyPlayerState)
 {
 	if(!MyPlayerState)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("MyPlayerState: NULL")));
 		return;
 	}
+	
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("MyPlayerState: Correct")));
 	
 	UAbilitySystemComponent* AbilitySystemComponent = MyPlayerState->GetAbilitySystemComponent();
 	const UMyCharacterAttributeSet* FlareForgeAttributeSet = MyPlayerState->GetAttributeSet();
