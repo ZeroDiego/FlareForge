@@ -46,12 +46,43 @@ void UAttributesWidget::NativeTick(const FGeometry& MyGeometry, float DeltaSecon
 	{
 		const FActiveGameplayEffect& Effect = *It;
 
+		FNumberFormattingOptions FormattingOptions;
+		FormattingOptions.MinimumIntegralDigits = 1;  // Minimum whole digits
+		FormattingOptions.MaximumIntegralDigits = 2; // Maximum whole digits
+		FormattingOptions.MinimumFractionalDigits = 1; // Minimum decimal places
+		FormattingOptions.MaximumFractionalDigits = 1; // Maximum decimal places
+		
 		// Compare the effect's class with the desired class
 		if (Effect.Spec.Def->GetClass() == BasicCooldown)
 		{
 			const float BasicCooldownDuration = AbilitySystemComponent->GetGameplayEffectDuration(Effect.Handle);
 			BasicPercent = GetRemainingEffectTime(AbilitySystemComponent, Effect.Handle) / BasicCooldownDuration;
-			BasicCooldownTime = GetRemainingEffectTime(AbilitySystemComponent, Effect.Handle);
+			const float BasicCooldownTime = GetRemainingEffectTime(AbilitySystemComponent, Effect.Handle);
+			BasicCooldownTimeText = FText::AsNumber(BasicCooldownTime, &FormattingOptions);
+		}
+
+		if (Effect.Spec.Def->GetClass() == HomingCooldown)
+		{
+			const float HomingCooldownDuration = AbilitySystemComponent->GetGameplayEffectDuration(Effect.Handle);
+			HomingPercent = GetRemainingEffectTime(AbilitySystemComponent, Effect.Handle) / HomingCooldownDuration;
+			const float HomingCooldownTime = GetRemainingEffectTime(AbilitySystemComponent, Effect.Handle);
+			HomingCooldownTimeText = FText::AsNumber(HomingCooldownTime, &FormattingOptions);
+		}
+
+		if (Effect.Spec.Def->GetClass() == ReflectCooldown)
+		{
+			const float ReflectCooldownDuration = AbilitySystemComponent->GetGameplayEffectDuration(Effect.Handle);
+			ReflectPercent = GetRemainingEffectTime(AbilitySystemComponent, Effect.Handle) / ReflectCooldownDuration;
+			const float ReflectCooldownTime = GetRemainingEffectTime(AbilitySystemComponent, Effect.Handle);
+			ReflectCooldownTimeText = FText::AsNumber(ReflectCooldownTime, &FormattingOptions);
+		}
+
+		if (Effect.Spec.Def->GetClass() == DashCooldown)
+		{
+			const float DashCooldownDuration = AbilitySystemComponent->GetGameplayEffectDuration(Effect.Handle);
+			DashPercent = GetRemainingEffectTime(AbilitySystemComponent, Effect.Handle) / DashCooldownDuration;
+			const float DashCooldownTime = GetRemainingEffectTime(AbilitySystemComponent, Effect.Handle);
+			DashCooldownTimeText = FText::AsNumber(DashCooldownTime, &FormattingOptions);
 		}
 	}
 }
