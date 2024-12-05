@@ -97,7 +97,7 @@ void AFlareForgePlayerController::SetupInputComponent()
 			EnhancedInputComponent->BindAction(MovementVerticalAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::MovementVertical);
 
 			// Dash Setup
-			EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::Dash);
+			//EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &AFlareForgePlayerController::Dash);
 			
 		}
 		else
@@ -195,30 +195,27 @@ FVector AFlareForgePlayerController::GetAnimationVelocity()
 	return AnimationVelocity;
 }
 
-void AFlareForgePlayerController::Dash()
+void AFlareForgePlayerController::Dash(float DashSpeed)
 {
-	if(DashTimer < UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()))
+	if (GetCharacter())
 	{
-		if (GetCharacter())
+		const FVector MoveDirection = GetCharacter()->GetCharacterMovement()->GetLastInputVector();
+		
+		//double MaxMoveSpeed = GetCharacter()->GetCharacterMovement()->MaxWalkSpeed;
+		FVector DashVector;
+		
+		if(MoveDirection.IsZero())
 		{
-			const FVector MoveDirection = GetCharacter()->GetCharacterMovement()->GetLastInputVector();
-		
-			//double MaxMoveSpeed = GetCharacter()->GetCharacterMovement()->MaxWalkSpeed;
-			FVector DashVector;
-		
-			if(MoveDirection.IsZero())
-			{
-				DashVector = FVector(DashSpeed * GetCharacter()->GetActorForwardVector());
-			}
-			else
-			{
-				DashVector = FVector(DashSpeed * MoveDirection);
-			}
-			
-			GetCharacter()->LaunchCharacter(DashVector, false, false);
-			DashOnServer(DashVector);
-			DashTimer = UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()) + DashCooldown;
+			DashVector = FVector(DashSpeed * GetCharacter()->GetActorForwardVector());
 		}
+		else
+		{
+			DashVector = FVector(DashSpeed * MoveDirection);
+		}
+			
+		GetCharacter()->LaunchCharacter(DashVector, false, false);
+		DashOnServer(DashVector);
+		//DashTimer = UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()) + DashCooldown;
 	}
 	
 }

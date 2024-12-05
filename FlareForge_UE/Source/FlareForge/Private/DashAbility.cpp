@@ -3,6 +3,7 @@
 
 #include "DashAbility.h"
 #include "TopDown//FlareForgePlayerController.h"
+#include "TopDown/FlareForgeCharacter.h"
 #include "GameFramework/Character.h"
 #include "LucasAbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -10,34 +11,51 @@
 
 void UDashAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	
-	// Make the Character Dash
-	if (ACharacter* Character = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))
-	{
-		//Character->SetActorLocation(Character->GetActorLocation() + DashDistance, 1.0, nullptr, ETeleportType::ResetPhysics);
-		
-		//Character->LaunchCharacter(DashDistance, )
-	}
 
 	if (AActor* Actor = GetAvatarActorFromActorInfo())
 	{
-		if (AFlareForgePlayerController* PlayerController = Cast<AFlareForgePlayerController>(Actor))
+		if (APawn* Pawn = Cast<APawn>(Actor))
 		{
-			if (ACharacter* Character = Cast<ACharacter>(PlayerController->GetPawn()))
+			if (AFlareForgePlayerController* PlayerController = Cast<AFlareForgePlayerController>(Pawn->GetController()))
 			{
-				//const FVector SpawnProjectileLocation = Character->GetComponentByClass<UFiringOffset>()->GetComponentLocation();
-				//const FVector CurrentMovingDirection = Character->GetActorRotation().Vector();
-				/*const FVector DashDirection = Character->GetActorRotation().Vector();
-				Character->LaunchCharacter(DashDistance * DashDirection, false, false);*/
-				
-				/*const FVector CurrentMovingDirection = Character->GetCharacterMovement()->GetLastInputVector().GetSafeNormal();
-				double MaxMoveSpeed = Character->GetCharacterMovement()->MaxWalkSpeed;
-				FVector Dash = DashDistance * CurrentMovingDirection * MaxMoveSpeed;
-				//HomingStrikeAbility(SpawnProjectileLocation, CurrentRotation);
-				Character->LaunchCharacter(Dash, false, false);*/
+				PlayerController->Dash(DashSpeed);
 			}
 		}
 	}
+	
+	/*if (AActor* Actor = GetAvatarActorFromActorInfo())
+	{
+		
+		if (AFlareForgePlayerController* PlayerController = Cast<AFlareForgePlayerController>(Actor))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Controller"));
+			if (ACharacter* Character = Cast<ACharacter>(PlayerController->GetPawn()))
+			{
+				//bUseDash = true;
+				UE_LOG(LogTemp, Warning, TEXT("Dash Ability"));
+				PlayerController->Dash();
+				
+				
+				/*const FVector MoveDirection = Character->GetCharacterMovement()->GetLastInputVector();
+		
+				//double MaxMoveSpeed = GetCharacter()->GetCharacterMovement()->MaxWalkSpeed;
+				FVector DashVector;
+		
+				if(MoveDirection.IsZero())
+				{
+					DashVector = FVector(DashSpeed * Character->GetActorForwardVector());
+				}
+				else
+				{
+					DashVector = FVector(DashSpeed * MoveDirection);
+				}
+			
+				Character->LaunchCharacter(DashVector, false, false);
+				//DashOnServer(Character, DashVector);
+				//DashTimer = UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()) + DashCooldown;
+			}
+		}
+	}*/
 
 
 	CommitAbilityCooldown(Handle, ActorInfo, ActivationInfo, true, nullptr);
@@ -47,3 +65,15 @@ void UDashAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 	
 }
+
+/*bool UDashAbility::DashAbilityIsActive() const
+{
+	return bUseDash;
+}*/
+
+
+/*void UDashAbility::DashOnServer_Implementation(ACharacter* Character, const FVector& DashVector) const
+{
+	Character->LaunchCharacter(DashVector, false, false);
+}*/
+
