@@ -42,8 +42,8 @@ public:
 	void RemoveAbilityAtIndex(int32 Index);
 
 	// Transfers SelectedAbilities to the Ability System Component (ASC)
-	UFUNCTION(BlueprintCallable, Category = "Ability")
-	void TransferAbilitiesToASC();
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Ability")
+	void TransferAbilitiesToAbilitySystemComponent();
 	
 	//~IAbilitySystemInterface interface
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;

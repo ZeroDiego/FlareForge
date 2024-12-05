@@ -107,7 +107,7 @@ void AMyPlayerState::RemoveAbilityAtIndex(int32 Index)
 	}
 }
 
-void AMyPlayerState::TransferAbilitiesToASC()
+void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
 {
 	if (!AbilitySystemComponent) return;
 	

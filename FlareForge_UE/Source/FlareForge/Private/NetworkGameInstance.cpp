@@ -16,6 +16,10 @@ TArray<FGameplayAbilitySpec> UNetworkGameInstance::GetGameplayAbilitySpec() cons
 void UNetworkGameInstance::SetSelectedAbilities(TArray<TSubclassOf<UGameplayAbility>> NewSelectedAbilities)
 {
 	SelectedAbilities = NewSelectedAbilities;
+	for (const TSubclassOf<UGameplayAbility> Ability : SelectedAbilities)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("EffectHandle %s"), *Ability->GetName()));
+	}
 }
 
 TSubclassOf<UGameplayAbility> UNetworkGameInstance::GetAbilityAtIndex(const int32 Index) const
