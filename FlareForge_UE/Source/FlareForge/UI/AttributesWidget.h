@@ -34,8 +34,35 @@ protected:
 	float BasicPercent;
 
 	UPROPERTY(BlueprintReadOnly)
-	float BasicCooldownTime;
+	FText BasicCooldownTimeText;
+
+	UPROPERTY(BlueprintReadOnly)
+	float HomingPercent;
+
+	UPROPERTY(BlueprintReadOnly)
+	FText HomingCooldownTimeText;
+
+	UPROPERTY(BlueprintReadOnly)
+	float ReflectPercent;
+
+	UPROPERTY(BlueprintReadOnly)
+	FText ReflectCooldownTimeText;
+
+	UPROPERTY(BlueprintReadOnly)
+	float DashPercent;
+
+	UPROPERTY(BlueprintReadOnly)
+	FText DashCooldownTimeText;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UGameplayEffect> BasicCooldown;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UGameplayEffect> HomingCooldown;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UGameplayEffect> ReflectCooldown;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UGameplayEffect> DashCooldown;
 };
