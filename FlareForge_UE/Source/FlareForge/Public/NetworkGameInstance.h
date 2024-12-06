@@ -20,7 +20,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FGameplayAbilitySpec> GameplayAbilitySpec;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Server, Reliable)
 	void SetGameplayAbilitySpecAtIndex(const FGameplayAbilitySpec NewGameplayAbilitySpec, const int32 AtIndex);
 
 	UFUNCTION(BlueprintCallable)
@@ -29,8 +29,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
 
-	UFUNCTION(BlueprintCallable)
-	void SetSelectedAbilities(TArray<TSubclassOf<UGameplayAbility>> NewSelectedAbilities);
+	UFUNCTION(Server, Reliable)
+	void SetSelectedAbilities(const TArray<TSubclassOf<UGameplayAbility>>& NewSelectedAbilities);
 
 	// Gets an ability from a specific index in SelectedAbilities
 	UFUNCTION(BlueprintCallable)

@@ -30,7 +30,7 @@ void AMyPlayerState::PostInitializeComponents()
 	InitializeAbilities();
 }
 
-void AMyPlayerState::InitializeAbilities()
+void AMyPlayerState::InitializeAbilities_Implementation()
 {
 	if (AbilitySystemComponent && AbilitySystemComponent->IsOwnerActorAuthoritative())
 	{
@@ -75,7 +75,7 @@ UMyCharacterAttributeSet* AMyPlayerState::GetAttributeSet() const
 	return AttributeSet;
 }
 
-void AMyPlayerState::SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility)
+void AMyPlayerState::SetAbilityAtIndex_Implementation(const int32 Index, const TSubclassOf<UGameplayAbility> NewAbility)
 {
 	if (!HasAuthority() || !NewAbility)
 	{
@@ -147,6 +147,8 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
 					if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
 					{
 						NetworkGI->SetGameplayAbilitySpecAtIndex(AbilitySpec, Index);
+						GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Yellow,
+									FString::Printf(TEXT("Transferred Ability: %s"), *AbilityClass->GetName()));
 					}
 				}
 			}
@@ -157,7 +159,7 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
 	{
 		if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
 		{
-			NetworkGI->SetSelectedAbilities(SelectedAbilities);
+			NetworkGI->SetSelectedAbilities(GetSelectedAbilities());
 		}
 	}
 }

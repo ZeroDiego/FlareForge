@@ -3,7 +3,7 @@
 
 #include "NetworkGameInstance.h"
 
-void UNetworkGameInstance::SetGameplayAbilitySpecAtIndex(const FGameplayAbilitySpec NewGameplayAbilitySpec, const int32 AtIndex)
+void UNetworkGameInstance::SetGameplayAbilitySpecAtIndex_Implementation(const FGameplayAbilitySpec NewGameplayAbilitySpec, const int32 AtIndex)
 {
 	GameplayAbilitySpec.Insert(NewGameplayAbilitySpec, AtIndex);
 }
@@ -13,7 +13,7 @@ TArray<FGameplayAbilitySpec> UNetworkGameInstance::GetGameplayAbilitySpec() cons
 	return GameplayAbilitySpec;
 }
 
-void UNetworkGameInstance::SetSelectedAbilities(TArray<TSubclassOf<UGameplayAbility>> NewSelectedAbilities)
+void UNetworkGameInstance::SetSelectedAbilities_Implementation(const TArray<TSubclassOf<UGameplayAbility>>& NewSelectedAbilities)
 {
 	SelectedAbilities = NewSelectedAbilities;
 	for (const TSubclassOf<UGameplayAbility> Ability : SelectedAbilities)

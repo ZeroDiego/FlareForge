@@ -22,7 +22,10 @@ public:
 	AMyPlayerState();
 	
 	virtual void BeginPlay() override;
+
+	UFUNCTION(Server, Reliable)
 	void InitializeAbilities();
+	
 	virtual void PostInitializeComponents() override;
 
 	const TArray<TSubclassOf<UGameplayAbility>>& GetSelectedAbilities() const;
@@ -32,7 +35,7 @@ public:
 	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
 
 	// Adds or sets an ability at a specific index in SelectedAbilities
-	UFUNCTION(BlueprintCallable, Category = "Ability")
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Ability")
 	void SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility);
 	
 	// Gets an ability from a specific index in SelectedAbilities
