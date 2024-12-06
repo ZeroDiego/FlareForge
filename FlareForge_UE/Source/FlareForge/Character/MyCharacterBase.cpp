@@ -29,7 +29,7 @@ UMyCharacterAttributeSet* AMyCharacterBase::GetAttributeSet() const
 	return AttributeSet;
 }
 
-void AMyCharacterBase::GrantSelectedAbilities()
+/*void AMyCharacterBase::GrantSelectedAbilities()
 {
 	AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>();
 	if (MyPlayerState)
@@ -48,7 +48,7 @@ void AMyCharacterBase::GrantSelectedAbilities()
 			}
 		}
 	}
-}
+}*/
 
 void AMyCharacterBase::InitDefaultAttributes() const
 {

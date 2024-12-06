@@ -22,6 +22,8 @@ public:
 	AMyPlayerState();
 	
 	virtual void BeginPlay() override;
+	void InitializeAbilities();
+	virtual void PostInitializeComponents() override;
 
 	const TArray<TSubclassOf<UGameplayAbility>>& GetSelectedAbilities() const;
 	

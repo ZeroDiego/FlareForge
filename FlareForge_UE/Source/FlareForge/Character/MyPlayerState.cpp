@@ -20,28 +20,49 @@ AMyPlayerState::AMyPlayerState()
 void AMyPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	if(const UWorld* World = GetWorld())
+}
+
+void AMyPlayerState::InitializeAbilities()
+{
+	if (AbilitySystemComponent && AbilitySystemComponent->IsOwnerActorAuthoritative())
 	{
-		if (UGameInstance* GameInstance = World->GetGameInstance())
+		if (const UWorld* World = GetWorld())
 		{
-			if (const UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
+			if (UGameInstance* GameInstance = World->GetGameInstance())
 			{
-				for (TArray<FGameplayAbilitySpec> CurrentGameplayAbilitySpec = NetworkGI->GetGameplayAbilitySpec(); const FGameplayAbilitySpec GameplayAbilitySpec : CurrentGameplayAbilitySpec)
+				if (const UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
 				{
-					if (GameplayAbilitySpec.Ability)
+					const TArray<FGameplayAbilitySpec>& AbilitySpecs = NetworkGI->GetGameplayAbilitySpec();
+					for (const FGameplayAbilitySpec& GameplayAbilitySpec : AbilitySpecs)
 					{
-						AbilitySystemComponent->GiveAbility(GameplayAbilitySpec);
+						if (GameplayAbilitySpec.Ability)
+						{
+							// Assign the ability to the AbilitySystemComponent
+							AbilitySystemComponent->GiveAbility(GameplayAbilitySpec);
+
+							// Debug message
+							if (GEngine)
+							{
+								GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow,
+									FString::Printf(TEXT("Assigned Ability: %s"), *GameplayAbilitySpec.Ability->GetName()));
+							}
+						}
 					}
 
-					if (GEngine)
-					{
-						GEngine->AddOnScreenDebugMessage(-1, 150.0f, FColor::Yellow, FString::Printf(TEXT("BeginPlay: %s"), *GameplayAbilitySpec.Ability->GetName()));
-					}
+					// Finalize initialization
+					AbilitySystemComponent->InitAbilityActorInfo(this, this);
 				}
 			}
 		}
 	}
+}
+
+void AMyPlayerState::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	// Ensure Ability System is initialized after all components are ready
+	InitializeAbilities();
 }
 
 UAbilitySystemComponent* AMyPlayerState::GetAbilitySystemComponent() const
@@ -145,3 +166,4 @@ const TArray<TSubclassOf<UGameplayAbility>>& AMyPlayerState::GetSelectedAbilitie
 {
 	return SelectedAbilities;
 }
+
