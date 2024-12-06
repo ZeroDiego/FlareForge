@@ -29,7 +29,7 @@ void UAttributesWidget::BindToAttributes(const AMyPlayerState* MyPlayerState)
 	});
 }
 
-void UAttributesWidget::NativeTick(const FGeometry& MyGeometry, float DeltaSeconds)
+void UAttributesWidget::NativeTick(const FGeometry& MyGeometry, const float DeltaSeconds)
 {
 	Super::NativeTick(MyGeometry, DeltaSeconds);
 
@@ -39,8 +39,8 @@ void UAttributesWidget::NativeTick(const FGeometry& MyGeometry, float DeltaSecon
 	{
 		return;
 	}
-	
-	UAbilitySystemComponent* AbilitySystemComponent = MyPlayerState->GetAbilitySystemComponent();
+
+	const UAbilitySystemComponent* AbilitySystemComponent = MyPlayerState->GetAbilitySystemComponent();
 
 	const FActiveGameplayEffectsContainer& ActiveEffects = AbilitySystemComponent->GetActiveGameplayEffects();
 	
@@ -90,7 +90,7 @@ void UAttributesWidget::NativeTick(const FGeometry& MyGeometry, float DeltaSecon
 	}
 }
 
-float UAttributesWidget::GetRemainingEffectTime(UAbilitySystemComponent* AbilitySystemComponent, FActiveGameplayEffectHandle EffectHandle)
+float UAttributesWidget::GetRemainingEffectTime(const UAbilitySystemComponent* AbilitySystemComponent, const FActiveGameplayEffectHandle EffectHandle)
 {
 	if (!AbilitySystemComponent)
 	{
@@ -98,17 +98,14 @@ float UAttributesWidget::GetRemainingEffectTime(UAbilitySystemComponent* Ability
 		return -1.0f;
 	}
 
-	const FActiveGameplayEffect* ActiveEffect = AbilitySystemComponent->GetActiveGameplayEffect(EffectHandle);
-
-	if (ActiveEffect)
+	if (const FActiveGameplayEffect* ActiveEffect = AbilitySystemComponent->GetActiveGameplayEffect(EffectHandle))
 	{
 		const float CurrentTime = AbilitySystemComponent->GetWorld()->GetTimeSeconds();
 		const float EffectStartTime = ActiveEffect->StartWorldTime;
-		const float EffectDuration = ActiveEffect->Spec.GetDuration();
 
-		if (EffectDuration > 0.0f) // Check if the effect has a finite duration
+		if (const float EffectDuration = ActiveEffect->Spec.GetDuration(); EffectDuration > 0.0f) // Check if the effect has a finite duration
 		{
-			float RemainingTime = (EffectStartTime + EffectDuration) - CurrentTime;
+			const float RemainingTime = (EffectStartTime + EffectDuration) - CurrentTime;
 			return FMath::Max(RemainingTime, 0.0f); // Ensure it's not negative
 		}
 		else
