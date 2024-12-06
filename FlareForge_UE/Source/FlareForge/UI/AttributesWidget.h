@@ -18,7 +18,7 @@ class FLAREFORGE_API UAttributesWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void BindToAttributes(const AMyPlayerState* MyPlayerState);
 
 	float GetRemainingEffectTime(UAbilitySystemComponent* AbilitySystemComponent, FActiveGameplayEffectHandle EffectHandle);
