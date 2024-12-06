@@ -22,6 +22,14 @@ void AMyPlayerState::BeginPlay()
 	Super::BeginPlay();
 }
 
+void AMyPlayerState::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	// Ensure Ability System is initialized after all components are ready
+	InitializeAbilities();
+}
+
 void AMyPlayerState::InitializeAbilities()
 {
 	if (AbilitySystemComponent && AbilitySystemComponent->IsOwnerActorAuthoritative())
@@ -55,14 +63,6 @@ void AMyPlayerState::InitializeAbilities()
 			}
 		}
 	}
-}
-
-void AMyPlayerState::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
-	// Ensure Ability System is initialized after all components are ready
-	InitializeAbilities();
 }
 
 UAbilitySystemComponent* AMyPlayerState::GetAbilitySystemComponent() const
