@@ -29,26 +29,26 @@ UMyCharacterAttributeSet* AMyCharacterBase::GetAttributeSet() const
 	return AttributeSet;
 }
 
-/*void AMyCharacterBase::GrantSelectedAbilities()
+void AMyCharacterBase::InitAbilitySystemComponent()
 {
-	AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>();
-	if (MyPlayerState)
+	if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>())
 	{
-		UAbilitySystemComponent* ASC = MyPlayerState->GetAbilitySystemComponent();
-		if (ASC)
+		AbilitySystemComponent = Cast<ULucasAbilitySystemComponent>(MyPlayerState->GetAbilitySystemComponent());
+		if (!AbilitySystemComponent)
 		{
-			const TArray<TSubclassOf<UGameplayAbility>>& SelectedAbilities = MyPlayerState->GetSelectedAbilities();
-			for (TSubclassOf<UGameplayAbility> AbilityClass : SelectedAbilities)
-			{
-				if (AbilityClass)
-				{
-					FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
-					ASC->GiveAbility(AbilitySpec);
-				}
-			}
+			UE_LOG(LogTemp, Error, TEXT("Failed to cast AbilitySystemComponent to ULucasAbilitySystemComponent"));
+			return;
+		}
+
+		AttributeSet = MyPlayerState->GetAttributeSet();
+
+		// Initialize ASC with character as avatar
+		if (AbilitySystemComponent)
+		{
+			AbilitySystemComponent->InitAbilityActorInfo(MyPlayerState, this);
 		}
 	}
-}*/
+}
 
 void AMyCharacterBase::InitDefaultAttributes() const
 {
@@ -63,4 +63,5 @@ void AMyCharacterBase::InitDefaultAttributes() const
 	{
 		AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());			
 	}
+	
 }

@@ -70,27 +70,6 @@ void AMyPlayerCharacter::OnRep_PlayerState()
 	InitDefaultAttributes();
 }
 
-void AMyPlayerCharacter::InitAbilitySystemComponent()
-{
-	if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>())
-	{
-		AbilitySystemComponent = Cast<ULucasAbilitySystemComponent>(MyPlayerState->GetAbilitySystemComponent());
-		if (!AbilitySystemComponent)
-		{
-			UE_LOG(LogTemp, Error, TEXT("Failed to cast AbilitySystemComponent to ULucasAbilitySystemComponent"));
-			return;
-		}
-
-		AttributeSet = MyPlayerState->GetAttributeSet();
-
-		// Initialize ASC with character as avatar
-		if (AbilitySystemComponent)
-		{
-			AbilitySystemComponent->InitAbilityActorInfo(MyPlayerState, this);
-		}
-	}
-}
-
 void AMyPlayerCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);

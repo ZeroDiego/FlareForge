@@ -22,13 +22,14 @@ public:
 	//~IAbilitySystemInterface interface
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	//~End of IAbilitySystemInterface interface
+	
 	virtual UMyCharacterAttributeSet* GetAttributeSet() const;
 	
-	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability", meta = (ExposeOnSpawn=true))
-	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities; */
-	
 protected:
-	void GrantSelectedAbilities();
+
+	// Initialize ASC
+	virtual void InitAbilitySystemComponent();
+	
 	void InitDefaultAttributes() const;
 
 	UPROPERTY()
