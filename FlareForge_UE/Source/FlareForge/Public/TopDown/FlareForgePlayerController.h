@@ -45,6 +45,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector AnimationVelocity;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float LerpAlphaValue = 0.05f;
+
 	/** FX Class that we will spawn when clicking */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UNiagaraSystem* FXCursor;
@@ -140,4 +143,8 @@ private:
 	FVector2D InputVector = FVector2D::ZeroVector;
 	
 	float DashTimer = 0.0f;
+
+	float CurrentLerpValueForward = 0.0f;
+	float CurrentLerpValueRight = 0.0f;
+	
 };
