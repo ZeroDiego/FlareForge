@@ -188,8 +188,14 @@ FVector AFlareForgePlayerController::GetAnimationVelocity()
 	
 	float ForwardVelocity = FVector::DotProduct(NormalizedVelocity, CurrentForwardVector);
 	float RightVelocity = FVector::DotProduct(NormalizedVelocity, CurrentRightVector);
+
+	float DeltaTime = GetWorld()->GetDeltaSeconds();
+
+	//float Alpha = 0.05f;
+	CurrentLerpValueForward = FMath::Lerp(CurrentLerpValueForward, ForwardVelocity, LerpAlphaValue * DeltaTime);
+	CurrentLerpValueRight = FMath::Lerp(CurrentLerpValueRight, RightVelocity, LerpAlphaValue * DeltaTime);
 	
-	AnimationVelocity = FVector(ForwardVelocity, RightVelocity, 0.0f);
+	AnimationVelocity = FVector(CurrentLerpValueForward, CurrentLerpValueRight, 0.0f);
 	//UE_LOG(LogTemp, Warning, TEXT("Vector: %s"), *AnimationVelocity.ToString());
 	
 	return AnimationVelocity;

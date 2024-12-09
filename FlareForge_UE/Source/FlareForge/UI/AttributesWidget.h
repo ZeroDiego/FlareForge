@@ -21,7 +21,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void BindToAttributes(const AMyPlayerState* MyPlayerState);
 
-	float GetRemainingEffectTime(UAbilitySystemComponent* AbilitySystemComponent, FActiveGameplayEffectHandle EffectHandle);
+	static float GetRemainingEffectTime(const UAbilitySystemComponent* AbilitySystemComponent, FActiveGameplayEffectHandle EffectHandle);
 	
 	// Called every frame.
 	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaSeconds) override;
