@@ -194,7 +194,6 @@ FVector AFlareForgePlayerController::GetAnimationVelocity()
 	//float Alpha = 0.05f;
 	CurrentLerpValueForward = FMath::Lerp(CurrentLerpValueForward, ForwardVelocity, LerpAlphaValue * DeltaTime);
 	CurrentLerpValueRight = FMath::Lerp(CurrentLerpValueRight, RightVelocity, LerpAlphaValue * DeltaTime);
-	UE_LOG(LogTemp, Warning, TEXT("Lerpforward: %f"), CurrentLerpValueForward);
 	
 	AnimationVelocity = FVector(CurrentLerpValueForward, CurrentLerpValueRight, 0.0f);
 	//UE_LOG(LogTemp, Warning, TEXT("Vector: %s"), *AnimationVelocity.ToString());
