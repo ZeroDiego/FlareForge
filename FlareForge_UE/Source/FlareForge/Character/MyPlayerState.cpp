@@ -5,6 +5,7 @@
 #include "LucasAbilitySystemComponent.h"
 #include "MyCharacterAttributeSet.h"
 #include "NetworkGameInstance.h"
+#include "Net/UnrealNetwork.h"
 
 
 AMyPlayerState::AMyPlayerState()
@@ -169,5 +170,10 @@ const TArray<TSubclassOf<UGameplayAbility>>& AMyPlayerState::GetSelectedAbilitie
 	return SelectedAbilities;
 }
 
+void AMyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AMyPlayerState, IsMelee);
+}
 
 

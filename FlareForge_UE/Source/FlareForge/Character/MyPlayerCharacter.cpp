@@ -68,6 +68,23 @@ void AMyPlayerCharacter::OnRep_PlayerState()
 	
 	InitAbilitySystemComponent();
 	InitDefaultAttributes();
+
+	// Ensure PlayerState is valid and castable to MyPlayerState
+	AMyPlayerState* MyPlayerState = Cast<AMyPlayerState>(PlayerState);
+	if (MyPlayerState)
+	{
+		// Check if IsMelee is true
+		if (MyPlayerState->IsMelee)
+		{
+			UE_LOG(LogTemp, Log, TEXT("IsMelee is true!"));
+			// Perform melee-specific logic here
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("IsMelee is false."));
+		}
+	}
+}
 }
 
 void AMyPlayerCharacter::Tick(float DeltaSeconds)

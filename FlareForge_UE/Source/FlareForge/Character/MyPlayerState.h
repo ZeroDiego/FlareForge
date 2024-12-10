@@ -55,6 +55,12 @@ public:
 	//~End of IAbilitySystemInterface interface
 	virtual UMyCharacterAttributeSet* GetAttributeSet() const;
 
+	UPROPERTY(ReplicatedUsing = OnRep_IsMelee)
+	bool IsMelee;
+
+	UFUNCTION()
+	void OnRep_IsMelee();
+	
 protected:	
 	UPROPERTY()
 	TObjectPtr<ULucasAbilitySystemComponent> AbilitySystemComponent;

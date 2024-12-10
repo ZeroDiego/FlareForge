@@ -49,10 +49,10 @@ void UMyCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMo
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
 	}
 
-	if(Data.EvaluatedData.Attribute == GetArmorAttribute())
+	/*if(Data.EvaluatedData.Attribute == GetArmorAttribute())
 	{
 		SetHealth(FMath::Clamp(GetArmor(), 0.f, GetMaxArmor()));
-	}
+	}*/
 }
 
 void UMyCharacterAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
