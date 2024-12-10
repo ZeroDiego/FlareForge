@@ -59,7 +59,6 @@ void AMyPlayerCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 	    
 	InitAbilitySystemComponent();
-	GiveDefaultAbilities();
 	InitDefaultAttributes();
 }
 
@@ -68,18 +67,7 @@ void AMyPlayerCharacter::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 	
 	InitAbilitySystemComponent();
-	GiveDefaultAbilities();
 	InitDefaultAttributes();
-}
-
-void AMyPlayerCharacter::InitAbilitySystemComponent()
-{
-	AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>();
-	check(MyPlayerState);
-	AbilitySystemComponent =  CastChecked<ULucasAbilitySystemComponent>(
-		MyPlayerState->GetAbilitySystemComponent());
-	AbilitySystemComponent->InitAbilityActorInfo(MyPlayerState, this);
-	AttributeSet = MyPlayerState->GetAttributeSet();
 }
 
 void AMyPlayerCharacter::Tick(float DeltaSeconds)

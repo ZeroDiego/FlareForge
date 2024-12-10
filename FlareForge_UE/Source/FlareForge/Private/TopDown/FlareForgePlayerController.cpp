@@ -188,9 +188,32 @@ FVector AFlareForgePlayerController::GetAnimationVelocity()
 	
 	float ForwardVelocity = FVector::DotProduct(NormalizedVelocity, CurrentForwardVector);
 	float RightVelocity = FVector::DotProduct(NormalizedVelocity, CurrentRightVector);
+
+	float DeltaTime = GetWorld()->GetDeltaSeconds();
+
+	// Lerp with different values if character is moving forward or backwards
+	if(ForwardVelocity >= 0.0f)
+	{
+		CurrentLerpValueForward = FMath::Lerp(CurrentLerpValueForward, ForwardVelocity, LerpAlphaValueForward * DeltaTime);
+	}
+	else if (ForwardVelocity < 0.0f)
+	{
+		CurrentLerpValueForward = FMath::Lerp(CurrentLerpValueForward, ForwardVelocity, LerpAlphaValueBackward * DeltaTime);
+	}
+
+	// Lerp with different values if character is moving left or right
+	if(RightVelocity >= 0.0f)
+	{
+		CurrentLerpValueRight = FMath::Lerp(CurrentLerpValueRight, RightVelocity, LerpAlphaValueRight * DeltaTime);
+	}
+	else if(RightVelocity < 0.0f)
+	{
+		CurrentLerpValueRight = FMath::Lerp(CurrentLerpValueRight, RightVelocity, LerpAlphaValueLeft * DeltaTime);
+	}
+	//CurrentLerpValueForward = FMath::Lerp(CurrentLerpValueForward, ForwardVelocity, LerpAlphaValueForward * DeltaTime);
+	//CurrentLerpValueRight = FMath::Lerp(CurrentLerpValueRight, RightVelocity, LerpAlphaValueRight * DeltaTime);
 	
-	AnimationVelocity = FVector(ForwardVelocity, RightVelocity, 0.0f);
-	//UE_LOG(LogTemp, Warning, TEXT("Vector: %s"), *AnimationVelocity.ToString());
+	AnimationVelocity = FVector(CurrentLerpValueForward, CurrentLerpValueRight, 0.0f);
 	
 	return AnimationVelocity;
 }
