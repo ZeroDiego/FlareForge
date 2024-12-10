@@ -9,6 +9,7 @@
 UMyCharacterAttributeSet::UMyCharacterAttributeSet()
 {
 	InitHealth(80.f);
+	InitArmor(1.f);
 }
 
 void UMyCharacterAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -31,6 +32,11 @@ void UMyCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attr
 	if(Attribute == GetHealthAttribute())
 	{
 		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxHealth());
+	}
+	
+	if(Attribute == GetArmorAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxArmor());
 	}
 }
 
