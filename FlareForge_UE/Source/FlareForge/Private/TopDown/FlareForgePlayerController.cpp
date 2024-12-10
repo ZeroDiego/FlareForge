@@ -2,6 +2,7 @@
 
 #include "TopDown/FlareForgePlayerController.h"
 #include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
 #include "TopDown/FlareForgeCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
@@ -239,6 +240,7 @@ void AFlareForgePlayerController::Dash()
 			}
 			
 			GetCharacter()->LaunchCharacter(DashVector, false, false);
+			PlayDashAnimation();
 			DashOnServer(DashVector);
 			DashTimer = UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()) + DashCooldown;
 		}
@@ -283,8 +285,11 @@ void AFlareForgePlayerController::RotatePlayerTowardsMouse()
             FRotator NewRot = FRotator(CharRotation.Pitch, TargetRotation.Yaw, CharRotation.Roll);
 
             // Set the new rotation
-            CurrentChar->SetActorRotation(NewRot);
-        	RotatePlayerOnServer(NewRot);
+        	if(bShouldRotateTowardsMouse)
+        	{
+        		CurrentChar->SetActorRotation(NewRot);
+        		RotatePlayerOnServer(NewRot);	
+        	}
         }
     }
 }
@@ -305,7 +310,7 @@ void AFlareForgePlayerController::RotatePlayerTowardsJoystick(const FInputAction
 
 void AFlareForgePlayerController::RotatePlayerOnServer_Implementation(const FRotator PlayerRotation)
 {
-	this->GetCharacter()->SetActorRotation(PlayerRotation);
+	this->GetCharacter()->SetActorRotation(PlayerRotation);	
 }
 
 /*

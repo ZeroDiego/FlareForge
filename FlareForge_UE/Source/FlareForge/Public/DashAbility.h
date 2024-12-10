@@ -23,6 +23,9 @@ public:
 	//Override the ActivateAbility method
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UGameplayEffect> AnimDelay_Dash_Blueprint;
+	
 	/*UFUNCTION(Server, Reliable)
 	void CallDashOnServer(AFlareForgePlayerController* FlareForgePlayerController);*/
 	
