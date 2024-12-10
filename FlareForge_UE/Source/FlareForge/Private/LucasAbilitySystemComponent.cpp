@@ -6,7 +6,7 @@
 ULucasAbilitySystemComponent::ULucasAbilitySystemComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-	SetIsReplicated(true);
+	SetIsReplicatedByDefault(true);
 }
 
 void ULucasAbilitySystemComponent::BeginPlay()
