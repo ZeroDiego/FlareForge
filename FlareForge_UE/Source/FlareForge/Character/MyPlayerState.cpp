@@ -76,6 +76,11 @@ UMyCharacterAttributeSet* AMyPlayerState::GetAttributeSet() const
 	return AttributeSet;
 }
 
+void AMyPlayerState::OnRep_IsMelee()
+{
+	UE_LOG(LogTemp, Log, TEXT("OnRep_IsMelee called. IsMelee: %s"), IsMelee ? TEXT("true") : TEXT("false"));
+}
+
 void AMyPlayerState::SetAbilityAtIndex_Implementation(const int32 Index, const TSubclassOf<UGameplayAbility> NewAbility)
 {
 	if (!HasAuthority() || !NewAbility)

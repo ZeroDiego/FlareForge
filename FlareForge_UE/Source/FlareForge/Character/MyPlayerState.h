@@ -55,7 +55,7 @@ public:
 	//~End of IAbilitySystemInterface interface
 	virtual UMyCharacterAttributeSet* GetAttributeSet() const;
 
-	UPROPERTY(ReplicatedUsing = OnRep_IsMelee)
+	UPROPERTY(ReplicatedUsing = OnRep_IsMelee, BlueprintReadWrite, Category = "Ability")
 	bool IsMelee;
 
 	UFUNCTION()

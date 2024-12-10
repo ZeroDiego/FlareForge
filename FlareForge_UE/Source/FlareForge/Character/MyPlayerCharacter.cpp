@@ -70,10 +70,8 @@ void AMyPlayerCharacter::OnRep_PlayerState()
 	InitDefaultAttributes();
 
 	// Ensure PlayerState is valid and castable to MyPlayerState
-	AMyPlayerState* MyPlayerState = Cast<AMyPlayerState>(PlayerState);
-	if (MyPlayerState)
+	if (AMyPlayerState* MyPlayerState = Cast<AMyPlayerState>(GetPlayerState()))
 	{
-		// Check if IsMelee is true
 		if (MyPlayerState->IsMelee)
 		{
 			UE_LOG(LogTemp, Log, TEXT("IsMelee is true!"));
@@ -84,7 +82,10 @@ void AMyPlayerCharacter::OnRep_PlayerState()
 			UE_LOG(LogTemp, Log, TEXT("IsMelee is false."));
 		}
 	}
-}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PlayerState is not valid or not castable to AMyPlayerState."));
+	}
 }
 
 void AMyPlayerCharacter::Tick(float DeltaSeconds)
