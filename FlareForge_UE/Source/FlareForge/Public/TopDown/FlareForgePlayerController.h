@@ -46,7 +46,17 @@ public:
 	FVector AnimationVelocity;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float LerpAlphaValue = 0.05f;
+	float LerpAlphaValueForward = 0.05f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float LerpAlphaValueBackward = 0.05f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float LerpAlphaValueRight = 0.05f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float LerpAlphaValueLeft = 0.05f;
+
 
 	/** FX Class that we will spawn when clicking */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
