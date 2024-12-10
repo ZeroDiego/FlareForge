@@ -14,6 +14,7 @@
 #include "FlareForge/UI/FlareForgeHUD.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -29,10 +30,12 @@ AFlareForgePlayerController::AFlareForgePlayerController()
 	//InstanceCounter++;
 	
 	bShowMouseCursor = true;
+	bShouldRotateTowardsMouse = true;
 	DefaultMouseCursor = EMouseCursor::Default;
 	CachedDestination = FVector::ZeroVector;
 	FollowTime = 0.f;
-
+	bReplicates = true;
+	
 }
 
 void AFlareForgePlayerController::BeginPlay()
@@ -219,6 +222,13 @@ FVector AFlareForgePlayerController::GetAnimationVelocity()
 	return AnimationVelocity;
 }
 
+void AFlareForgePlayerController::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AFlareForgePlayerController, bShouldRotateTowardsMouse);
+}
+
 void AFlareForgePlayerController::Dash()
 {
 	if(DashTimer < UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()))
@@ -239,7 +249,7 @@ void AFlareForgePlayerController::Dash()
 				DashVector = FVector(DashSpeed * MoveDirection);
 			}
 			
-			GetCharacter()->LaunchCharacter(DashVector, false, false);
+			//GetCharacter()->LaunchCharacter(DashVector, false, false);
 			PlayDashAnimation();
 			DashOnServer(DashVector);
 			DashTimer = UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()) + DashCooldown;
@@ -251,6 +261,7 @@ void AFlareForgePlayerController::Dash()
 void AFlareForgePlayerController::DashOnServer_Implementation(const FVector& DashVector) const
 {
 	GetCharacter()->LaunchCharacter(DashVector, false, false);
+	//PlayDashAnimation();
 }
 
 void AFlareForgePlayerController::RotatePlayerTowardsMouse()
