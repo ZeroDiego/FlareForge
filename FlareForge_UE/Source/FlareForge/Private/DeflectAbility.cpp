@@ -14,7 +14,6 @@ void UDeflectAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, c
 		if (const ACharacter* Character = Cast<ACharacter>(Actor))
 		{
 			const FVector SpawnDeflectShieldLocation = Character->GetComponentByClass<UFiringOffset>()->GetComponentLocation();
-			UE_LOG(LogTemp, Warning, TEXT("forward vector: %s"), *Character->GetActorForwardVector().ToString());
 			//const FVector CurrentVector = Character->GetActorForwardVector() * 2;
 			const FRotator CurrentRotation = Character->GetActorRotation();
 			//FName PlayerName = Character->GetFName();
