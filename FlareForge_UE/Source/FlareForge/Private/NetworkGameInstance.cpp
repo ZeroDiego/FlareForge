@@ -2,6 +2,7 @@
 
 
 #include "NetworkGameInstance.h"
+#include "Engine/Engine.h"
 
 void UNetworkGameInstance::SetGameplayAbilitySpecAtIndex_Implementation(const FGameplayAbilitySpec NewGameplayAbilitySpec, const int32 AtIndex)
 {
@@ -45,18 +46,18 @@ bool UNetworkGameInstance::GetIsMelee() const
 	return bIsMelee;
 }
 
-void UNetworkGameInstance::AddPlayerState(const FString& PlayerID, AMyPlayerState* PlayerState)
+void UNetworkGameInstance::AddPlayerState(const FString& UniquePlayerID, AMyPlayerState* PlayerState)
 {
-	if (!PlayerStatesMap.Contains(PlayerID))
+	if (!PlayerStatesMap.Contains(UniquePlayerID))
 	{
-		PlayerStatesMap.Add(PlayerID, PlayerState);
-		UE_LOG(LogTemp, Log, TEXT("Added Player %s to GameInstance"), *PlayerID);
+		PlayerStatesMap.Add(UniquePlayerID, PlayerState);
+		UE_LOG(LogTemp, Log, TEXT("Added Player %s to GameInstance"), *UniquePlayerID);
 	}
 }
 
-TArray<TSubclassOf<UGameplayAbility>> UNetworkGameInstance::GetAbilitiesForPlayer(const FString& PlayerID) const
+TArray<TSubclassOf<UGameplayAbility>> UNetworkGameInstance::GetAbilitiesForPlayer(const FString& UniquePlayerID) const
 {
-	if (AMyPlayerState* const* FoundPlayerState = PlayerStatesMap.Find(PlayerID))
+	if (AMyPlayerState* const* FoundPlayerState = PlayerStatesMap.Find(UniquePlayerID))
 	{
 		// Dereference FoundPlayerState to get the actual AMyPlayerState*
 		const AMyPlayerState* PlayerState = *FoundPlayerState;
@@ -68,13 +69,41 @@ TArray<TSubclassOf<UGameplayAbility>> UNetworkGameInstance::GetAbilitiesForPlaye
 	return TArray<TSubclassOf<UGameplayAbility>>();
 }
 
-TSubclassOf<UGameplayAbility> UNetworkGameInstance::GetAbilityAtIndexForPlayer(const FString& PlayerID, const int32 Index) const
+TSubclassOf<UGameplayAbility> UNetworkGameInstance::GetAbilityAtIndexForPlayer(const FString& UniquePlayerID, const int32 Index) const
 {
-	if (AMyPlayerState* const* FoundPlayerState = PlayerStatesMap.Find(PlayerID))
+	if (AMyPlayerState* const* FoundPlayerState = PlayerStatesMap.Find(UniquePlayerID))
 	{
 		const AMyPlayerState* PlayerState = *FoundPlayerState;
 		return PlayerState->GetAbilityAtIndex(Index);
 	}
 
 	return nullptr;
+}
+
+FString UNetworkGameInstance::GenerateUniquePlayerId()
+{
+	FString NewId;
+	do
+	{
+		NewId = FGuid::NewGuid().ToString();
+	} while (UsedPlayerIds.Contains(NewId));
+
+	UsedPlayerIds.Add(NewId);
+	return NewId;
+	
+	// Print debug message if GEngine is available
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,
+			FString::Printf(TEXT("Assigned Unique ID: %s"), *NewId));
+	}
+}
+
+void UNetworkGameInstance::AssignPlayerId(APlayerController* PlayerController)
+{
+	if (AMyPlayerState* PS = Cast<AMyPlayerState>(PlayerController->PlayerState))
+	{
+		FString PlayerID = GenerateUniquePlayerId();
+		PS->SetUniquePlayerId(PlayerID);
+	}
 }

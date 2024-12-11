@@ -47,15 +47,19 @@ public:
 	bool GetIsMelee() const;
 
 	// Add a PlayerState to the map
-	void AddPlayerState(const FString& PlayerID, AMyPlayerState* PlayerState);
+	void AddPlayerState(const FString& UniquePlayerID, AMyPlayerState* PlayerState);
 
 	// Get abilities for a specific player by ID
-	TArray<TSubclassOf<UGameplayAbility>> GetAbilitiesForPlayer(const FString& PlayerID) const;
+	TArray<TSubclassOf<UGameplayAbility>> GetAbilitiesForPlayer(const FString& UniquePlayerID) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Player Settings")
-	TSubclassOf<UGameplayAbility> GetAbilityAtIndexForPlayer(const FString& PlayerID, int32 Index) const;
+	TSubclassOf<UGameplayAbility> GetAbilityAtIndexForPlayer(const FString& UniquePlayerID, int32 Index) const;
+
+	FString GenerateUniquePlayerId();
+	void AssignPlayerId(APlayerController* PlayerController);
 
 private:
 	// Map of Player IDs (e.g., C0, C1) to PlayerStates
 	TMap<FString, AMyPlayerState*> PlayerStatesMap;
+	TSet<FString> UsedPlayerIds;
 };
