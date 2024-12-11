@@ -44,4 +44,16 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player Settings")
 	bool GetIsMelee() const;
+
+	// Add this to UNetworkGameInstance
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TMap<FString, TArray<TSubclassOf<UGameplayAbility>>> PlayerAbilities;
+
+	// Function to set abilities for a specific player
+	UFUNCTION(Server, Reliable)
+	void SetPlayerAbilities(const FString& PlayerId, const TArray<TSubclassOf<UGameplayAbility>>& Abilities);
+
+	// Function to get abilities for a specific player
+	UFUNCTION(BlueprintCallable)
+	TArray<TSubclassOf<UGameplayAbility>> GetPlayerAbilities(const FString& PlayerId) const;
 };

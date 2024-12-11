@@ -12,8 +12,15 @@ class AFlareForgeGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
+private:
+	TSet<FString> UsedPlayerIds; // Track used IDs
+	
 public:
 	AFlareForgeGameMode();
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+
+protected:
+	FString GenerateUniquePlayerId();
 };
 
 
