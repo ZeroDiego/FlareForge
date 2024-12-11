@@ -57,7 +57,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float LerpAlphaValueLeft = 0.05f;
 
-
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
+	bool bShouldRotateTowardsMouse = true;
+	
 	/** FX Class that we will spawn when clicking */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UNiagaraSystem* FXCursor;
@@ -89,7 +91,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* ControllerRotationAction;
-
+	
 	// Dash functions
 	void Dash();
 
@@ -98,6 +100,11 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FVector GetAnimationVelocity();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayDashAnimation() const;
+
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 	// Keeps track of the number of instances that
 	// have been created of this class thus far
