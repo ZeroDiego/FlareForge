@@ -220,5 +220,12 @@ void AMyPlayerState::SetIsMeleeFalse()
 	}
 }
 
+void AMyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// Replicate SelectedAbilities array
+	DOREPLIFETIME(AMyPlayerState, SelectedAbilities);
+}
 
 

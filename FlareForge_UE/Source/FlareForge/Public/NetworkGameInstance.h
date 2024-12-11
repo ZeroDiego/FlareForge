@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AdvancedFriendsGameInstance.h"
 #include "LucasAbilitySystemComponent.h"
+#include "FlareForge/Character/MyPlayerState.h"
 #include "NetworkGameInstance.generated.h"
 
 /**
@@ -44,4 +45,17 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player Settings")
 	bool GetIsMelee() const;
+
+	// Add a PlayerState to the map
+	void AddPlayerState(const FString& PlayerID, AMyPlayerState* PlayerState);
+
+	// Get abilities for a specific player by ID
+	TArray<TSubclassOf<UGameplayAbility>> GetAbilitiesForPlayer(const FString& PlayerID) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Player Settings")
+	TSubclassOf<UGameplayAbility> GetAbilityAtIndexForPlayer(const FString& PlayerID, int32 Index) const;
+
+private:
+	// Map of Player IDs (e.g., C0, C1) to PlayerStates
+	TMap<FString, AMyPlayerState*> PlayerStatesMap;
 };

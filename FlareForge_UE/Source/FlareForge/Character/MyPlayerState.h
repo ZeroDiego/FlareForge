@@ -29,10 +29,6 @@ public:
 	virtual void PostInitializeComponents() override;
 
 	const TArray<TSubclassOf<UGameplayAbility>>& GetSelectedAbilities() const;
-	
-	// Pending abilities to be granted to the player
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
-	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
 
 	// Adds or sets an ability at a specific index in SelectedAbilities
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Ability")
@@ -70,4 +66,10 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UMyCharacterAttributeSet> AttributeSet;
+
+	// Replicated list of selected abilities
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Ability")
+	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

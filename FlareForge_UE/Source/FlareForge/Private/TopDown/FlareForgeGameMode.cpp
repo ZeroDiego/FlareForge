@@ -2,6 +2,7 @@
 
 #include "TopDown/FlareForgeGameMode.h"
 
+#include "NetworkGameInstance.h"
 #include "FlareForge/Character/MyPlayerState.h"
 #include "TopDown/FlareForgePlayerController.h"
 #include "FlareForge/Character/MyPlayerState.h"
@@ -39,5 +40,29 @@ AFlareForgeGameMode::AFlareForgeGameMode()
 	if(PlayerControllerBPClass.Class != NULL)
 	{
 		PlayerControllerClass = PlayerControllerBPClass.Class;
+	}
+}
+
+void AFlareForgeGameMode::PostLogin(APlayerController* NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+
+	if (AMyPlayerState* PlayerState = Cast<AMyPlayerState>(NewPlayer->PlayerState))
+	{
+		FString PlayerID = FString::Printf(TEXT("C%d"), CurrentPlayerIndex++);
+        
+		if (UNetworkGameInstance* GI = GetGameInstance<UNetworkGameInstance>())
+		{
+			GI->AddPlayerState(PlayerID, PlayerState);
+		}
+
+		UE_LOG(LogTemp, Log, TEXT("Assigned ID %s to player"), *PlayerID);
+        
+		// Debug message for verification
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,
+				FString::Printf(TEXT("Assigned ID %s"), *PlayerID));
+		}
 	}
 }

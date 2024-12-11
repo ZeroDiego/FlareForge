@@ -14,6 +14,12 @@ class AFlareForgeGameMode : public AGameModeBase
 
 public:
 	AFlareForgeGameMode();
+
+protected:
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+
+private:
+	int32 CurrentPlayerIndex = 0; // Tracks player indices (e.g., C0, C1)
 };
 
 
