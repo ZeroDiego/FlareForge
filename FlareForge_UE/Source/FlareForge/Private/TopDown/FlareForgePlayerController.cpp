@@ -246,7 +246,8 @@ void AFlareForgePlayerController::Dash()
 			}
 			else
 			{
-				DashVector = FVector(DashSpeed * MoveDirection);
+				// GetSafeNormal makes diagonal movement the same as vertical and horizontal
+				DashVector = FVector(DashSpeed * MoveDirection.GetSafeNormal());
 			}
 			
 			//GetCharacter()->LaunchCharacter(DashVector, false, false);
