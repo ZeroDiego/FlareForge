@@ -52,12 +52,23 @@ AMyPlayerCharacter::AMyPlayerCharacter()
 	PrimaryActorTick.bStartWithTickEnabled = true;
 
 	bReplicates = true;
+	bAlwaysRelevant = true;
 }
 
 void AMyPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	    
+	
+
+	// Access IsMelee from PlayerState
+	if (APlayerState* PS = GetPlayerState())
+	{
+		if (AMyPlayerState* MyPS = Cast<AMyPlayerState>(PS))
+		{
+			bool bIsMelee = MyPS->IsMelee; // Access IsMelee value here
+		}
+	}
+
 	InitAbilitySystemComponent();
 	InitDefaultAttributes();
 }
@@ -68,24 +79,6 @@ void AMyPlayerCharacter::OnRep_PlayerState()
 	
 	InitAbilitySystemComponent();
 	InitDefaultAttributes();
-
-	// Ensure PlayerState is valid and castable to MyPlayerState
-	if (AMyPlayerState* MyPlayerState = Cast<AMyPlayerState>(GetPlayerState()))
-	{
-		if (MyPlayerState->IsMelee)
-		{
-			UE_LOG(LogTemp, Log, TEXT("IsMelee is true!"));
-			// Perform melee-specific logic here
-		}
-		else
-		{
-			UE_LOG(LogTemp, Log, TEXT("IsMelee is false."));
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PlayerState is not valid or not castable to AMyPlayerState."));
-	}
 }
 
 void AMyPlayerCharacter::Tick(float DeltaSeconds)

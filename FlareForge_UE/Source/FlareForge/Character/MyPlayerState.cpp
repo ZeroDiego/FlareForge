@@ -16,6 +16,7 @@ AMyPlayerState::AMyPlayerState()
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 	AttributeSet = CreateDefaultSubobject<UMyCharacterAttributeSet>(TEXT("AttributeSet"));
 	bReplicates = true;
+	bAlwaysRelevant = true;
 }
 
 void AMyPlayerState::BeginPlay()
@@ -74,11 +75,6 @@ UAbilitySystemComponent* AMyPlayerState::GetAbilitySystemComponent() const
 UMyCharacterAttributeSet* AMyPlayerState::GetAttributeSet() const
 {
 	return AttributeSet;
-}
-
-void AMyPlayerState::OnRep_IsMelee()
-{
-	UE_LOG(LogTemp, Log, TEXT("OnRep_IsMelee called. IsMelee: %s"), IsMelee ? TEXT("true") : TEXT("false"));
 }
 
 void AMyPlayerState::SetAbilityAtIndex_Implementation(const int32 Index, const TSubclassOf<UGameplayAbility> NewAbility)
@@ -173,6 +169,22 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
 const TArray<TSubclassOf<UGameplayAbility>>& AMyPlayerState::GetSelectedAbilities() const
 {
 	return SelectedAbilities;
+}
+
+void AMyPlayerState::SetIsMeleeTrue()
+{
+	if (HasAuthority()) // Ensure this is executed on the server
+	{
+		IsMelee = true;
+	}
+}
+
+void AMyPlayerState::SetIsMeleeFalse()
+{
+	if (HasAuthority()) // Ensure this is executed on the server
+	{
+		IsMelee = false;
+	}
 }
 
 void AMyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

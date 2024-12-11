@@ -55,11 +55,14 @@ public:
 	//~End of IAbilitySystemInterface interface
 	virtual UMyCharacterAttributeSet* GetAttributeSet() const;
 
-	UPROPERTY(ReplicatedUsing = OnRep_IsMelee, BlueprintReadWrite, Category = "Ability")
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Ability")
 	bool IsMelee;
 
-	UFUNCTION()
-	void OnRep_IsMelee();
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	void SetIsMeleeTrue();
+
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	void SetIsMeleeFalse();
 	
 protected:	
 	UPROPERTY()
