@@ -70,23 +70,11 @@ TArray<TSubclassOf<UGameplayAbility>> UNetworkGameInstance::GetAbilitiesForPlaye
 
 TSubclassOf<UGameplayAbility> UNetworkGameInstance::GetAbilityAtIndexForPlayer(const FString& PlayerID, const int32 Index) const
 {
-	// Check if the PlayerID exists in the PlayerStatesMap
 	if (AMyPlayerState* const* FoundPlayerState = PlayerStatesMap.Find(PlayerID))
 	{
-		// Dereference FoundPlayerState to get the actual AMyPlayerState*
 		const AMyPlayerState* PlayerState = *FoundPlayerState;
-
-		// Retrieve the selected abilities for this player
-		const TArray<TSubclassOf<UGameplayAbility>>& Abilities = PlayerState->GetSelectedAbilities();
-
-		// Check if the index is valid
-		if (Abilities.IsValidIndex(Index))
-		{
-			// Return the ability at the specified index
-			return Abilities[Index];
-		}
+		return PlayerState->GetAbilityAtIndex(Index);
 	}
 
-	// Return nullptr if PlayerID is not found or index is invalid
 	return nullptr;
 }

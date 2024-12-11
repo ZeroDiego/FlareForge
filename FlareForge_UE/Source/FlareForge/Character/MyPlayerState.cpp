@@ -220,12 +220,23 @@ void AMyPlayerState::SetIsMeleeFalse()
 	}
 }
 
+void AMyPlayerState::SetUniquePlayerId(const FString& NewId)
+{
+	UniquePlayerId = NewId;
+}
+
+FString AMyPlayerState::GetUniquePlayerId() const
+{
+	return UniquePlayerId;
+}
+
 void AMyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	// Replicate SelectedAbilities array
 	DOREPLIFETIME(AMyPlayerState, SelectedAbilities);
+
+	// Replicate UniquePlayerId to all clients
+	DOREPLIFETIME(AMyPlayerState, UniquePlayerId);
 }
-
-

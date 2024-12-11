@@ -59,6 +59,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player State")
 	void SetIsMeleeFalse();
+
+	// Set the unique player ID
+	void SetUniquePlayerId(const FString& NewId);
+
+	// Get the unique player ID
+	FString GetUniquePlayerId() const;
 	
 protected:	
 	UPROPERTY()
@@ -72,4 +78,8 @@ protected:
 	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	// Replicated unique player ID
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	FString UniquePlayerId;
 };

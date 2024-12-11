@@ -15,12 +15,15 @@ class AFlareForgeGameMode : public AGameModeBase
 public:
 	AFlareForgeGameMode();
 
-protected:
+	// Override PostLogin to assign unique IDs
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 private:
-	int32 CurrentPlayerIndex = 0; // Tracks player indices (e.g., C0, C1)
-};
+	// Generate a unique player ID
+	FString GenerateUniquePlayerId();
+
+	// Track used player IDs to ensure uniqueness
+	TSet<FString> UsedPlayerIds;};
 
 
 

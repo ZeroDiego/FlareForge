@@ -47,22 +47,31 @@ void AFlareForgeGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 
-	if (AMyPlayerState* PlayerState = Cast<AMyPlayerState>(NewPlayer->PlayerState))
+	// Cast to custom PlayerState
+	if (AMyPlayerState* PS = Cast<AMyPlayerState>(NewPlayer->PlayerState))
 	{
-		FString PlayerID = FString::Printf(TEXT("C%d"), CurrentPlayerIndex++);
-        
-		if (UNetworkGameInstance* GI = GetGameInstance<UNetworkGameInstance>())
-		{
-			GI->AddPlayerState(PlayerID, PlayerState);
-		}
+		// Generate a unique ID and assign it to the PlayerState
+		FString PlayerID = GenerateUniquePlayerId();
+		PS->SetUniquePlayerId(PlayerID);
 
-		UE_LOG(LogTemp, Log, TEXT("Assigned ID %s to player"), *PlayerID);
-        
-		// Debug message for verification
+		// Debug log and screen message for verification
+		UE_LOG(LogTemp, Log, TEXT("Assigned Unique ID: %s"), *PlayerID);
 		if (GEngine)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,
-				FString::Printf(TEXT("Assigned ID %s"), *PlayerID));
+				FString::Printf(TEXT("Assigned Unique ID: %s"), *PlayerID));
 		}
 	}
+}
+
+FString AFlareForgeGameMode::GenerateUniquePlayerId()
+{
+	FString NewId;
+	do
+	{
+		NewId = FGuid::NewGuid().ToString(); // Generate a GUID
+	} while (UsedPlayerIds.Contains(NewId)); // Ensure it's unique
+
+	UsedPlayerIds.Add(NewId); // Track the generated ID
+	return NewId;
 }
