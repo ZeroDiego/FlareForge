@@ -2,7 +2,6 @@
 
 
 #include "NetworkGameInstance.h"
-#include "Engine/Engine.h"
 
 void UNetworkGameInstance::SetGameplayAbilitySpecAtIndex_Implementation(const FGameplayAbilitySpec NewGameplayAbilitySpec, const int32 AtIndex)
 {
@@ -90,20 +89,13 @@ FString UNetworkGameInstance::GenerateUniquePlayerId()
 
 	UsedPlayerIds.Add(NewId);
 	return NewId;
-	
-	// Print debug message if GEngine is available
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,
-			FString::Printf(TEXT("Assigned Unique ID: %s"), *NewId));
-	}
 }
 
-void UNetworkGameInstance::AssignPlayerId(APlayerController* PlayerController)
+void UNetworkGameInstance::AssignPlayerId(const APlayerController* PlayerController)
 {
 	if (AMyPlayerState* PS = Cast<AMyPlayerState>(PlayerController->PlayerState))
 	{
-		FString PlayerID = GenerateUniquePlayerId();
+		const FString PlayerID = GenerateUniquePlayerId();
 		PS->SetUniquePlayerId(PlayerID);
 	}
 }

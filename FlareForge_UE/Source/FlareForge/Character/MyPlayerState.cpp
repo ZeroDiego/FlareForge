@@ -30,6 +30,12 @@ void AMyPlayerState::BeginPlay()
 			if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
 			{
 				IsMelee = NetworkGI->GetIsMelee();
+
+				// Generate a unique player ID
+				//NetworkGI->GenerateUniquePlayerId();
+
+				// Set the unique player ID for this player state
+				//SetUniquePlayerId(NewUniqueId);
 			}
 		}
 	}
