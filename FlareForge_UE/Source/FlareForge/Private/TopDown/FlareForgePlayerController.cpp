@@ -2,6 +2,7 @@
 
 #include "TopDown/FlareForgePlayerController.h"
 #include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
 #include "TopDown/FlareForgeCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
@@ -13,6 +14,7 @@
 #include "FlareForge/UI/FlareForgeHUD.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -28,10 +30,12 @@ AFlareForgePlayerController::AFlareForgePlayerController()
 	//InstanceCounter++;
 	
 	bShowMouseCursor = true;
+	bShouldRotateTowardsMouse = true;
 	DefaultMouseCursor = EMouseCursor::Default;
 	CachedDestination = FVector::ZeroVector;
 	FollowTime = 0.f;
-
+	bReplicates = true;
+	
 }
 
 void AFlareForgePlayerController::BeginPlay()
@@ -188,11 +192,41 @@ FVector AFlareForgePlayerController::GetAnimationVelocity()
 	
 	float ForwardVelocity = FVector::DotProduct(NormalizedVelocity, CurrentForwardVector);
 	float RightVelocity = FVector::DotProduct(NormalizedVelocity, CurrentRightVector);
+
+	float DeltaTime = GetWorld()->GetDeltaSeconds();
+
+	// Lerp with different values if character is moving forward or backwards
+	if(ForwardVelocity >= 0.0f)
+	{
+		CurrentLerpValueForward = FMath::Lerp(CurrentLerpValueForward, ForwardVelocity, LerpAlphaValueForward * DeltaTime);
+	}
+	else if (ForwardVelocity < 0.0f)
+	{
+		CurrentLerpValueForward = FMath::Lerp(CurrentLerpValueForward, ForwardVelocity, LerpAlphaValueBackward * DeltaTime);
+	}
+
+	// Lerp with different values if character is moving left or right
+	if(RightVelocity >= 0.0f)
+	{
+		CurrentLerpValueRight = FMath::Lerp(CurrentLerpValueRight, RightVelocity, LerpAlphaValueRight * DeltaTime);
+	}
+	else if(RightVelocity < 0.0f)
+	{
+		CurrentLerpValueRight = FMath::Lerp(CurrentLerpValueRight, RightVelocity, LerpAlphaValueLeft * DeltaTime);
+	}
+	//CurrentLerpValueForward = FMath::Lerp(CurrentLerpValueForward, ForwardVelocity, LerpAlphaValueForward * DeltaTime);
+	//CurrentLerpValueRight = FMath::Lerp(CurrentLerpValueRight, RightVelocity, LerpAlphaValueRight * DeltaTime);
 	
-	AnimationVelocity = FVector(ForwardVelocity, RightVelocity, 0.0f);
-	//UE_LOG(LogTemp, Warning, TEXT("Vector: %s"), *AnimationVelocity.ToString());
+	AnimationVelocity = FVector(CurrentLerpValueForward, CurrentLerpValueRight, 0.0f);
 	
 	return AnimationVelocity;
+}
+
+void AFlareForgePlayerController::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AFlareForgePlayerController, bShouldRotateTowardsMouse);
 }
 
 void AFlareForgePlayerController::Dash()
@@ -215,7 +249,8 @@ void AFlareForgePlayerController::Dash()
 				DashVector = FVector(DashSpeed * MoveDirection);
 			}
 			
-			GetCharacter()->LaunchCharacter(DashVector, false, false);
+			//GetCharacter()->LaunchCharacter(DashVector, false, false);
+			PlayDashAnimation();
 			DashOnServer(DashVector);
 			DashTimer = UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()) + DashCooldown;
 		}
@@ -226,6 +261,7 @@ void AFlareForgePlayerController::Dash()
 void AFlareForgePlayerController::DashOnServer_Implementation(const FVector& DashVector) const
 {
 	GetCharacter()->LaunchCharacter(DashVector, false, false);
+	//PlayDashAnimation();
 }
 
 void AFlareForgePlayerController::RotatePlayerTowardsMouse()
@@ -260,8 +296,11 @@ void AFlareForgePlayerController::RotatePlayerTowardsMouse()
             FRotator NewRot = FRotator(CharRotation.Pitch, TargetRotation.Yaw, CharRotation.Roll);
 
             // Set the new rotation
-            CurrentChar->SetActorRotation(NewRot);
-        	RotatePlayerOnServer(NewRot);
+        	if(bShouldRotateTowardsMouse)
+        	{
+        		CurrentChar->SetActorRotation(NewRot);
+        		RotatePlayerOnServer(NewRot);	
+        	}
         }
     }
 }
@@ -282,7 +321,7 @@ void AFlareForgePlayerController::RotatePlayerTowardsJoystick(const FInputAction
 
 void AFlareForgePlayerController::RotatePlayerOnServer_Implementation(const FRotator PlayerRotation)
 {
-	this->GetCharacter()->SetActorRotation(PlayerRotation);
+	this->GetCharacter()->SetActorRotation(PlayerRotation);	
 }
 
 /*

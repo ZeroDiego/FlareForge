@@ -14,7 +14,6 @@ void UDeflectAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, c
 		if (const ACharacter* Character = Cast<ACharacter>(Actor))
 		{
 			const FVector SpawnDeflectShieldLocation = Character->GetComponentByClass<UFiringOffset>()->GetComponentLocation();
-			UE_LOG(LogTemp, Warning, TEXT("forward vector: %s"), *Character->GetActorForwardVector().ToString());
 			//const FVector CurrentVector = Character->GetActorForwardVector() * 2;
 			const FRotator CurrentRotation = Character->GetActorRotation();
 			//FName PlayerName = Character->GetFName();
@@ -24,6 +23,7 @@ void UDeflectAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, c
 	}
 	
 	CommitAbilityCooldown(Handle, ActorInfo, ActivationInfo, true, nullptr);
+	ApplyGameplayEffectToOwner(Handle, ActorInfo, ActivationInfo, AnimDelay_Reflect_Blueprint.GetDefaultObject(), 1.0f);
 	
 	// End the ability
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);

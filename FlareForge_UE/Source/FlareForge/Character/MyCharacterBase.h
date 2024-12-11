@@ -22,10 +22,14 @@ public:
 	//~IAbilitySystemInterface interface
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	//~End of IAbilitySystemInterface interface
+	
 	virtual UMyCharacterAttributeSet* GetAttributeSet() const;
-
+	
 protected:
-	void GiveDefaultAbilities();
+
+	// Initialize ASC
+	virtual void InitAbilitySystemComponent();
+	
 	void InitDefaultAttributes() const;
 
 	UPROPERTY()
@@ -33,9 +37,6 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UMyCharacterAttributeSet> AttributeSet;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Ability")
-	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Ability")
 	TSubclassOf<UGameplayEffect> DefaultAttributeEffect;
