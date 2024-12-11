@@ -58,16 +58,6 @@ AMyPlayerCharacter::AMyPlayerCharacter()
 void AMyPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	
-
-	// Access IsMelee from PlayerState
-	if (APlayerState* PS = GetPlayerState())
-	{
-		if (AMyPlayerState* MyPS = Cast<AMyPlayerState>(PS))
-		{
-			bool bIsMelee = MyPS->IsMelee; // Access IsMelee value here
-		}
-	}
 
 	InitAbilitySystemComponent();
 	InitDefaultAttributes();

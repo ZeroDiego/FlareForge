@@ -55,7 +55,7 @@ public:
 	//~End of IAbilitySystemInterface interface
 	virtual UMyCharacterAttributeSet* GetAttributeSet() const;
 
-	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Ability")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
 	bool IsMelee;
 
 	UFUNCTION(BlueprintCallable, Category = "Player State")

@@ -22,6 +22,17 @@ AMyPlayerState::AMyPlayerState()
 void AMyPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (const UWorld* World = GetWorld())
+	{
+		if (UGameInstance* GameInstance = World->GetGameInstance())
+		{
+			if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
+			{
+				IsMelee = NetworkGI->GetIsMelee();
+			}
+		}
+	}
 }
 
 void AMyPlayerState::PostInitializeComponents()
@@ -173,24 +184,41 @@ const TArray<TSubclassOf<UGameplayAbility>>& AMyPlayerState::GetSelectedAbilitie
 
 void AMyPlayerState::SetIsMeleeTrue()
 {
-	if (HasAuthority()) // Ensure this is executed on the server
+	if (HasAuthority()) // Ensure this runs on the server
 	{
 		IsMelee = true;
+
+		if (const UWorld* World = GetWorld())
+		{
+			if (UGameInstance* GameInstance = World->GetGameInstance())
+			{
+				if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
+				{
+					NetworkGI->SetIsMelee(true);
+				}
+			}
+		}
 	}
 }
 
 void AMyPlayerState::SetIsMeleeFalse()
 {
-	if (HasAuthority()) // Ensure this is executed on the server
+	if (HasAuthority()) // Ensure this runs on the server
 	{
 		IsMelee = false;
+
+		if (const UWorld* World = GetWorld())
+		{
+			if (UGameInstance* GameInstance = World->GetGameInstance())
+			{
+				if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
+				{
+					NetworkGI->SetIsMelee(false);
+				}
+			}
+		}
 	}
 }
 
-void AMyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AMyPlayerState, IsMelee);
-}
 
 

@@ -35,4 +35,13 @@ public:
 	// Gets an ability from a specific index in SelectedAbilities
 	UFUNCTION(BlueprintCallable)
 	TSubclassOf<UGameplayAbility> GetAbilityAtIndex(const int32 Index) const;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Player Settings")
+	bool bIsMelee;
+	
+	UFUNCTION(BlueprintCallable, Category = "Player Settings")
+	void SetIsMelee(bool bNewIsMelee);
+
+	UFUNCTION(BlueprintCallable, Category = "Player Settings")
+	bool GetIsMelee() const;
 };

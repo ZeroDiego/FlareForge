@@ -34,3 +34,13 @@ TSubclassOf<UGameplayAbility> UNetworkGameInstance::GetAbilityAtIndex(const int3
 	// Return nullptr or a default value if the index is invalid
 	return nullptr;
 }
+
+void UNetworkGameInstance::SetIsMelee(bool bNewIsMelee)
+{
+	bIsMelee = bNewIsMelee;
+}
+
+bool UNetworkGameInstance::GetIsMelee() const
+{
+	return bIsMelee;
+}
