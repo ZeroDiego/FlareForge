@@ -25,6 +25,7 @@ void UDashAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	}
 	
 	CommitAbilityCooldown(Handle, ActorInfo, ActivationInfo, true, nullptr);
+	ApplyGameplayEffectToOwner(Handle, ActorInfo, ActivationInfo, AnimDelay_Dash_Blueprint.GetDefaultObject(), 1.0f);
 	
 	// End the ability
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);

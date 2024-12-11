@@ -27,8 +27,12 @@ AFlareForgeGameMode::AFlareForgeGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 
-	//set default Player State
-	PlayerStateClass = AMyPlayerState::StaticClass();
+	// set default Player State to BP_MyPlayerState
+	static ConstructorHelpers::FClassFinder<APlayerState> PlayerStateBPClass(TEXT("/Game/TopDown/Blueprints/BP_MyPlayerState"));
+	if (PlayerStateBPClass.Class != nullptr)
+	{
+		PlayerStateClass = PlayerStateBPClass.Class;
+	}
 	
 	// set default controller to our Blueprinted controller
 	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerBPClass(TEXT("/Game/TopDown/Blueprints/BP_TopDownPlayerController"));

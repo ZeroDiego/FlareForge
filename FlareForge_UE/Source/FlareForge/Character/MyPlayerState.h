@@ -7,6 +7,7 @@
 #include "AbilitySystemInterface.h"
 #include "MyPlayerState.generated.h"
 
+class UGameplayAbility;
 class ULucasAbilitySystemComponent;
 class UMyCharacterAttributeSet;
 /**
@@ -19,6 +20,36 @@ class FLAREFORGE_API AMyPlayerState : public APlayerState, public IAbilitySystem
 
 public:
 	AMyPlayerState();
+	
+	virtual void BeginPlay() override;
+
+	UFUNCTION(Server, Reliable)
+	void InitializeAbilities();
+	
+	virtual void PostInitializeComponents() override;
+
+	const TArray<TSubclassOf<UGameplayAbility>>& GetSelectedAbilities() const;
+	
+	// Pending abilities to be granted to the player
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
+	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
+
+	// Adds or sets an ability at a specific index in SelectedAbilities
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Ability")
+	void SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility);
+	
+	// Gets an ability from a specific index in SelectedAbilities
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	TSubclassOf<UGameplayAbility> GetAbilityAtIndex(int32 Index) const;
+	
+	// Removes an ability from a specific index in SelectedAbilities
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	void RemoveAbilityAtIndex(int32 Index);
+
+	// Transfers SelectedAbilities to the Ability System Component (ASC)
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Ability")
+	void TransferAbilitiesToAbilitySystemComponent();
+	
 	//~IAbilitySystemInterface interface
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	//~End of IAbilitySystemInterface interface
