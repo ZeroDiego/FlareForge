@@ -63,11 +63,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player State")
 	void SetIsMeleeFalse();
-
-	UPROPERTY(Replicated, BlueprintReadOnly)
-	FString PS_UniqueStringId;
-
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
 protected:	
 	UPROPERTY()
 	TObjectPtr<ULucasAbilitySystemComponent> AbilitySystemComponent;

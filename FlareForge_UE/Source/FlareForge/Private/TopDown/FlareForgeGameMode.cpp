@@ -2,7 +2,6 @@
 
 #include "TopDown/FlareForgeGameMode.h"
 
-#include "NetworkGameInstance.h"
 #include "FlareForge/Character/MyPlayerState.h"
 #include "TopDown/FlareForgePlayerController.h"
 #include "FlareForge/Character/MyPlayerState.h"
@@ -41,36 +40,4 @@ AFlareForgeGameMode::AFlareForgeGameMode()
 	{
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
-}
-
-FString AFlareForgeGameMode::GenerateUniquePlayerId() {
-	FString NewId;
-	do {
-		NewId = FGuid::NewGuid().ToString(); // Generate a GUID
-	} while (UsedPlayerIds.Contains(NewId)); // Ensure it's unique
-
-	UsedPlayerIds.Add(NewId); // Mark it as used
-	return NewId;
-}
-
-void AFlareForgeGameMode::PostLogin(APlayerController* NewPlayer)
-{
-	Super::PostLogin(NewPlayer);
-
-	if (AMyPlayerState* PS = Cast<AMyPlayerState>(NewPlayer->GetPlayerState()))
-	{
-		// Generate and assign unique ID
-		PS->PS_UniqueStringId = GenerateUniquePlayerId();
-		PS->ForceNetUpdate();
-
-		// Notify GameInstance about this player (optional)
-		if (UWorld* World = GetWorld())
-		{
-			if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(World->GetGameInstance()))
-			{
-				NetworkGI->SetPlayerAbilities(PS->PS_UniqueStringId, TArray<TSubclassOf<UGameplayAbility>>());
-			}
-		}
-	}
-}
 }

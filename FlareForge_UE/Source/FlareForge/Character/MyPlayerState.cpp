@@ -49,19 +49,30 @@ void AMyPlayerState::InitializeAbilities_Implementation()
 	{
 		if (const UWorld* World = GetWorld())
 		{
-			if (const UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(World->GetGameInstance()))
+			if (UGameInstance* GameInstance = World->GetGameInstance())
 			{
-				// Fetch abilities for this player's unique ID
-				const TArray<TSubclassOf<UGameplayAbility>>& Abilities = NetworkGI->GetPlayerAbilities(PS_UniqueStringId);
-
-				for (const TSubclassOf<UGameplayAbility>& AbilityClass : Abilities)
+				if (const UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
 				{
-					FGameplayAbilitySpec AbilitySpec(AbilityClass, 1); // Level 1 ability
-					AbilitySystemComponent->GiveAbility(AbilitySpec);
-				}
+					const TArray<FGameplayAbilitySpec>& AbilitySpecs = NetworkGI->GetGameplayAbilitySpec();
+					for (const FGameplayAbilitySpec& GameplayAbilitySpec : AbilitySpecs)
+					{
+						if (GameplayAbilitySpec.Ability)
+						{
+							// Assign the ability to the AbilitySystemComponent
+							AbilitySystemComponent->GiveAbility(GameplayAbilitySpec);
 
-				// Finalize initialization
-				AbilitySystemComponent->InitAbilityActorInfo(this, this);
+							// Debug message
+							if (GEngine)
+							{
+								GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow,
+									FString::Printf(TEXT("Assigned Ability: %s"), *GameplayAbilitySpec.Ability->GetName()));
+							}
+						}
+					}
+
+					// Finalize initialization
+					AbilitySystemComponent->InitAbilityActorInfo(this, this);
+				}
 			}
 		}
 	}
@@ -134,7 +145,7 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
 {
 	if (!AbilitySystemComponent) return;
 	
-	// Iterate over indices
+	// Iterate over the first four indices: 0, 1, 2, and 3
 	for (int32 Index = 0; Index < SelectedAbilities.Num(); ++Index)
 	{
 		if (SelectedAbilities.IsValidIndex(Index))
@@ -169,12 +180,6 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
 const TArray<TSubclassOf<UGameplayAbility>>& AMyPlayerState::GetSelectedAbilities() const
 {
 	return SelectedAbilities;
-}
-
-void AMyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AMyPlayerState, PS_UniqueStringId);
 }
 
 void AMyPlayerState::SetIsMeleeTrue()

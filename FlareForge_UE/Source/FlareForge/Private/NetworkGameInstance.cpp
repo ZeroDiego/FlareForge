@@ -44,25 +44,3 @@ bool UNetworkGameInstance::GetIsMelee() const
 {
 	return bIsMelee;
 }
-
-void UNetworkGameInstance::SetPlayerAbilities_Implementation(const FString& PlayerId, const TArray<TSubclassOf<UGameplayAbility>>& Abilities)
-{
-	if (!PlayerAbilities.Contains(PlayerId))
-	{
-		PlayerAbilities.Add(PlayerId, Abilities);
-	}
-	else
-	{
-		PlayerAbilities[PlayerId] = Abilities;
-	}
-}
-
-TArray<TSubclassOf<UGameplayAbility>> UNetworkGameInstance::GetPlayerAbilities(const FString& PlayerId) const
-{
-	if (PlayerAbilities.Contains(PlayerId))
-	{
-		return PlayerAbilities[PlayerId];
-	}
-
-	return TArray<TSubclassOf<UGameplayAbility>>();
-}
