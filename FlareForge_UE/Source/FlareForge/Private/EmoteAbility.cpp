@@ -16,7 +16,7 @@ void UEmoteAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 			if (Character->bHello)
 				Play_HelloEmote_Anim_OnServer(Character);
 			else
-				Play_TBagEmote_Anim_OnServer_Implementation(Character);
+				Play_TBagEmote_Anim_OnServer(Character);
 		}
 	}
 	

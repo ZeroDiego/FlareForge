@@ -15,6 +15,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
+#include "Net/UnrealNetwork.h"
 
 
 // Sets default values
@@ -52,6 +53,13 @@ AMyPlayerCharacter::AMyPlayerCharacter()
 	PrimaryActorTick.bStartWithTickEnabled = true;
 
 	bReplicates = true;
+}
+
+void AMyPlayerCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMyPlayerCharacter, bHello);
 }
 
 void AMyPlayerCharacter::PossessedBy(AController* NewController)
