@@ -54,27 +54,42 @@ void UNetworkGameInstance::AddPlayerState(const FString& UniquePlayerID, AMyPlay
 	}
 }
 
+void UNetworkGameInstance::SetSelectedAbilitiesForPlayer(const FString& UniquePlayerID, const TArray<TSubclassOf<UGameplayAbility>>& NewSelectedAbilities)
+{
+	// Store the selected abilities for the given player ID
+	PlayerSelectedAbilitiesMap.Add(UniquePlayerID, NewSelectedAbilities);
+
+	// Debug output for verification
+	for (const TSubclassOf<UGameplayAbility> Ability : NewSelectedAbilities)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("EffectHandle %s for Player %s"), *Ability->GetName(), *UniquePlayerID));
+	}
+}
+
 TArray<TSubclassOf<UGameplayAbility>> UNetworkGameInstance::GetAbilitiesForPlayer(const FString& UniquePlayerID) const
 {
-	if (AMyPlayerState* const* FoundPlayerState = PlayerStatesMap.Find(UniquePlayerID))
+	// Check if the player ID exists in the map
+	if (const TArray<TSubclassOf<UGameplayAbility>>* FoundAbilities = PlayerSelectedAbilitiesMap.Find(UniquePlayerID))
 	{
-		// Dereference FoundPlayerState to get the actual AMyPlayerState*
-		const AMyPlayerState* PlayerState = *FoundPlayerState;
-
-		// Now you can safely use PlayerState
-		TArray<TSubclassOf<UGameplayAbility>> Abilities = PlayerState->GetSelectedAbilities();
+		return *FoundAbilities;
 	}
-    
+
+	// Return an empty array if no abilities are found for the player ID
 	return TArray<TSubclassOf<UGameplayAbility>>();
 }
 
 TSubclassOf<UGameplayAbility> UNetworkGameInstance::GetAbilityAtIndexForPlayer(const FString& UniquePlayerID, const int32 Index) const
 {
-	if (AMyPlayerState* const* FoundPlayerState = PlayerStatesMap.Find(UniquePlayerID))
+	// Retrieve the abilities list for the given player ID
+	if (const TArray<TSubclassOf<UGameplayAbility>>* FoundAbilities = PlayerSelectedAbilitiesMap.Find(UniquePlayerID))
 	{
-		const AMyPlayerState* PlayerState = *FoundPlayerState;
-		return PlayerState->GetAbilityAtIndex(Index);
+		// Check if the index is valid
+		if (FoundAbilities->IsValidIndex(Index))
+		{
+			return (*FoundAbilities)[Index];
+		}
 	}
 
+	// Return nullptr if no abilities are found or the index is invalid
 	return nullptr;
 }
