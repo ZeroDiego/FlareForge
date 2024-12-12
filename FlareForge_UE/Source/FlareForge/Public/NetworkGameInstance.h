@@ -30,13 +30,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
 
-	UFUNCTION(Server, Reliable)
+	/*UFUNCTION(Server, Reliable)
 	void SetSelectedAbilities(const TArray<TSubclassOf<UGameplayAbility>>& NewSelectedAbilities);
 
 	// Gets an ability from a specific index in SelectedAbilities
 	UFUNCTION(BlueprintCallable)
 	TSubclassOf<UGameplayAbility> GetAbilityAtIndex(const int32 Index) const;
-
+*/
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Player Settings")
 	bool bIsMelee;
 	
@@ -49,11 +49,16 @@ public:
 	// Add a PlayerState to the map
 	void AddPlayerState(const FString& UniquePlayerID, AMyPlayerState* PlayerState);
 
-	// Get abilities for a specific player by ID
+	// Sets the selected abilities for a specific player identified by UniquePlayerID
+	UFUNCTION(Server, Reliable)
+	void SetSelectedAbilitiesForPlayer(const FString& UniquePlayerID, const TArray<TSubclassOf<UGameplayAbility>>& NewSelectedAbilities);
+
+	// Retrieves the list of abilities for a specific player identified by UniquePlayerID
 	TArray<TSubclassOf<UGameplayAbility>> GetAbilitiesForPlayer(const FString& UniquePlayerID) const;
 
+	// Retrieves a specific ability at a given index for a player identified by UniquePlayerID
 	UFUNCTION(BlueprintCallable, Category = "Player Settings")
-	TSubclassOf<UGameplayAbility> GetAbilityAtIndexForPlayer(const FString& UniquePlayerID, int32 Index) const;
+	TSubclassOf<UGameplayAbility> GetAbilityAtIndexForPlayer(const FString& UniquePlayerID, const int32 Index) const;
 
 private:
 	// Map of Player IDs to PlayerStates

@@ -13,7 +13,7 @@ TArray<FGameplayAbilitySpec> UNetworkGameInstance::GetGameplayAbilitySpec() cons
 	return GameplayAbilitySpec;
 }
 
-void UNetworkGameInstance::SetSelectedAbilities_Implementation(const TArray<TSubclassOf<UGameplayAbility>>& NewSelectedAbilities)
+/*void UNetworkGameInstance::SetSelectedAbilities_Implementation(const TArray<TSubclassOf<UGameplayAbility>>& NewSelectedAbilities)
 {
 	SelectedAbilities = NewSelectedAbilities;
 	for (const TSubclassOf<UGameplayAbility> Ability : SelectedAbilities)
@@ -34,7 +34,7 @@ TSubclassOf<UGameplayAbility> UNetworkGameInstance::GetAbilityAtIndex(const int3
 	// Return nullptr or a default value if the index is invalid
 	return nullptr;
 }
-
+*/
 void UNetworkGameInstance::SetIsMelee(bool bNewIsMelee)
 {
 	bIsMelee = bNewIsMelee;
@@ -54,7 +54,7 @@ void UNetworkGameInstance::AddPlayerState(const FString& UniquePlayerID, AMyPlay
 	}
 }
 
-void UNetworkGameInstance::SetSelectedAbilitiesForPlayer(const FString& UniquePlayerID, const TArray<TSubclassOf<UGameplayAbility>>& NewSelectedAbilities)
+void UNetworkGameInstance::SetSelectedAbilitiesForPlayer_Implementation(const FString& UniquePlayerID, const TArray<TSubclassOf<UGameplayAbility>>& NewSelectedAbilities)
 {
 	// Store the selected abilities for the given player ID
 	PlayerSelectedAbilitiesMap.Add(UniquePlayerID, NewSelectedAbilities);
