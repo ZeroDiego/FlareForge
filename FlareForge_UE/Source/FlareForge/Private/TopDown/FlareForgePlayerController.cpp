@@ -54,6 +54,7 @@ void AFlareForgePlayerController::ClientRestart_Implementation(APawn* NewPawn)
 		if (AFlareForgeHUD* FlareForgeHUD = Cast<AFlareForgeHUD>(GetHUD()))
 		{
 			FlareForgeHUD->Init();
+			
 		}
 		else
 		{

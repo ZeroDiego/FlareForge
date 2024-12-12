@@ -36,6 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	float ShortPressThreshold;
 
+	/*UPROPERTY(BlueprintReadWrite)
+	TSubclassOf<UUserWidget> LoadingUI;*/
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DashSpeed = 100.0f;
 
