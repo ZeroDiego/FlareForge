@@ -42,7 +42,7 @@ AFlareForgeGameMode::AFlareForgeGameMode()
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
 }
-
+/*
 void AFlareForgeGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
@@ -74,4 +74,4 @@ FString AFlareForgeGameMode::GenerateUniquePlayerId()
 
 	UsedPlayerIds.Add(NewId); // Track the generated ID
 	return NewId;
-}
+}*/

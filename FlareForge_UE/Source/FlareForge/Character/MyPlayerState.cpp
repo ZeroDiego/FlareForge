@@ -145,7 +145,7 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
 {
 	if (!AbilitySystemComponent) return;
 	
-	// Iterate over the first four indices: 0, 1, 2, and 3
+	// Iterate over indices
 	for (int32 Index = 0; Index < SelectedAbilities.Num(); ++Index)
 	{
 		if (SelectedAbilities.IsValidIndex(Index))
@@ -223,6 +223,22 @@ void AMyPlayerState::SetIsMeleeFalse()
 void AMyPlayerState::SetUniquePlayerId(const FString& NewId)
 {
 	UniquePlayerId = NewId;
+
+	// Ensure this runs on the server
+	if (HasAuthority())
+	{
+		if (const UWorld* World = GetWorld())
+		{
+			if (UGameInstance* GameInstance = World->GetGameInstance())
+			{
+				if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
+				{
+					// Add this player state to the game instance
+					NetworkGI->AddPlayerState(UniquePlayerId, this);
+				}
+			}
+		}
+	}
 }
 
 FString AMyPlayerState::GetUniquePlayerId() const

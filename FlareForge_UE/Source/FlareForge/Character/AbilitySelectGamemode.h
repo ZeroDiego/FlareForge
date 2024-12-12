@@ -1,21 +1,21 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "GameFramework/HUD.h"
-#include "FlareForgeGameMode.generated.h"
+#include "AbilitySelectGamemode.generated.h"
 
-UCLASS(minimalapi)
-class AFlareForgeGameMode : public AGameModeBase
+/**
+ * 
+ */
+UCLASS()
+class FLAREFORGE_API AAbilitySelectGamemode : public AGameModeBase
 {
 	GENERATED_BODY()
 
 public:
-	AFlareForgeGameMode();
-
-	/*// Override PostLogin to assign unique IDs
+	// Override PostLogin to assign unique IDs
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 private:
@@ -23,7 +23,5 @@ private:
 	FString GenerateUniquePlayerId();
 
 	// Track used player IDs to ensure uniqueness
-	TSet<FString> UsedPlayerIds;*/
+	TSet<FString> UsedPlayerIds;
 };
-
-
