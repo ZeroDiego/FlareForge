@@ -78,24 +78,3 @@ TSubclassOf<UGameplayAbility> UNetworkGameInstance::GetAbilityAtIndexForPlayer(c
 
 	return nullptr;
 }
-
-FString UNetworkGameInstance::GenerateUniquePlayerId()
-{
-	FString NewId;
-	do
-	{
-		NewId = FGuid::NewGuid().ToString();
-	} while (UsedPlayerIds.Contains(NewId));
-
-	UsedPlayerIds.Add(NewId);
-	return NewId;
-}
-
-void UNetworkGameInstance::AssignPlayerId(const APlayerController* PlayerController)
-{
-	if (AMyPlayerState* PS = Cast<AMyPlayerState>(PlayerController->PlayerState))
-	{
-		const FString PlayerID = GenerateUniquePlayerId();
-		PS->SetUniquePlayerId(PlayerID);
-	}
-}

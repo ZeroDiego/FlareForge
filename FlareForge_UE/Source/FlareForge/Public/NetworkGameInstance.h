@@ -55,14 +55,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Player Settings")
 	TSubclassOf<UGameplayAbility> GetAbilityAtIndexForPlayer(const FString& UniquePlayerID, int32 Index) const;
 
-	FString GenerateUniquePlayerId();
-
-	UFUNCTION(BlueprintCallable, Category = "Player Management")
-	void AssignPlayerId(const APlayerController* PlayerController);
-
 private:
-	// Map of Player IDs (e.g., C0, C1) to PlayerStates
+	// Map of Player IDs to PlayerStates
 	TMap<FString, AMyPlayerState*> PlayerStatesMap;
-	
-	TSet<FString> UsedPlayerIds;
+
+	TMap<FString, TArray<TSubclassOf<UGameplayAbility>>> PlayerSelectedAbilitiesMap;
 };
