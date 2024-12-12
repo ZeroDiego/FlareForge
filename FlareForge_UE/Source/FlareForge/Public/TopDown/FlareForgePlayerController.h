@@ -107,6 +107,12 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayDashAnimation() const;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void RemoveLoadingScreenFromPlayer();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void RemoveLoadingScreenFromServer();
+
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 	// Keeps track of the number of instances that
@@ -130,6 +136,9 @@ protected:
 	virtual void BeginPlay();
 	
 	virtual void ClientRestart_Implementation(APawn* NewPawn) override;
+
+	UFUNCTION(Server, Reliable)
+	void ServerHandleClientRestart();
 
 	/** Input handlers for SetDestination action. */
 	void OnInputStarted();

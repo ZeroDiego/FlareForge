@@ -54,7 +54,11 @@ void AFlareForgePlayerController::ClientRestart_Implementation(APawn* NewPawn)
 		if (AFlareForgeHUD* FlareForgeHUD = Cast<AFlareForgeHUD>(GetHUD()))
 		{
 			FlareForgeHUD->Init();
-			
+			RemoveLoadingScreenFromPlayer();
+			if(IsLocalController())
+			{
+				ServerHandleClientRestart();
+			}
 		}
 		else
 		{
@@ -66,6 +70,13 @@ void AFlareForgePlayerController::ClientRestart_Implementation(APawn* NewPawn)
 		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("HUD is NULL in ClientRestart!"));
 	}
 }
+
+void AFlareForgePlayerController::ServerHandleClientRestart_Implementation()
+{
+	//UE_LOG(LogTemp, Display, TEXT("ServerHandleClientRestart_Implementation"));
+	RemoveLoadingScreenFromServer();
+}
+
 
 void AFlareForgePlayerController::Tick(const float DeltaSeconds)
 {
