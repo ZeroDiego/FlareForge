@@ -32,38 +32,6 @@ TArray<FGameplayAbilitySpec> UNetworkGameInstance::GetGameplayAbilitySpec(const 
 	return TArray<FGameplayAbilitySpec>();
 }
 
-/*void UNetworkGameInstance::SetSelectedAbilities_Implementation(const TArray<TSubclassOf<UGameplayAbility>>& NewSelectedAbilities)
-{
-	SelectedAbilities = NewSelectedAbilities;
-	for (const TSubclassOf<UGameplayAbility> Ability : SelectedAbilities)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("EffectHandle %s"), *Ability->GetName()));
-	}
-}
-
-TSubclassOf<UGameplayAbility> UNetworkGameInstance::GetAbilityAtIndex(const int32 Index) const
-{
-	// Check if the index is valid
-	if (SelectedAbilities.IsValidIndex(Index))
-	{
-		// Return the ability at the specified index
-		return SelectedAbilities[Index];
-	}
-
-	// Return nullptr or a default value if the index is invalid
-	return nullptr;
-}
-*/
-void UNetworkGameInstance::SetIsMelee(bool bNewIsMelee)
-{
-	bIsMelee = bNewIsMelee;
-}
-
-bool UNetworkGameInstance::GetIsMelee() const
-{
-	return bIsMelee;
-}
-
 void UNetworkGameInstance::AddPlayerState(const FString& UniquePlayerID, AMyPlayerState* PlayerState)
 {
 	if (!PlayerStatesMap.Contains(UniquePlayerID))
@@ -111,4 +79,14 @@ TSubclassOf<UGameplayAbility> UNetworkGameInstance::GetAbilityAtIndexForPlayer(c
 
 	// Return nullptr if no abilities are found or the index is invalid
 	return nullptr;
+}
+
+void UNetworkGameInstance::SetIsMelee(bool bNewIsMelee)
+{
+	bIsMelee = bNewIsMelee;
+}
+
+bool UNetworkGameInstance::GetIsMelee() const
+{
+	return bIsMelee;
 }

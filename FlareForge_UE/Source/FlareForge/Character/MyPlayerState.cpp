@@ -5,6 +5,7 @@
 #include "LucasAbilitySystemComponent.h"
 #include "MyCharacterAttributeSet.h"
 #include "NetworkGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
 
@@ -143,38 +144,50 @@ void AMyPlayerState::RemoveAbilityAtIndex(int32 Index)
 
 void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
 {
-	if (!AbilitySystemComponent) return;
+    if (!HasAuthority()) return; // Ensure this runs on the server
 
-	for (int32 Index = 0; Index < SelectedAbilities.Num(); ++Index)
-	{
-		if (SelectedAbilities.IsValidIndex(Index))
-		{
-			if (const TSubclassOf<UGameplayAbility> AbilityClass = SelectedAbilities[Index])
-			{
-				const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
-				AbilitySystemComponent->GiveAbility(AbilitySpec);
+    // Get all player states
+    TArray<AActor*> PlayerStates;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMyPlayerState::StaticClass(), PlayerStates);
 
-				if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
-				{
-					if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
-					{
-						NetworkGI->SetGameplayAbilitySpecAtIndex(GetUniquePlayerId(), AbilitySpec, Index);
-						GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Yellow,
-							FString::Printf(TEXT("Transferred Ability: %s"), *AbilityClass->GetName()));
-					}
-				}
-			}
-		}
-	}
+    for (AActor* Actor : PlayerStates)
+    {
+        AMyPlayerState* PlayerState = Cast<AMyPlayerState>(Actor);
+        if (PlayerState && PlayerState->AbilitySystemComponent)
+        {
+            for (int32 Index = 0; Index < PlayerState->SelectedAbilities.Num(); ++Index)
+            {
+                if (PlayerState->SelectedAbilities.IsValidIndex(Index))
+                {
+                    if (const TSubclassOf<UGameplayAbility> AbilityClass = PlayerState->SelectedAbilities[Index])
+                    {
+                        const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
+                        PlayerState->AbilitySystemComponent->GiveAbility(AbilitySpec);
 
-	if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
-	{
-		if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
-		{
-			NetworkGI->SetSelectedAbilitiesForPlayer(GetUniquePlayerId(), GetSelectedAbilities());
-		}
-	}
+                        if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
+                        {
+                            if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
+                            {
+                                NetworkGI->SetGameplayAbilitySpecAtIndex(PlayerState->GetUniquePlayerId(), AbilitySpec, Index);
+                                GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Yellow,
+                                    FString::Printf(TEXT("Transferred Ability: %s"), *AbilityClass->GetName()));
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
+            {
+                if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
+                {
+                    NetworkGI->SetSelectedAbilitiesForPlayer(PlayerState->GetUniquePlayerId(), PlayerState->GetSelectedAbilities());
+                }
+            }
+        }
+    }
 }
+
 
 const TArray<TSubclassOf<UGameplayAbility>>& AMyPlayerState::GetSelectedAbilities() const
 {

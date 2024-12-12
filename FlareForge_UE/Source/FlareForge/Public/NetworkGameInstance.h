@@ -29,14 +29,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
-
-	/*UFUNCTION(Server, Reliable)
-	void SetSelectedAbilities(const TArray<TSubclassOf<UGameplayAbility>>& NewSelectedAbilities);
-
-	// Gets an ability from a specific index in SelectedAbilities
-	UFUNCTION(BlueprintCallable)
-	TSubclassOf<UGameplayAbility> GetAbilityAtIndex(const int32 Index) const;
-*/
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Player Settings")
 	bool bIsMelee;
 	
@@ -62,6 +55,7 @@ public:
 
 private:
 	// Map of Player IDs to PlayerStates
+	UPROPERTY()
 	TMap<FString, AMyPlayerState*> PlayerStatesMap;
 
 	// Map of Player IDs to their respective ability specs
