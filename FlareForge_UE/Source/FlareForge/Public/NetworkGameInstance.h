@@ -22,10 +22,10 @@ public:
 	TArray<FGameplayAbilitySpec> GameplayAbilitySpec;
 
 	UFUNCTION(Server, Reliable)
-	void SetGameplayAbilitySpecAtIndex(const FGameplayAbilitySpec NewGameplayAbilitySpec, const int32 AtIndex);
+	void SetGameplayAbilitySpecAtIndex(const FString& UniquePlayerID, const FGameplayAbilitySpec& NewGameplayAbilitySpec, const int32 AtIndex);
 
 	UFUNCTION(BlueprintCallable)
-	TArray<FGameplayAbilitySpec> GetGameplayAbilitySpec() const;
+	TArray<FGameplayAbilitySpec> GetGameplayAbilitySpec(const FString& UniquePlayerID) const;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
@@ -63,6 +63,9 @@ public:
 private:
 	// Map of Player IDs to PlayerStates
 	TMap<FString, AMyPlayerState*> PlayerStatesMap;
+
+	// Map of Player IDs to their respective ability specs
+	TMap<FString, TArray<FGameplayAbilitySpec>> PlayerAbilitySpecsMap;
 
 	TMap<FString, TArray<TSubclassOf<UGameplayAbility>>> PlayerSelectedAbilitiesMap;
 };

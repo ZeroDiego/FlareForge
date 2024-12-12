@@ -53,7 +53,7 @@ void AMyPlayerState::InitializeAbilities_Implementation()
 			{
 				if (const UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
 				{
-					const TArray<FGameplayAbilitySpec>& AbilitySpecs = NetworkGI->GetGameplayAbilitySpec();
+					const TArray<FGameplayAbilitySpec>& AbilitySpecs = NetworkGI->GetGameplayAbilitySpec(GetUniquePlayerId());
 					for (const FGameplayAbilitySpec& GameplayAbilitySpec : AbilitySpecs)
 					{
 						if (GameplayAbilitySpec.Ability)
@@ -144,8 +144,7 @@ void AMyPlayerState::RemoveAbilityAtIndex(int32 Index)
 void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
 {
 	if (!AbilitySystemComponent) return;
-	
-	// Iterate over indices
+
 	for (int32 Index = 0; Index < SelectedAbilities.Num(); ++Index)
 	{
 		if (SelectedAbilities.IsValidIndex(Index))
@@ -154,14 +153,14 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
 			{
 				const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
 				AbilitySystemComponent->GiveAbility(AbilitySpec);
-				
+
 				if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
 				{
 					if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
 					{
-						NetworkGI->SetGameplayAbilitySpecAtIndex(AbilitySpec, Index);
+						NetworkGI->SetGameplayAbilitySpecAtIndex(GetUniquePlayerId(), AbilitySpec, Index);
 						GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Yellow,
-									FString::Printf(TEXT("Transferred Ability: %s"), *AbilityClass->GetName()));
+							FString::Printf(TEXT("Transferred Ability: %s"), *AbilityClass->GetName()));
 					}
 				}
 			}
@@ -172,7 +171,7 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
 	{
 		if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
 		{
-			NetworkGI->SetSelectedAbilitiesForPlayer(UniquePlayerId, GetSelectedAbilities());
+			NetworkGI->SetSelectedAbilitiesForPlayer(GetUniquePlayerId(), GetSelectedAbilities());
 		}
 	}
 }

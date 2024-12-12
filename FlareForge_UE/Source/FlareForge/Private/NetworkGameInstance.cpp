@@ -3,14 +3,33 @@
 
 #include "NetworkGameInstance.h"
 
-void UNetworkGameInstance::SetGameplayAbilitySpecAtIndex_Implementation(const FGameplayAbilitySpec NewGameplayAbilitySpec, const int32 AtIndex)
+void UNetworkGameInstance::SetGameplayAbilitySpecAtIndex_Implementation(const FString& UniquePlayerID, const FGameplayAbilitySpec& NewGameplayAbilitySpec, int32 AtIndex)
 {
-	GameplayAbilitySpec.Insert(NewGameplayAbilitySpec, AtIndex);
+	if (!PlayerAbilitySpecsMap.Contains(UniquePlayerID))
+	{
+		PlayerAbilitySpecsMap.Add(UniquePlayerID, TArray<FGameplayAbilitySpec>());
+	}
+
+	TArray<FGameplayAbilitySpec>& AbilitySpecs = PlayerAbilitySpecsMap[UniquePlayerID];
+	if (AtIndex >= 0 && AtIndex < AbilitySpecs.Num())
+	{
+		AbilitySpecs[AtIndex] = NewGameplayAbilitySpec;
+	}
+	else
+	{
+		AbilitySpecs.SetNum(AtIndex + 1);
+		AbilitySpecs[AtIndex] = NewGameplayAbilitySpec;
+	}
 }
 
-TArray<FGameplayAbilitySpec> UNetworkGameInstance::GetGameplayAbilitySpec() const
+
+TArray<FGameplayAbilitySpec> UNetworkGameInstance::GetGameplayAbilitySpec(const FString& UniquePlayerID) const
 {
-	return GameplayAbilitySpec;
+	if (const TArray<FGameplayAbilitySpec>* FoundAbilities = PlayerAbilitySpecsMap.Find(UniquePlayerID))
+	{
+		return *FoundAbilities;
+	}
+	return TArray<FGameplayAbilitySpec>();
 }
 
 /*void UNetworkGameInstance::SetSelectedAbilities_Implementation(const TArray<TSubclassOf<UGameplayAbility>>& NewSelectedAbilities)
