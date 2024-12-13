@@ -46,11 +46,11 @@ void UNetworkGameInstance::SetSelectedAbilitiesForPlayer_Implementation(const FS
 	// Store the selected abilities for the given player ID
 	PlayerSelectedAbilitiesMap.Add(UniquePlayerID, NewSelectedAbilities);
 
-	// Debug output for verification
+	/*// Debug output for verification
 	for (const TSubclassOf<UGameplayAbility> Ability : NewSelectedAbilities)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("EffectHandle %s for Player %s"), *Ability->GetName(), *UniquePlayerID));
-	}
+	}*/
 }
 
 TArray<TSubclassOf<UGameplayAbility>> UNetworkGameInstance::GetAbilitiesForPlayer(const FString& UniquePlayerID) const
@@ -65,7 +65,7 @@ TArray<TSubclassOf<UGameplayAbility>> UNetworkGameInstance::GetAbilitiesForPlaye
 	return TArray<TSubclassOf<UGameplayAbility>>();
 }
 
-TSubclassOf<UGameplayAbility> UNetworkGameInstance::GetAbilityAtIndexForPlayer(const FString& UniquePlayerID, const int32 Index) const
+TSubclassOf<UGameplayAbility> UNetworkGameInstance::GetAbilityAtIndexForPlayer_Implementation(const FString& UniquePlayerID, const int32 Index) const
 {
 	// Retrieve the abilities list for the given player ID
 	if (const TArray<TSubclassOf<UGameplayAbility>>* FoundAbilities = PlayerSelectedAbilitiesMap.Find(UniquePlayerID))

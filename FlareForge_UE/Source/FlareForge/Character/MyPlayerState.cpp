@@ -62,12 +62,12 @@ void AMyPlayerState::InitializeAbilities_Implementation()
 							// Assign the ability to the AbilitySystemComponent
 							AbilitySystemComponent->GiveAbility(GameplayAbilitySpec);
 
-							// Debug message
+							/*// Debug message
 							if (GEngine)
 							{
 								GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow,
 									FString::Printf(TEXT("Assigned Ability: %s"), *GameplayAbilitySpec.Ability->GetName()));
-							}
+							}*/
 						}
 					}
 
@@ -166,12 +166,12 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
 
                         if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
                         {
-                            if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
+                            /*if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
                             {
                                 NetworkGI->SetGameplayAbilitySpecAtIndex(PlayerState->GetUniquePlayerId(), AbilitySpec, Index);
                                 GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Yellow,
                                     FString::Printf(TEXT("Transferred Ability: %s"), *AbilityClass->GetName()));
-                            }
+                            }*/
                         }
                     }
                 }

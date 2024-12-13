@@ -50,7 +50,7 @@ public:
 	TArray<TSubclassOf<UGameplayAbility>> GetAbilitiesForPlayer(const FString& UniquePlayerID) const;
 
 	// Retrieves a specific ability at a given index for a player identified by UniquePlayerID
-	UFUNCTION(BlueprintCallable, Category = "Player Settings")
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Player Settings")
 	TSubclassOf<UGameplayAbility> GetAbilityAtIndexForPlayer(const FString& UniquePlayerID, const int32 Index) const;
 
 private:
