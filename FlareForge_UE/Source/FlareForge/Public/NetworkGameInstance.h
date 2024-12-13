@@ -49,9 +49,11 @@ public:
 	// Retrieves the list of abilities for a specific player identified by UniquePlayerID
 	TArray<TSubclassOf<UGameplayAbility>> GetAbilitiesForPlayer(const FString& UniquePlayerID) const;
 
-	// Retrieves a specific ability at a given index for a player identified by UniquePlayerID
-	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Player Settings")
-	TSubclassOf<UGameplayAbility> GetAbilityAtIndexForPlayer(const FString& UniquePlayerID, const int32 Index) const;
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable, Category = "Player Settings")
+	void GetAbilityAtIndexForPlayer(const FString& UniquePlayerID, const int32 Index);
+	
+	UFUNCTION(Client, Reliable, BlueprintCallable, Category = "Player Settings")
+	void ClientReceiveAbility(const FString& UniquePlayerID, TSubclassOf<UGameplayAbility> Ability);
 
 private:
 	// Map of Player IDs to PlayerStates
