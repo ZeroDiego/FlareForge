@@ -60,6 +60,7 @@ void AMyPlayerCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProper
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AMyPlayerCharacter, bHello);
+	DOREPLIFETIME(AMyPlayerCharacter, bDead);
 }
 
 void AMyPlayerCharacter::PossessedBy(AController* NewController)

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AdvancedFriendsGameInstance.h"
 #include "LucasAbilitySystemComponent.h"
+#include "FlareForge/Character/MyPlayerCharacter.h"
 #include "NetworkGameInstance.generated.h"
 
 /**
@@ -35,4 +36,7 @@ public:
 	// Gets an ability from a specific index in SelectedAbilities
 	UFUNCTION(BlueprintCallable)
 	TSubclassOf<UGameplayAbility> GetAbilityAtIndex(const int32 Index) const;
+
+	UPROPERTY(BlueprintReadWrite)
+	TMap<AMyPlayerCharacter*, int> PlayerScores;
 };
