@@ -232,7 +232,7 @@ void AMyPlayerState::SetIsMeleeFalse()
 	}
 }
 
-void AMyPlayerState::SetUniquePlayerId(const FString& NewId)
+void AMyPlayerState::SetUniquePlayerId_Implementation(const FString& NewId)
 {
 	UniquePlayerId = NewId;
 

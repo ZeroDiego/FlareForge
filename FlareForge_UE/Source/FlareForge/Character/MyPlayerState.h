@@ -61,6 +61,7 @@ public:
 	void SetIsMeleeFalse();
 
 	// Set the unique player ID
+	UFUNCTION(Server, Reliable)
 	void SetUniquePlayerId(const FString& NewId);
 
 	// Get the unique player ID

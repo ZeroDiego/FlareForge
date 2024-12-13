@@ -40,6 +40,7 @@ public:
 	bool GetIsMelee() const;
 
 	// Add a PlayerState to the map
+	UFUNCTION(Server, Reliable)
 	void AddPlayerState(const FString& UniquePlayerID, AMyPlayerState* PlayerState);
 
 	// Sets the selected abilities for a specific player identified by UniquePlayerID

@@ -32,7 +32,7 @@ TArray<FGameplayAbilitySpec> UNetworkGameInstance::GetGameplayAbilitySpec(const 
 	return TArray<FGameplayAbilitySpec>();
 }
 
-void UNetworkGameInstance::AddPlayerState(const FString& UniquePlayerID, AMyPlayerState* PlayerState)
+void UNetworkGameInstance::AddPlayerState_Implementation(const FString& UniquePlayerID, AMyPlayerState* PlayerState)
 {
 	if (!PlayerStatesMap.Contains(UniquePlayerID))
 	{
