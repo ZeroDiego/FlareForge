@@ -62,12 +62,12 @@ void AMyPlayerState::InitializeAbilities_Implementation()
 							// Assign the ability to the AbilitySystemComponent
 							AbilitySystemComponent->GiveAbility(GameplayAbilitySpec);
 
-							/*// Debug message
+							// Debug message
 							if (GEngine)
 							{
 								GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow,
 									FString::Printf(TEXT("Assigned Ability: %s"), *GameplayAbilitySpec.Ability->GetName()));
-							}*/
+							}
 						}
 					}
 

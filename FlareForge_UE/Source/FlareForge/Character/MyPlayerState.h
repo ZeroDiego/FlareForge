@@ -30,6 +30,9 @@ public:
 
 	const TArray<TSubclassOf<UGameplayAbility>>& GetSelectedAbilities() const;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<FGameplayAbilitySpec> GameplayAbilitySpec;
+
 	// Adds or sets an ability at a specific index in SelectedAbilities
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Ability")
 	void SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility);
