@@ -20,7 +20,7 @@ struct FPlayerStatePair
 	FString PlayerID;
 
 	UPROPERTY(BlueprintReadWrite)
-	AMyPlayerState* PlayerState;
+	FString PlayerState;
 };
 
 UCLASS()
@@ -53,7 +53,7 @@ public:
 
 	// Add a PlayerState to the map
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void AddPlayerState(const FString& UniquePlayerID, AMyPlayerState* PlayerState);
+	void AddPlayerState(const FString& UniquePlayerID, const FString& PlayerState);
 
 	// Sets the selected abilities for a specific player identified by UniquePlayerID
 	UFUNCTION(Server, Reliable)
@@ -67,7 +67,7 @@ public:
 	TSubclassOf<UGameplayAbility> GetAbilityAtIndexForPlayer(const FString& UniquePlayerID, const int32 Index) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Player Settings")
-	FString GetUniquePlayerIDFromState(AMyPlayerState* PlayerState) const;
+	FString GetUniquePlayerIDFromState(const FString& PlayerState) const;
 
 	// Retrieves the player's name from their PlayerState using their unique ID
 	UFUNCTION(BlueprintCallable, Category = "Players")
@@ -79,7 +79,7 @@ public:
     TArray<FPlayerStatePair> PlayerStatesArray;
 private:
 	// Local map for easy access
-	TMap<FString, AMyPlayerState*> PlayerStatesMap;
+	TMap<FString, FString> PlayerStatesMap;
 
 	// Called when PlayerStatesArray is updated
 	UFUNCTION()

@@ -27,18 +27,18 @@ TArray<FGameplayAbilitySpec> UNetworkGameInstance::GetGameplayAbilitySpec(const 
     return TArray<FGameplayAbilitySpec>();
 }
 
-void UNetworkGameInstance::AddPlayerState_Implementation(const FString& UniquePlayerID, AMyPlayerState* PlayerState)
+void UNetworkGameInstance::AddPlayerState_Implementation(const FString& UniquePlayerID, const FString& PlayerState)
 {
     if (!PlayerStatesMap.Contains(UniquePlayerID))
         PlayerStatesMap.Add(UniquePlayerID, PlayerState);
 
-        // Update the replicated array
-        FPlayerStatePair NewPair;
-        NewPair.PlayerID = UniquePlayerID;
-        NewPair.PlayerState = PlayerState;
-        PlayerStatesArray.Add(NewPair);
+    // Update the replicated array
+    FPlayerStatePair NewPair;
+    NewPair.PlayerID = UniquePlayerID;
+    NewPair.PlayerState = PlayerState;
+    PlayerStatesArray.Add(NewPair);
 
-        UE_LOG(LogTemp, Log, TEXT("Added Player %s to GameInstance"), *UniquePlayerID);
+    UE_LOG(LogTemp, Log, TEXT("Added Player %s with State %s to GameInstance"), *UniquePlayerID, *PlayerState);
 }
 
 void UNetworkGameInstance::SetSelectedAbilitiesForPlayer_Implementation(const FString& UniquePlayerID, const TArray<TSubclassOf<UGameplayAbility>>& NewSelectedAbilities)
@@ -67,24 +67,24 @@ TSubclassOf<UGameplayAbility> UNetworkGameInstance::GetAbilityAtIndexForPlayer(c
    return nullptr;
 }
 
-FString UNetworkGameInstance::GetUniquePlayerIDFromState(AMyPlayerState* PlayerState) const
+FString UNetworkGameInstance::GetUniquePlayerIDFromState(const FString& PlayerState) const
 {
-   if (IsValid(PlayerState))
-       for (const auto& Entry : PlayerStatesMap)
-           if (Entry.Value == PlayerState)
-               return Entry.Key;
+    for (const auto& Entry : PlayerStatesMap)
+        if (Entry.Value == PlayerState)
+            return Entry.Key;
 
-   return FString();
+    return FString();
 }
 
 FString UNetworkGameInstance::GetPlayerNameFromState(const FString& UniquePlayerID) const
 {
-    if (AMyPlayerState* PlayerState = *PlayerStatesMap.Find(UniquePlayerID))
+    if (const FString* PlayerState = PlayerStatesMap.Find(UniquePlayerID))
     {
-        return PlayerState->GetPlayerName();
+        return *PlayerState; // Directly return the PlayerState string
     }
     return FString("Unknown");
 }
+
 
 void UNetworkGameInstance::SetIsMelee(bool bNewIsMelee)
 {
@@ -98,10 +98,10 @@ bool UNetworkGameInstance::GetIsMelee() const
 
 void UNetworkGameInstance::OnRep_PlayerStatesArray()
 {
-   // Rebuild local map from replicated array
-   PlayerStatesMap.Empty();
-   for (const FPlayerStatePair& Pair : PlayerStatesArray)
-       PlayerStatesMap.Add(Pair.PlayerID, Pair.PlayerState);
+    // Rebuild local map from replicated array
+    PlayerStatesMap.Empty();
+    for (const FPlayerStatePair& Pair : PlayerStatesArray)
+        PlayerStatesMap.Add(Pair.PlayerID, Pair.PlayerState);
 }
 
 void UNetworkGameInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
