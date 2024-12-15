@@ -44,39 +44,53 @@ void AMyPlayerState::PostInitializeComponents()
 	InitializeAbilities();
 }
 
-void AMyPlayerState::InitializeAbilities_Implementation()
-{
-	if (AbilitySystemComponent && AbilitySystemComponent->IsOwnerActorAuthoritative())
-	{
-		if (const UWorld* World = GetWorld())
-		{
-			if (UGameInstance* GameInstance = World->GetGameInstance())
-			{
-				if (const UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
-				{
-					const TArray<FGameplayAbilitySpec>& AbilitySpecs = NetworkGI->GetGameplayAbilitySpec(GetUniquePlayerId());
-					for (const FGameplayAbilitySpec& GameplayAbilitySpec : AbilitySpecs)
-					{
-						if (GameplayAbilitySpec.Ability)
-						{
-							// Assign the ability to the AbilitySystemComponent
-							AbilitySystemComponent->GiveAbility(GameplayAbilitySpec);
+void AMyPlayerState::InitializeAbilities_Implementation() {
+    if (!AbilitySystemComponent) {
+        if (GEngine) {
+            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("AbilitySystemComponent is null!"));
+        }
+        return;
+    }
 
-							// Debug message
-							if (GEngine)
-							{
-								GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow,
-									FString::Printf(TEXT("Assigned Ability: %s"), *GameplayAbilitySpec.Ability->GetName()));
-							}
-						}
-					}
+    if (!AbilitySystemComponent->IsOwnerActorAuthoritative()) {
+        if (GEngine) {
+            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Owner is not authoritative!"));
+        }
+        return;
+    }
 
-					// Finalize initialization
-					AbilitySystemComponent->InitAbilityActorInfo(this, this);
-				}
-			}
-		}
-	}
+    if (const UWorld* World = GetWorld()) {
+        if (UGameInstance* GameInstance = World->GetGameInstance()) {
+            if (const UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance)) {
+                // Use GetUniquePlayerIDFromState instead of GetUniquePlayerId
+                FString UniquePlayerID = NetworkGI->GetUniquePlayerIDFromState(this);
+
+                const TArray<FGameplayAbilitySpec>& AbilitySpecs = NetworkGI->GetGameplayAbilitySpec(UniquePlayerID);
+                if (GEngine) {
+                    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Unique Player ID: %s"), *UniquePlayerID));
+                }
+
+                for (const FGameplayAbilitySpec& GameplayAbilitySpec : AbilitySpecs) {
+                    if (!GameplayAbilitySpec.Ability) {
+                        if (GEngine) {
+                            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Invalid Ability Spec: Ability is null!"));
+                        }
+                        continue;
+                    }
+                    // Assign the ability to the AbilitySystemComponent
+                    AbilitySystemComponent->GiveAbility(GameplayAbilitySpec);
+
+                    // Debug message for successful assignment
+                    if (GEngine) {
+                        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Assigned Ability: %s"), *GameplayAbilitySpec.Ability->GetName()));
+                    }
+                }
+
+                // Finalize initialization
+                AbilitySystemComponent->InitAbilityActorInfo(this, this);
+            }
+        }
+    }
 }
 
 UAbilitySystemComponent* AMyPlayerState::GetAbilitySystemComponent() const

@@ -22,8 +22,15 @@ void UNetworkGameInstance::SetGameplayAbilitySpecAtIndex_Implementation(const FS
 TArray<FGameplayAbilitySpec> UNetworkGameInstance::GetGameplayAbilitySpec(const FString& UniquePlayerID) const
 {
     if (const TArray<FGameplayAbilitySpec>* FoundAbilities = PlayerAbilitySpecsMap.Find(UniquePlayerID))
+    {
+        if (GEngine)
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green,
+                FString::Printf(TEXT("Found %d Abilities for Player ID: %s"), FoundAbilities->Num(), *UniquePlayerID));
+        }
         return *FoundAbilities;
-    
+    }
+
     return TArray<FGameplayAbilitySpec>();
 }
 
