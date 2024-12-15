@@ -235,22 +235,6 @@ void AMyPlayerState::SetIsMeleeFalse()
 void AMyPlayerState::SetUniquePlayerId_Implementation(const FString& NewId)
 {
 	UniquePlayerId = NewId;
-
-	/*// Ensure this runs on the server
-	if (HasAuthority())
-	{
-		if (const UWorld* World = GetWorld())
-		{
-			if (UGameInstance* GameInstance = World->GetGameInstance())
-			{
-				if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
-				{
-					// Add this player state to the game instance
-					NetworkGI->AddPlayerState(UniquePlayerId, this);
-				}
-			}
-		}
-	}*/
 }
 
 FString AMyPlayerState::GetUniquePlayerId() const
