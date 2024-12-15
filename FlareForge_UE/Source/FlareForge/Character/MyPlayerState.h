@@ -5,9 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayAbilitySpec.h"
 #include "MyPlayerState.generated.h"
 
-class UGameplayAbility;
 class ULucasAbilitySystemComponent;
 class UMyCharacterAttributeSet;
 /**
@@ -29,9 +29,6 @@ public:
 	virtual void PostInitializeComponents() override;
 
 	const TArray<TSubclassOf<UGameplayAbility>>& GetSelectedAbilities() const;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<FGameplayAbilitySpec> GameplayAbilitySpec;
 
 	// Adds or sets an ability at a specific index in SelectedAbilities
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Ability")
