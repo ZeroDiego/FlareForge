@@ -236,7 +236,7 @@ void AMyPlayerState::SetUniquePlayerId_Implementation(const FString& NewId)
 {
 	UniquePlayerId = NewId;
 
-	// Ensure this runs on the server
+	/*// Ensure this runs on the server
 	if (HasAuthority())
 	{
 		if (const UWorld* World = GetWorld())
@@ -250,7 +250,7 @@ void AMyPlayerState::SetUniquePlayerId_Implementation(const FString& NewId)
 				}
 			}
 		}
-	}
+	}*/
 }
 
 FString AMyPlayerState::GetUniquePlayerId() const

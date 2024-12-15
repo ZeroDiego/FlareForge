@@ -11,6 +11,18 @@
 /**
  * 
  */
+USTRUCT(BlueprintType)
+struct FPlayerStatePair
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	FString PlayerID;
+
+	UPROPERTY(BlueprintReadWrite)
+	AMyPlayerState* PlayerState;
+};
+
 UCLASS()
 class FLAREFORGE_API UNetworkGameInstance : public UAdvancedFriendsGameInstance
 {
@@ -40,7 +52,7 @@ public:
 	bool GetIsMelee() const;
 
 	// Add a PlayerState to the map
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void AddPlayerState(const FString& UniquePlayerID, AMyPlayerState* PlayerState);
 
 	// Sets the selected abilities for a specific player identified by UniquePlayerID
@@ -57,10 +69,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Player Settings")
 	FString GetUniquePlayerIDFromState(AMyPlayerState* PlayerState) const;
 
+	// Retrieves the player's name from their PlayerState using their unique ID
+	UFUNCTION(BlueprintCallable, Category = "Players")
+	FString GetPlayerNameFromState(const FString& UniquePlayerID) const;
+
+	protected:
+    // Replicated array of player states
+    UPROPERTY(ReplicatedUsing=OnRep_PlayerStatesArray)
+    TArray<FPlayerStatePair> PlayerStatesArray;
 private:
-	// Map of Player IDs to PlayerStates
-	UPROPERTY()
+	// Local map for easy access
 	TMap<FString, AMyPlayerState*> PlayerStatesMap;
+
+	// Called when PlayerStatesArray is updated
+	UFUNCTION()
+	void OnRep_PlayerStatesArray();
 
 	// Map of Player IDs to their respective ability specs
 	TMap<FString, TArray<FGameplayAbilitySpec>> PlayerAbilitySpecsMap;
