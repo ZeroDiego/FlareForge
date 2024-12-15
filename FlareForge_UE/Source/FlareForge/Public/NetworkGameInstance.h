@@ -38,9 +38,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	TArray<FGameplayAbilitySpec> GetGameplayAbilitySpec(const FString& UniquePlayerID) const;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Player Settings")
 	bool bIsMelee;
