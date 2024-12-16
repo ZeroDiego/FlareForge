@@ -2,7 +2,6 @@
 
 
 #include "NetworkGameInstance.h"
-
 #include "Net/UnrealNetwork.h"
 
 void UNetworkGameInstance::SetGameplayAbilitySpecAtIndex_Implementation(const FString& UniquePlayerID, const FGameplayAbilitySpec& NewGameplayAbilitySpec, int32 AtIndex)
@@ -85,13 +84,13 @@ FString UNetworkGameInstance::GetUniquePlayerIDFromState(const FString& PlayerSt
 
 FString UNetworkGameInstance::GetPlayerNameFromState(const FString& UniquePlayerID) const
 {
+    
     if (const FString* PlayerState = PlayerStatesMap.Find(UniquePlayerID))
     {
         return *PlayerState; // Directly return the PlayerState string
     }
     return FString("Unknown");
 }
-
 
 void UNetworkGameInstance::SetIsMelee(bool bNewIsMelee)
 {

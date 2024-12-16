@@ -82,9 +82,9 @@ void AMyPlayerState::InitializeAbilities_Implementation() {
                     AbilitySystemComponent->GiveAbility(GameplayAbilitySpec);
 
                     // Debug message for successful assignment
-                    if (GEngine) {
+                    /*if (GEngine) {
                         GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Assigned Ability: %s"), *GameplayAbilitySpec.Ability->GetName()));
-                    }
+                    }*/
                 }
 
                 // Finalize initialization
@@ -160,14 +160,8 @@ void AMyPlayerState::RemoveAbilityAtIndex(int32 Index)
 void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
 {
     if (!HasAuthority()) return; // Ensure this runs on the server
-
-    // Get all player states
-    TArray<AActor*> PlayerStates;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMyPlayerState::StaticClass(), PlayerStates);
-
-    for (AActor* Actor : PlayerStates)
-    {
-        AMyPlayerState* PlayerState = Cast<AMyPlayerState>(Actor);
+	
+        AMyPlayerState* PlayerState = Cast<AMyPlayerState>(this);
         if (PlayerState && PlayerState->AbilitySystemComponent)
         {
             for (int32 Index = 0; Index < PlayerState->SelectedAbilities.Num(); ++Index)
@@ -208,7 +202,6 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
             }
         }
     }
-}
 
 
 const TArray<TSubclassOf<UGameplayAbility>>& AMyPlayerState::GetSelectedAbilities() const

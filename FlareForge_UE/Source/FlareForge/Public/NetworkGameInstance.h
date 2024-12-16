@@ -70,7 +70,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Players")
 	FString GetPlayerNameFromState(const FString& UniquePlayerID) const;
 
-	protected:
+protected:
     // Replicated array of player states
     UPROPERTY(ReplicatedUsing=OnRep_PlayerStatesArray)
     TArray<FPlayerStatePair> PlayerStatesArray;
