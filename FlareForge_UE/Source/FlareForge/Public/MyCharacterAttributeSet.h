@@ -40,6 +40,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Armor, Category = "Ability | Gameplay Attribute")
 	FGameplayAttributeData Armor;
 	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, Armor);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxArmor, Category = "Ability | Gameplay Attribute")
+	FGameplayAttributeData MaxArmor;
+	ATTRIBUTE_ACCESSORS(UMyCharacterAttributeSet, MaxArmor);
 	
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Haste, Category = "Ability | Gameplay Attribute")
 	FGameplayAttributeData Haste;
@@ -61,6 +65,9 @@ public:
 
 	UFUNCTION()
 	void OnRep_Armor(const FGameplayAttributeData& OldArmor) const;
+
+	UFUNCTION()
+	void OnRep_MaxArmor(const FGameplayAttributeData& OldMaxArmor) const;
 
 	UFUNCTION()
 	void OnRep_Haste(const FGameplayAttributeData& OldHaste) const;
