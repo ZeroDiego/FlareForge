@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AdvancedFriendsGameInstance.h"
 #include "LucasAbilitySystemComponent.h"
+#include "FlareForge/Character/MyPlayerCharacter.h"
 #include "FlareForge/Character/MyPlayerState.h"
 #include "NetworkGameInstance.generated.h"
 
@@ -69,6 +70,9 @@ public:
 	// Retrieves the player's name from their PlayerState using their unique ID
 	UFUNCTION(BlueprintCallable, Category = "Players")
 	FString GetPlayerNameFromState(const FString& UniquePlayerID) const;
+
+	UPROPERTY(BlueprintReadWrite)
+	TMap<AMyPlayerCharacter*, int> PlayerScores;
 
 protected:
     // Replicated array of player states
