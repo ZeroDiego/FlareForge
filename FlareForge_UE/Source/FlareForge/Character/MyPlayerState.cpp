@@ -6,6 +6,7 @@
 #include "MyCharacterAttributeSet.h"
 #include "NetworkGameInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 
@@ -63,11 +64,11 @@ void AMyPlayerState::InitializeAbilities_Implementation() {
         if (UGameInstance* GameInstance = World->GetGameInstance()) {
             if (const UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance)) {
                 // Use GetUniquePlayerIDFromState instead of GetUniquePlayerId
-                FString UniquePlayerID = NetworkGI->GetUniquePlayerIDFromState(this);
+                const FString ThisUniquePlayerID = NetworkGI->GetUniquePlayerIDFromState(GetCustomDisplayName());
 
-                const TArray<FGameplayAbilitySpec>& AbilitySpecs = NetworkGI->GetGameplayAbilitySpec(UniquePlayerID);
+                const TArray<FGameplayAbilitySpec>& AbilitySpecs = NetworkGI->GetGameplayAbilitySpec(ThisUniquePlayerID);
                 if (GEngine) {
-                    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Unique Player ID: %s"), *UniquePlayerID));
+                    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Unique Player ID: %s"), *ThisUniquePlayerID));
                 }
 
                 for (const FGameplayAbilitySpec& GameplayAbilitySpec : AbilitySpecs) {
@@ -254,6 +255,17 @@ void AMyPlayerState::SetUniquePlayerId_Implementation(const FString& NewId)
 FString AMyPlayerState::GetUniquePlayerId() const
 {
 	return UniquePlayerId;
+}
+
+FString AMyPlayerState::GetCustomDisplayName() const
+{
+	// Get the original display name
+	const FString OriginalName = UKismetSystemLibrary::GetDisplayName(this);
+
+	// Remove unwanted suffix and underscore
+	FString ModifiedName = OriginalName.Replace(TEXT("_C_"), TEXT(""));
+
+	return ModifiedName;
 }
 
 void AMyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

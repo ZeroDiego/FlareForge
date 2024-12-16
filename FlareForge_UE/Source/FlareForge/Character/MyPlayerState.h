@@ -30,9 +30,6 @@ public:
 
 	const TArray<TSubclassOf<UGameplayAbility>>& GetSelectedAbilities() const;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player State")
-	FString PlayerName;
-
 	// Adds or sets an ability at a specific index in SelectedAbilities
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Ability")
 	void SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility);
@@ -69,6 +66,8 @@ public:
 
 	// Get the unique player ID
 	FString GetUniquePlayerId() const;
+
+	FString GetCustomDisplayName() const;
 	
 protected:	
 	UPROPERTY()
