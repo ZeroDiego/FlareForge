@@ -23,6 +23,7 @@ void UDeflectAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, c
 	}
 	
 	CommitAbilityCooldown(Handle, ActorInfo, ActivationInfo, true, nullptr);
+	ApplyGameplayEffectToOwner(Handle, ActorInfo, ActivationInfo, AnimDelay_Reflect_Blueprint.GetDefaultObject(), 1.0f);
 	
 	// End the ability
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);

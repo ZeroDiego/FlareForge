@@ -15,6 +15,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
+#include "Net/UnrealNetwork.h"
 
 
 // Sets default values
@@ -53,6 +54,14 @@ AMyPlayerCharacter::AMyPlayerCharacter()
 
 	bReplicates = true;
 	bAlwaysRelevant = true;
+}
+
+void AMyPlayerCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMyPlayerCharacter, bHello);
+	DOREPLIFETIME(AMyPlayerCharacter, bDead);
 }
 
 void AMyPlayerCharacter::PossessedBy(AController* NewController)

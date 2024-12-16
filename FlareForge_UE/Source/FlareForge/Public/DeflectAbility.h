@@ -31,6 +31,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ADeflectShield> ShieldBlueprint;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UGameplayEffect> AnimDelay_Reflect_Blueprint;
+
 	UPROPERTY(VisibleAnywhere)
 	ADeflectShield* Shield;
 

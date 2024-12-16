@@ -36,6 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	float ShortPressThreshold;
 
+	/*UPROPERTY(BlueprintReadWrite)
+	TSubclassOf<UUserWidget> LoadingUI;*/
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DashSpeed = 100.0f;
 
@@ -57,7 +60,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float LerpAlphaValueLeft = 0.05f;
 
-
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
+	bool bShouldRotateTowardsMouse = true;
+	
 	/** FX Class that we will spawn when clicking */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UNiagaraSystem* FXCursor;
@@ -89,7 +94,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* ControllerRotationAction;
-
+	
 	// Dash functions
 	void Dash();
 
@@ -98,6 +103,17 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FVector GetAnimationVelocity();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayDashAnimation() const;
+
+	/*UFUNCTION(BlueprintImplementableEvent)
+	void RemoveLoadingScreenFromPlayer();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void RemoveLoadingScreenFromServer();*/
+
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 	// Keeps track of the number of instances that
 	// have been created of this class thus far
@@ -120,6 +136,9 @@ protected:
 	virtual void BeginPlay();
 	
 	virtual void ClientRestart_Implementation(APawn* NewPawn) override;
+
+	/*UFUNCTION(Server, Reliable)
+	void ServerHandleClientRestart();*/
 
 	/** Input handlers for SetDestination action. */
 	void OnInputStarted();

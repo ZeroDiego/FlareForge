@@ -26,8 +26,13 @@ public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(Replicated, BlueprintReadWrite)
 	bool bHello;
+	
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	bool bDead;
+	
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	
 private:
 	/** Top down camera */
