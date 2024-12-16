@@ -107,11 +107,11 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayDashAnimation() const;
 
-	UFUNCTION(BlueprintImplementableEvent)
+	/*UFUNCTION(BlueprintImplementableEvent)
 	void RemoveLoadingScreenFromPlayer();
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void RemoveLoadingScreenFromServer();
+	void RemoveLoadingScreenFromServer();*/
 
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -137,8 +137,8 @@ protected:
 	
 	virtual void ClientRestart_Implementation(APawn* NewPawn) override;
 
-	UFUNCTION(Server, Reliable)
-	void ServerHandleClientRestart();
+	/*UFUNCTION(Server, Reliable)
+	void ServerHandleClientRestart();*/
 
 	/** Input handlers for SetDestination action. */
 	void OnInputStarted();
