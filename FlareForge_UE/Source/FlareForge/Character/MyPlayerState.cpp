@@ -68,13 +68,13 @@ void AMyPlayerState::InitializeAbilities_Implementation() {
 
                 const TArray<FGameplayAbilitySpec>& AbilitySpecs = NetworkGI->GetGameplayAbilitySpec(ThisUniquePlayerID);
                 if (GEngine) {
-                    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Unique Player ID: %s"), *ThisUniquePlayerID));
+                    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Unique Player ID: %s"), *GetCustomDisplayName()));
                 }
 
                 for (const FGameplayAbilitySpec& GameplayAbilitySpec : AbilitySpecs) {
                     if (!GameplayAbilitySpec.Ability) {
                         if (GEngine) {
-                            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Invalid Ability Spec: Ability is null!"));
+                            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("Invalid Ability Spec: Ability is null!"));
                         }
                         continue;
                     }
@@ -83,7 +83,7 @@ void AMyPlayerState::InitializeAbilities_Implementation() {
 
                     // Debug message for successful assignment
                     if (GEngine) {
-                        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Assigned Ability: %s"), *GameplayAbilitySpec.Ability->GetName()));
+                        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Assigned Ability: %s"), *GameplayAbilitySpec.Ability->GetName()));
                     }
                 }
 
@@ -183,7 +183,12 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
                         {
                               if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
                             {
-                                NetworkGI->SetGameplayAbilitySpecAtIndex(PlayerState->GetUniquePlayerId(), AbilitySpec, Index);
+                              	//Add Player ID and Player State to GI
+                              	NetworkGI->AddPlayerState(GetUniquePlayerId(), GetCustomDisplayName());
+                              	// Use GetUniquePlayerIDFromState instead of GetUniquePlayerId
+                              	const FString ThisUniquePlayerID = NetworkGI->GetUniquePlayerIDFromState(GetCustomDisplayName());
+                              	
+                                NetworkGI->SetGameplayAbilitySpecAtIndex(ThisUniquePlayerID, AbilitySpec, Index);
                                 /*GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Yellow,
                                     FString::Printf(TEXT("Transferred Ability: %s"), *AbilityClass->GetName()));*/
                             }
@@ -196,7 +201,9 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
             {
                 if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
                 {
-                    NetworkGI->SetSelectedAbilitiesForPlayer(PlayerState->GetUniquePlayerId(), PlayerState->GetSelectedAbilities());
+                	// Use GetUniquePlayerIDFromState instead of GetUniquePlayerId
+                	const FString ThisUniquePlayerID = NetworkGI->GetUniquePlayerIDFromState(GetCustomDisplayName());
+                    NetworkGI->SetSelectedAbilitiesForPlayer(ThisUniquePlayerID, PlayerState->GetSelectedAbilities());
                 }
             }
         }
@@ -262,10 +269,18 @@ FString AMyPlayerState::GetCustomDisplayName() const
 	// Get the original display name
 	const FString OriginalName = UKismetSystemLibrary::GetDisplayName(this);
 
-	// Remove unwanted suffix and underscore
-	FString ModifiedName = OriginalName.Replace(TEXT("_C_"), TEXT(""));
+	// Use a regular expression to extract numbers from the string
+	FRegexPattern NumberPattern(TEXT("\\d+")); // Matches one or more digits
+	FRegexMatcher Matcher(NumberPattern, OriginalName);
 
-	return ModifiedName;
+	if (Matcher.FindNext())
+	{
+		// Extract the matched number as a substring
+		return Matcher.GetCaptureGroup(0);
+	}
+
+	// If no number is found, return an empty string or handle it as needed
+	return FString();
 }
 
 void AMyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

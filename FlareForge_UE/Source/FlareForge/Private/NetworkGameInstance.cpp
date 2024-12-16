@@ -51,10 +51,10 @@ void UNetworkGameInstance::AddPlayerState_Implementation(const FString& UniquePl
 void UNetworkGameInstance::SetSelectedAbilitiesForPlayer_Implementation(const FString& UniquePlayerID, const TArray<TSubclassOf<UGameplayAbility>>& NewSelectedAbilities)
 {
    PlayerSelectedAbilitiesMap.Add(UniquePlayerID, NewSelectedAbilities);
-   
+   /*
    for (const TSubclassOf<UGameplayAbility> Ability : NewSelectedAbilities)
        GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
-           FString::Printf(TEXT("EffectHandle %s for Player %s"), *Ability->GetName(), *UniquePlayerID));
+           FString::Printf(TEXT("EffectHandle %s for Player %s"), *Ability->GetName(), *UniquePlayerID));*/
 }
 
 TArray<TSubclassOf<UGameplayAbility>> UNetworkGameInstance::GetAbilitiesForPlayer(const FString& UniquePlayerID) const
