@@ -28,7 +28,10 @@ public:
 
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	bool bHello;
-
+	
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	bool bDead;
+	
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	
 private:
