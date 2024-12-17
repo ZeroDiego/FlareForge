@@ -4,6 +4,7 @@
 #include "DeflectAbility.h"
 
 #include "FiringOffset.h"
+#include "ReflectOffset.h"
 #include "GameFramework/Character.h"
 
 void UDeflectAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -13,10 +14,8 @@ void UDeflectAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, c
 	{
 		if (const ACharacter* Character = Cast<ACharacter>(Actor))
 		{
-			const FVector SpawnDeflectShieldLocation = Character->GetComponentByClass<UFiringOffset>()->GetComponentLocation();
-			//const FVector CurrentVector = Character->GetActorForwardVector() * 2;
+			const FVector SpawnDeflectShieldLocation = Character->GetComponentByClass<UReflectOffset>()->GetComponentLocation();
 			const FRotator CurrentRotation = Character->GetActorRotation();
-			//FName PlayerName = Character->GetFName();
 			DeflectAbility(SpawnDeflectShieldLocation, CurrentRotation);
 			Shield->GetDeflectPlayerReference(Character->GetRootComponent());
 		}
@@ -33,10 +32,5 @@ void UDeflectAbility::DeflectAbility_Implementation(const FVector SpawnDeflectSh
 {
 	const FActorSpawnParameters SpawnParameters;
 	Shield = GetWorld()->SpawnActor<ADeflectShield>(ShieldBlueprint, SpawnDeflectShieldLocation, CurrentRotation, SpawnParameters);
-	/*if(Shield)
-	{
-		Shield->SetPlayerName(PlayerName);
-	}*/
-	//UE_LOG(LogTemp, Warning, TEXT("Spawn shield"));
 }
 
