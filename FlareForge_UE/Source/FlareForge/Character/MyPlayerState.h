@@ -5,9 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayAbilitySpec.h"
 #include "MyPlayerState.generated.h"
 
-class UGameplayAbility;
 class ULucasAbilitySystemComponent;
 class UMyCharacterAttributeSet;
 /**
@@ -29,10 +29,6 @@ public:
 	virtual void PostInitializeComponents() override;
 
 	const TArray<TSubclassOf<UGameplayAbility>>& GetSelectedAbilities() const;
-	
-	// Pending abilities to be granted to the player
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
-	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
 
 	// Adds or sets an ability at a specific index in SelectedAbilities
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Ability")
@@ -55,10 +51,39 @@ public:
 	//~End of IAbilitySystemInterface interface
 	virtual UMyCharacterAttributeSet* GetAttributeSet() const;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
+	bool IsMelee;
+
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	void SetIsMeleeTrue();
+
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	void SetIsMeleeFalse();
+
+	// Set the unique player ID
+	UFUNCTION(Server, Reliable)
+	void SetUniquePlayerId(const FString& NewId);
+
+	// Get the unique player ID
+	FString GetUniquePlayerId() const;
+	// Get the custom player state display name
+	UFUNCTION(BlueprintCallable, Category = "Player State")
+	FString GetCustomDisplayName() const;
+	
 protected:	
 	UPROPERTY()
 	TObjectPtr<ULucasAbilitySystemComponent> AbilitySystemComponent;
 
 	UPROPERTY()
 	TObjectPtr<UMyCharacterAttributeSet> AttributeSet;
+
+	// Replicated list of selected abilities
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Ability")
+	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	// Replicated unique player ID
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	FString UniquePlayerId;
 };
