@@ -66,10 +66,20 @@ TArray<TSubclassOf<UGameplayAbility>> UNetworkGameInstance::GetAbilitiesForPlaye
 
 TSubclassOf<UGameplayAbility> UNetworkGameInstance::GetAbilityAtIndexForPlayer(const FString& UniquePlayerID, const int32 Index) const
 {
+    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green,
+                FString::Printf(TEXT("GetAbilityAtIndexForPlayer")));
    if (const TArray<TSubclassOf<UGameplayAbility>>* FoundAbilities = PlayerSelectedAbilitiesMap.Find(UniquePlayerID))
+   {
+       GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green,
+                FString::Printf(TEXT("Found %d Abilities for Player ID: %s"), FoundAbilities->Num(), *UniquePlayerID));
        if (FoundAbilities->IsValidIndex(Index))
+       {
+           GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green,
+                FString::Printf(TEXT("Found %d Abilities for Player ID: %s"), FoundAbilities->Num(), *UniquePlayerID));
            return (*FoundAbilities)[Index];
-
+       }
+   }
+    
    return nullptr;
 }
 
