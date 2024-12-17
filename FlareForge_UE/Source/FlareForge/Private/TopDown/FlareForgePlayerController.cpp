@@ -35,6 +35,7 @@ AFlareForgePlayerController::AFlareForgePlayerController()
 	CachedDestination = FVector::ZeroVector;
 	FollowTime = 0.f;
 	bReplicates = true;
+	bCanRemoveLoadingScreen = false;
 	
 }
 
@@ -59,6 +60,7 @@ void AFlareForgePlayerController::ClientRestart_Implementation(APawn* NewPawn)
 			{
 				ServerHandleClientRestart();
 			}*/
+			bCanRemoveLoadingScreen = true;
 		}
 		else
 		{
