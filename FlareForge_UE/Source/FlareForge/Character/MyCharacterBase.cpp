@@ -12,6 +12,8 @@ AMyCharacterBase::AMyCharacterBase()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
+	bAlwaysRelevant = true;
 }
 
 UAbilitySystemComponent* AMyCharacterBase::GetAbilitySystemComponent() const
@@ -36,7 +38,10 @@ void AMyCharacterBase::InitAbilitySystemComponent()
 		AbilitySystemComponent = Cast<ULucasAbilitySystemComponent>(MyPlayerState->GetAbilitySystemComponent());
 		if (!AbilitySystemComponent)
 		{
-			UE_LOG(LogTemp, Error, TEXT("Failed to cast AbilitySystemComponent to ULucasAbilitySystemComponent"));
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Failed to cast AbilitySystemComponent to ULucasAbilitySystemComponent"));
+			}
 			return;
 		}
 
@@ -46,6 +51,18 @@ void AMyCharacterBase::InitAbilitySystemComponent()
 		if (AbilitySystemComponent)
 		{
 			AbilitySystemComponent->InitAbilityActorInfo(MyPlayerState, this);
+
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Successfully initialized Ability System Component"));
+			}
+		}
+	}
+	else
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Failed to get PlayerState in InitAbilitySystemComponent"));
 		}
 	}
 }

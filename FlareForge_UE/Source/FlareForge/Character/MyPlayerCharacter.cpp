@@ -53,6 +53,7 @@ AMyPlayerCharacter::AMyPlayerCharacter()
 	PrimaryActorTick.bStartWithTickEnabled = true;
 
 	bReplicates = true;
+	bAlwaysRelevant = true;
 }
 
 void AMyPlayerCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
@@ -66,7 +67,7 @@ void AMyPlayerCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProper
 void AMyPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	    
+
 	InitAbilitySystemComponent();
 	InitDefaultAttributes();
 }
