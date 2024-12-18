@@ -35,7 +35,7 @@ USceneComponent* AHomingStrikeProjectile::FindHomingStrikeTarget() const
 
 	for (TActorIterator<AMyPlayerCharacter> CharacterItr(GetWorld()); CharacterItr; ++CharacterItr)
 	{
-		if (const double VectorLength = UKismetMathLibrary::VSize(CharacterItr->GetActorLocation() - GetActorLocation()); VectorLength < ClosestDistance)
+		if (const double VectorLength = UKismetMathLibrary::VSize(CharacterItr->GetActorLocation() - GetActorLocation()); VectorLength < ClosestDistance && !CharacterItr->bDead)
 		{
 			HomingStrikeTarget = *CharacterItr;
 			ClosestDistance = VectorLength;
