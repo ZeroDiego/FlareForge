@@ -35,12 +35,24 @@ TArray<FGameplayAbilitySpec> UNetworkGameInstance::GetGameplayAbilitySpec(const 
 
 void UNetworkGameInstance::SetSelectedAbilitiesForPlayer_Implementation(const FString& UniquePlayerID, const TArray<TSubclassOf<UGameplayAbility>>& NewSelectedAbilities)
 {
-   PlayerSelectedAbilitiesMap.Add(UniquePlayerID, NewSelectedAbilities);
-   /*
-   for (const TSubclassOf<UGameplayAbility> Ability : NewSelectedAbilities)
-       GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
-           FString::Printf(TEXT("EffectHandle %s for Player %s"), *Ability->GetName(), *UniquePlayerID));*/
+    // Find or add entry in the replicated array
+    FPlayerAbilityData* ExistingEntry = ReplicatedAbilityDataArray.FindByPredicate([&](const FPlayerAbilityData& Data) {
+        return Data.PlayerID == UniquePlayerID;
+    });
+
+    if (ExistingEntry)
+    {
+        ExistingEntry->Abilities = NewSelectedAbilities;
+    }
+    else
+    {
+        ReplicatedAbilityDataArray.Add(FPlayerAbilityData{UniquePlayerID, NewSelectedAbilities});
+    }
+
+    // Update local map for server-side use
+    PlayerSelectedAbilitiesMap.Add(UniquePlayerID, NewSelectedAbilities);
 }
+
 
 TArray<TSubclassOf<UGameplayAbility>> UNetworkGameInstance::GetAbilitiesForPlayer(const FString& UniquePlayerID) const
 {
@@ -87,6 +99,16 @@ void UNetworkGameInstance::OnRep_ReplicatedPlayerIDs()
         PlayerIDs.Add(PlayerID);
 }
 
+void UNetworkGameInstance::OnRep_PlayerSelectedAbilities()
+{
+    PlayerSelectedAbilitiesMap.Empty();
+    
+    for (const FPlayerAbilityData& Data : ReplicatedAbilityDataArray)
+    {
+        PlayerSelectedAbilitiesMap.Add(Data.PlayerID, Data.Abilities);
+    }
+}
+
 void UNetworkGameInstance::SetIsMelee(bool bNewIsMelee)
 {
    bIsMelee = bNewIsMelee;
@@ -102,4 +124,5 @@ void UNetworkGameInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
   DOREPLIFETIME(UNetworkGameInstance, ReplicatedPlayerIDs);
+  DOREPLIFETIME(UNetworkGameInstance, ReplicatedAbilityDataArray);
 }

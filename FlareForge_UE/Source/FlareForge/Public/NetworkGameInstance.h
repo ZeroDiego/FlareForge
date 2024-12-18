@@ -13,15 +13,17 @@
  * 
  */
 USTRUCT(BlueprintType)
-struct FPlayerStatePair
+struct FPlayerAbilityData
 {
 	GENERATED_BODY()
 
+	// The unique player ID (key)
 	UPROPERTY(BlueprintReadWrite)
 	FString PlayerID;
 
+	// The array of abilities (value)
 	UPROPERTY(BlueprintReadWrite)
-	FString PlayerState;
+	TArray<TSubclassOf<UGameplayAbility>> Abilities;
 };
 
 UCLASS()
@@ -70,6 +72,17 @@ public:
 	TMap<AMyPlayerCharacter*, int> PlayerScores;
 
 protected:
+
+	// Replicated array to store player abilities
+	UPROPERTY(ReplicatedUsing = OnRep_PlayerSelectedAbilities)
+	TArray<FPlayerAbilityData> ReplicatedAbilityDataArray;
+
+	// Local map to reconstruct TMap from replicated data
+	TMap<FString, TArray<TSubclassOf<UGameplayAbility>>> PlayerSelectedAbilitiesMap;
+
+	// Called when ReplicatedAbilityDataArray changes
+	UFUNCTION()
+	void OnRep_PlayerSelectedAbilities();
 	
 	UFUNCTION()
 	void OnRep_ReplicatedPlayerIDs();
@@ -84,6 +97,4 @@ private:
 	
 	// Map of Player IDs to their respective ability specs
 	TMap<FString, TArray<FGameplayAbilitySpec>> PlayerAbilitySpecsMap;
-
-	TMap<FString, TArray<TSubclassOf<UGameplayAbility>>> PlayerSelectedAbilitiesMap;
 };
