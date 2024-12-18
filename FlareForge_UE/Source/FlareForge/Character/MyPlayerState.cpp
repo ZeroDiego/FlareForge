@@ -50,7 +50,6 @@ void AMyPlayerState::CopyProperties(APlayerState* PlayerState) {
 	AMyPlayerState* MyPlayerState = Cast<AMyPlayerState>(PlayerState);
 	if (MyPlayerState) {
 		MyPlayerState->UniquePlayerId = UniquePlayerId;
-		MyPlayerState->SelectedAbilities = SelectedAbilities;
 	}
 }
 
@@ -184,8 +183,8 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
                         {
                               if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
                             {
-                              	//Add Player ID and Player State to GI
-                              	NetworkGI->AddPlayerState(GetUniquePlayerId(), GetCustomDisplayName());
+                              	//Add Player ID to GI
+                              	NetworkGI->AddReplicatedPlayerID(GetUniquePlayerId());
                               	
                                 NetworkGI->SetGameplayAbilitySpecAtIndex(GetUniquePlayerId(), AbilitySpec, Index);
                                 GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Yellow,
@@ -258,25 +257,6 @@ void AMyPlayerState::SetUniquePlayerId_Implementation(const FString& NewId)
 FString AMyPlayerState::GetUniquePlayerId() const
 {
 	return UniquePlayerId;
-}
-
-FString AMyPlayerState::GetCustomDisplayName() const
-{
-	// Get the original display name
-	const FString OriginalName = UKismetSystemLibrary::GetDisplayName(this);
-
-	// Use a regular expression to extract numbers from the string
-	FRegexPattern NumberPattern(TEXT("\\d+")); // Matches one or more digits
-	FRegexMatcher Matcher(NumberPattern, OriginalName);
-
-	if (Matcher.FindNext())
-	{
-		// Extract the matched number as a substring
-		return Matcher.GetCaptureGroup(0);
-	}
-
-	// If no number is found, return an empty string or handle it as needed
-	return FString();
 }
 
 void AMyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
