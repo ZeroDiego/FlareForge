@@ -26,6 +26,8 @@ public:
 	UFUNCTION(Server, Reliable)
 	void InitializeAbilities();
 	
+	virtual void CopyProperties(APlayerState* PlayerState) override;
+	
 	virtual void PostInitializeComponents() override;
 
 	const TArray<TSubclassOf<UGameplayAbility>>& GetSelectedAbilities() const;
@@ -84,6 +86,6 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	// Replicated unique player ID
-	UPROPERTY(Replicated, BlueprintReadOnly)
+	UPROPERTY(Replicated, BlueprintReadWrite)
 	FString UniquePlayerId;
 };

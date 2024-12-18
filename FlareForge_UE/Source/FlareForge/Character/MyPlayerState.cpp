@@ -45,6 +45,15 @@ void AMyPlayerState::PostInitializeComponents()
 	InitializeAbilities();
 }
 
+void AMyPlayerState::CopyProperties(APlayerState* PlayerState) {
+	Super::CopyProperties(PlayerState);
+	AMyPlayerState* MyPlayerState = Cast<AMyPlayerState>(PlayerState);
+	if (MyPlayerState) {
+		MyPlayerState->UniquePlayerId = UniquePlayerId;
+		MyPlayerState->SelectedAbilities = SelectedAbilities;
+	}
+}
+
 void AMyPlayerState::InitializeAbilities_Implementation() {
     if (!AbilitySystemComponent) {
         if (GEngine) {
@@ -63,12 +72,10 @@ void AMyPlayerState::InitializeAbilities_Implementation() {
     if (const UWorld* World = GetWorld()) {
         if (UGameInstance* GameInstance = World->GetGameInstance()) {
             if (const UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance)) {
-                // Use GetUniquePlayerIDFromState instead of GetUniquePlayerId
-                const FString ThisUniquePlayerID = NetworkGI->GetUniquePlayerIDFromState(GetCustomDisplayName());
 
-                const TArray<FGameplayAbilitySpec>& AbilitySpecs = NetworkGI->GetGameplayAbilitySpec(ThisUniquePlayerID);
+                const TArray<FGameplayAbilitySpec>& AbilitySpecs = NetworkGI->GetGameplayAbilitySpec(GetUniquePlayerId());
                 if (GEngine) {
-                    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Unique Player ID: %s"), *GetCustomDisplayName()));
+                    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Unique Player ID: %s"), *GetUniquePlayerId()));
                 }
 
                 for (const FGameplayAbilitySpec& GameplayAbilitySpec : AbilitySpecs) {
@@ -82,9 +89,9 @@ void AMyPlayerState::InitializeAbilities_Implementation() {
                     AbilitySystemComponent->GiveAbility(GameplayAbilitySpec);
 
                     // Debug message for successful assignment
-                    /*if (GEngine) {
+                    if (GEngine) {
                         GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Assigned Ability: %s"), *GameplayAbilitySpec.Ability->GetName()));
-                    }*/
+                    }
                 }
 
                 // Finalize initialization
@@ -179,12 +186,10 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
                             {
                               	//Add Player ID and Player State to GI
                               	NetworkGI->AddPlayerState(GetUniquePlayerId(), GetCustomDisplayName());
-                              	// Use GetUniquePlayerIDFromState instead of GetUniquePlayerId
-                              	const FString ThisUniquePlayerID = NetworkGI->GetUniquePlayerIDFromState(GetCustomDisplayName());
                               	
-                                NetworkGI->SetGameplayAbilitySpecAtIndex(ThisUniquePlayerID, AbilitySpec, Index);
-                                /*GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Yellow,
-                                    FString::Printf(TEXT("Transferred Ability: %s"), *AbilityClass->GetName()));*/
+                                NetworkGI->SetGameplayAbilitySpecAtIndex(GetUniquePlayerId(), AbilitySpec, Index);
+                                GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Yellow,
+                                    FString::Printf(TEXT("Transferred Ability: %s"), *AbilityClass->GetName()));
                             }
                         }
                     }
@@ -195,9 +200,7 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
             {
                 if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
                 {
-                	// Use GetUniquePlayerIDFromState instead of GetUniquePlayerId
-                	const FString ThisUniquePlayerID = NetworkGI->GetUniquePlayerIDFromState(GetCustomDisplayName());
-                    NetworkGI->SetSelectedAbilitiesForPlayer(ThisUniquePlayerID, PlayerState->GetSelectedAbilities());
+                    NetworkGI->SetSelectedAbilitiesForPlayer(GetUniquePlayerId(), PlayerState->GetSelectedAbilities());
                 }
             }
         }
