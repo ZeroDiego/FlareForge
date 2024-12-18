@@ -63,7 +63,10 @@ void AMyPlayerState::InitializeAbilities_Implementation() {
     if (const UWorld* World = GetWorld()) {
         if (UGameInstance* GameInstance = World->GetGameInstance()) {
             if (const UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance)) {
-                const TArray<FGameplayAbilitySpec>& AbilitySpecs = NetworkGI->GetGameplayAbilitySpec(GetUniquePlayerId());
+                // Use GetUniquePlayerIDFromState instead of GetUniquePlayerId
+                const FString ThisUniquePlayerID = NetworkGI->GetUniquePlayerIDFromState(GetCustomDisplayName());
+
+                const TArray<FGameplayAbilitySpec>& AbilitySpecs = NetworkGI->GetGameplayAbilitySpec(ThisUniquePlayerID);
                 if (GEngine) {
                     GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Unique Player ID: %s"), *GetCustomDisplayName()));
                 }
@@ -175,9 +178,11 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
                               if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
                             {
                               	//Add Player ID and Player State to GI
-                              	NetworkGI->AddReplicatedPlayerID(GetUniquePlayerId());
-
-                                NetworkGI->SetGameplayAbilitySpecAtIndex(GetUniquePlayerId(), AbilitySpec, Index);
+                              	NetworkGI->AddPlayerState(GetUniquePlayerId(), GetCustomDisplayName());
+                              	// Use GetUniquePlayerIDFromState instead of GetUniquePlayerId
+                              	const FString ThisUniquePlayerID = NetworkGI->GetUniquePlayerIDFromState(GetCustomDisplayName());
+                              	
+                                NetworkGI->SetGameplayAbilitySpecAtIndex(ThisUniquePlayerID, AbilitySpec, Index);
                                 /*GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Yellow,
                                     FString::Printf(TEXT("Transferred Ability: %s"), *AbilityClass->GetName()));*/
                             }
@@ -190,7 +195,9 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
             {
                 if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
                 {
-                    NetworkGI->SetSelectedAbilitiesForPlayer(GetUniquePlayerId(), PlayerState->GetSelectedAbilities());
+                	// Use GetUniquePlayerIDFromState instead of GetUniquePlayerId
+                	const FString ThisUniquePlayerID = NetworkGI->GetUniquePlayerIDFromState(GetCustomDisplayName());
+                    NetworkGI->SetSelectedAbilitiesForPlayer(ThisUniquePlayerID, PlayerState->GetSelectedAbilities());
                 }
             }
         }
@@ -267,24 +274,6 @@ FString AMyPlayerState::GetCustomDisplayName() const
 
 	// If no number is found, return an empty string or handle it as needed
 	return FString();
-}
-
-void AMyPlayerState::CopyProperties(APlayerState* NewPlayerState)
-{
-	Super::CopyProperties(NewPlayerState);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("CopyProperties called!"));
-
-	if (AMyPlayerState* NewCustomPlayerState = Cast<AMyPlayerState>(NewPlayerState))
-	{
-		if (NewCustomPlayerState)
-		{
-			NewCustomPlayerState->UniquePlayerId = this->UniquePlayerId;
-			GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Yellow,
-									FString::Printf(TEXT("PLAYER ID %s"), *GetUniquePlayerId()));
-		}
-		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Yellow,
-									FString::Printf(TEXT("PlayerState Not Valid")));
-	}
 }
 
 void AMyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

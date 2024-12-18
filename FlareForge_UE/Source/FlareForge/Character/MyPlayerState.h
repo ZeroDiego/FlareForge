@@ -61,17 +61,15 @@ public:
 	void SetIsMeleeFalse();
 
 	// Set the unique player ID
-	UFUNCTION(BlueprintCallable, Server, Reliable)
+	UFUNCTION(Server, Reliable)
 	void SetUniquePlayerId(const FString& NewId);
 
 	// Get the unique player ID
-	UFUNCTION(BlueprintCallable, Category = "Player State")
 	FString GetUniquePlayerId() const;
 	// Get the custom player state display name
 	UFUNCTION(BlueprintCallable, Category = "Player State")
 	FString GetCustomDisplayName() const;
 	
-	virtual void CopyProperties(APlayerState* NewPlayerState) override;
 protected:	
 	UPROPERTY()
 	TObjectPtr<ULucasAbilitySystemComponent> AbilitySystemComponent;
@@ -83,9 +81,9 @@ protected:
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Ability")
 	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
 
-	// Replicated unique player ID
-	UPROPERTY(Replicated)
-	FString UniquePlayerId;
-
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	// Replicated unique player ID
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	FString UniquePlayerId;
 };

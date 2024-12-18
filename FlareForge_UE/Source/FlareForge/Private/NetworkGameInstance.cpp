@@ -15,15 +15,36 @@ void UNetworkGameInstance::SetGameplayAbilitySpecAtIndex_Implementation(const FS
         AbilitySpecs[AtIndex] = NewGameplayAbilitySpec;
     else
         AbilitySpecs.SetNum(AtIndex + 1);
-    AbilitySpecs[AtIndex] = NewGameplayAbilitySpec;
+        AbilitySpecs[AtIndex] = NewGameplayAbilitySpec;
 }
 
 TArray<FGameplayAbilitySpec> UNetworkGameInstance::GetGameplayAbilitySpec(const FString& UniquePlayerID) const
 {
     if (const TArray<FGameplayAbilitySpec>* FoundAbilities = PlayerAbilitySpecsMap.Find(UniquePlayerID))
+    {
+        if (GEngine)
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green,
+                FString::Printf(TEXT("Found %d Abilities for Player ID: %s"), FoundAbilities->Num(), *UniquePlayerID));
+        }
         return *FoundAbilities;
+    }
 
     return TArray<FGameplayAbilitySpec>();
+}
+
+void UNetworkGameInstance::AddPlayerState_Implementation(const FString& UniquePlayerID, const FString& PlayerState)
+{
+    if (!PlayerStatesMap.Contains(UniquePlayerID))
+        PlayerStatesMap.Add(UniquePlayerID, PlayerState);
+
+    // Update the replicated array
+    FPlayerStatePair NewPair;
+    NewPair.PlayerID = UniquePlayerID;
+    NewPair.PlayerState = PlayerState;
+    PlayerStatesArray.Add(NewPair);
+
+    UE_LOG(LogTemp, Log, TEXT("Added Player %s with State %s to GameInstance"), *UniquePlayerID, *PlayerState);
 }
 
 void UNetworkGameInstance::SetSelectedAbilitiesForPlayer_Implementation(const FString& UniquePlayerID, const TArray<TSubclassOf<UGameplayAbility>>& NewSelectedAbilities)
@@ -62,6 +83,25 @@ TSubclassOf<UGameplayAbility> UNetworkGameInstance::GetAbilityAtIndexForPlayer(c
    return nullptr;
 }
 
+FString UNetworkGameInstance::GetUniquePlayerIDFromState(const FString& PlayerState) const
+{
+    for (const auto& Entry : PlayerStatesMap)
+        if (Entry.Value == PlayerState)
+            return Entry.Key;
+
+    return FString();
+}
+
+FString UNetworkGameInstance::GetPlayerNameFromState(const FString& UniquePlayerID) const
+{
+    
+    if (const FString* PlayerState = PlayerStatesMap.Find(UniquePlayerID))
+    {
+        return *PlayerState; // Directly return the PlayerState string
+    }
+    return FString("Unknown");
+}
+
 void UNetworkGameInstance::SetIsMelee(bool bNewIsMelee)
 {
    bIsMelee = bNewIsMelee;
@@ -72,27 +112,17 @@ bool UNetworkGameInstance::GetIsMelee() const
    return bIsMelee;
 }
 
-void UNetworkGameInstance::AddReplicatedPlayerID_Implementation(const FString& UniquePlayerID)
+void UNetworkGameInstance::OnRep_PlayerStatesArray()
 {
-    if (!ReplicatedPlayerIDs.Contains(UniquePlayerID))
-    {
-        ReplicatedPlayerIDs.Add(UniquePlayerID);
-        OnRep_ReplicatedPlayerIDs();
-        
-        UE_LOG(LogTemp, Log, TEXT("Added Player ID: %s"), *UniquePlayerID);
-    }
-}
-
-void UNetworkGameInstance::OnRep_ReplicatedPlayerIDs()
-{
-    PlayerIDs.Empty();
-    for (const FString& PlayerID : ReplicatedPlayerIDs)
-        PlayerIDs.Add(PlayerID);
+    // Rebuild local map from replicated array
+    PlayerStatesMap.Empty();
+    for (const FPlayerStatePair& Pair : PlayerStatesArray)
+        PlayerStatesMap.Add(Pair.PlayerID, Pair.PlayerState);
 }
 
 void UNetworkGameInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+   Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-    DOREPLIFETIME(UNetworkGameInstance, ReplicatedPlayerIDs);
+   DOREPLIFETIME(UNetworkGameInstance, PlayerStatesArray);
 }
