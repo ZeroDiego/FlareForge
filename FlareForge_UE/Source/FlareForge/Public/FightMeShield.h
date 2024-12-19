@@ -16,6 +16,9 @@ public:
 	// Sets default values for this actor's properties
 	AFightMeShield();
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void GetFightMePlayerReference(USceneComponent* PlayerSpawningRootComponent);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

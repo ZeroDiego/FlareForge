@@ -23,6 +23,9 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void FightMeAbility(const FVector SpawnLocation, const FRotator CurrentRotation);
+
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ActiveTime = 1.0f;*/
 	
 private:
 
