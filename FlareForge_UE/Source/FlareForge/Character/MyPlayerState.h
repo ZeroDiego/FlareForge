@@ -23,7 +23,7 @@ public:
 	
 	virtual void BeginPlay() override;
 
-	UFUNCTION()
+	UFUNCTION(Server, Reliable)
 	void InitializeAbilities();
 	
 	virtual void CopyProperties(APlayerState* PlayerState) override;
@@ -41,10 +41,6 @@ public:
 	// Removes an ability from a specific index in SelectedAbilities
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	void RemoveAbilityAtIndex(int32 Index);
-
-	// Transfers SelectedAbilities to the Ability System Component (ASC)
-	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Ability")
-	void TransferAbilitiesToAbilitySystemComponent();
 	
 	//~IAbilitySystemInterface interface
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;

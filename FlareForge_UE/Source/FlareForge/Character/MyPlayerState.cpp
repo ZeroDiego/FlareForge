@@ -62,7 +62,7 @@ void AMyPlayerState::CopyProperties(APlayerState* NewPlayerState)
 	}
 }
 
-void AMyPlayerState::InitializeAbilities()
+void AMyPlayerState::InitializeAbilities_Implementation()
 {
 	if (!AbilitySystemComponent || !HasAuthority()) return;
 
@@ -124,26 +124,6 @@ void AMyPlayerState::RemoveAbilityAtIndex(int32 Index)
 	{
 		SelectedAbilities.RemoveAt(Index);
 		OnRep_SelectedAbilities(); // Notify clients of the change
-	}
-}
-
-void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
-{
-	if (!HasAuthority()) return; // Ensure this runs on the server
-
-	if (AbilitySystemComponent)
-	{
-		for (const TSubclassOf<UGameplayAbility>& AbilityClass : SelectedAbilities)
-		{
-			if (IsValid(AbilityClass))
-			{
-				const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
-				AbilitySystemComponent->GiveAbility(AbilitySpec);
-			}
-		}
-
-		// Reinitialize the Ability System Component with updated abilities
-		AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	}
 }
 
@@ -223,4 +203,5 @@ void AMyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 
 	// Replicate UniquePlayerId to all clients
 	DOREPLIFETIME(AMyPlayerState, UniquePlayerId);
+	
 }
