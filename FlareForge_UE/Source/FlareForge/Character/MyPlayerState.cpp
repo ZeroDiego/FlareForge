@@ -15,6 +15,7 @@ AMyPlayerState::AMyPlayerState()
 	NetUpdateFrequency = 100.f;
 
 	AbilitySystemComponent = CreateDefaultSubobject<ULucasAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 	AttributeSet = CreateDefaultSubobject<UMyCharacterAttributeSet>(TEXT("AttributeSet"));
 	bReplicates = true;
@@ -59,6 +60,7 @@ void AMyPlayerState::CopyProperties(APlayerState* NewPlayerState)
 
 		// Reinitialize abilities after seamless travel
 		MyNewPlayerState->InitializeAbilities();
+		MyNewPlayerState->OnRep_SelectedAbilities();
 	}
 }
 
@@ -69,12 +71,11 @@ void AMyPlayerState::InitializeAbilities_Implementation()
 	// Initialize ability actor info for the Ability System Component
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 
-	for (const TSubclassOf<UGameplayAbility>& AbilityClass : SelectedAbilities)
+	for (const FGameplayAbilitySpecHandle& Handle : SelectedAbilities)
 	{
-		if (IsValid(AbilityClass))
+		if (Handle.IsValid())
 		{
-				const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
-			AbilitySystemComponent->GiveAbility(AbilitySpec);
+			AbilitySystemComponent->TryActivateAbility(Handle);
 		}
 	}
 }
@@ -95,16 +96,29 @@ void AMyPlayerState::SetAbilityAtIndex_Implementation(int32 Index, TSubclassOf<U
 
 	if (SelectedAbilities.IsValidIndex(Index))
 	{
-		SelectedAbilities[Index] = NewAbility;
+		// Remove old ability if necessary
+		FGameplayAbilitySpecHandle OldHandle = SelectedAbilities[Index];
+		if (OldHandle.IsValid())
+		{
+			AbilitySystemComponent->ClearAbility(OldHandle);
+		}
+
+		// Grant new ability and store its handle
+		FGameplayAbilitySpec NewSpec(NewAbility, 1); // Level 1 by default
+		FGameplayAbilitySpecHandle NewHandle = AbilitySystemComponent->GiveAbility(NewSpec);
+		SelectedAbilities[Index] = NewHandle;
 	}
 	else
 	{
-		SelectedAbilities.Add(NewAbility);
+		// Add new ability if index is out of bounds
+		FGameplayAbilitySpec NewSpec(NewAbility, 1); // Level 1 by default
+		FGameplayAbilitySpecHandle NewHandle = AbilitySystemComponent->GiveAbility(NewSpec);
+		SelectedAbilities.Add(NewHandle);
 	}
 
 	OnRep_SelectedAbilities();
 }
-
+/*
 TSubclassOf<UGameplayAbility> AMyPlayerState::GetAbilityAtIndex(int32 Index) const
 {
 	
@@ -113,7 +127,7 @@ TSubclassOf<UGameplayAbility> AMyPlayerState::GetAbilityAtIndex(int32 Index) con
 		return SelectedAbilities[Index];
 	}
 	return nullptr;
-}
+}*/
 
 void AMyPlayerState::RemoveAbilityAtIndex(int32 Index)
 {
@@ -177,21 +191,20 @@ FString AMyPlayerState::GetUniquePlayerId() const
 
 void AMyPlayerState::OnRep_SelectedAbilities()
 {
-	if (AbilitySystemComponent)
-	{
-		AbilitySystemComponent->ClearAllAbilities(); // Clear existing abilities
+	if (!AbilitySystemComponent) return;
 
-		for (const TSubclassOf<UGameplayAbility>& AbilityClass : SelectedAbilities)
+	AbilitySystemComponent->ClearAllAbilities(); // Clear existing abilities
+
+	for (const FGameplayAbilitySpecHandle& Handle : SelectedAbilities)
+	{
+		if (Handle.IsValid())
 		{
-			if (IsValid(AbilityClass))
-			{
-				const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
-				AbilitySystemComponent->GiveAbility(AbilitySpec);
-			}
+			AbilitySystemComponent->TryActivateAbility(Handle);
 		}
-        
-		AbilitySystemComponent->InitAbilityActorInfo(this, this); // Reinitialize ASC info
 	}
+
+	AbilitySystemComponent->InitAbilityActorInfo(this, this); // Reinitialize ASC info
+	InitializeAbilities();
 }
 
 void AMyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -203,5 +216,4 @@ void AMyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 
 	// Replicate UniquePlayerId to all clients
 	DOREPLIFETIME(AMyPlayerState, UniquePlayerId);
-	
 }

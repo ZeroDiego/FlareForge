@@ -13,6 +13,11 @@ class UMyCharacterAttributeSet;
 /**
  * 
  */
+
+class ULucasAbilitySystemComponent;
+class UMyCharacterAttributeSet;
+class UGameplayAbility;
+
 UCLASS()
 class FLAREFORGE_API AMyPlayerState : public APlayerState, public IAbilitySystemInterface
 {
@@ -35,8 +40,8 @@ public:
 	void SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility);
 	
 	// Gets an ability from a specific index in SelectedAbilities
-	UFUNCTION(BlueprintCallable, Category = "Ability")
-	TSubclassOf<UGameplayAbility> GetAbilityAtIndex(int32 Index) const;
+	//UFUNCTION(BlueprintCallable, Category = "Ability")
+	//TSubclassOf<UGameplayAbility> GetAbilityAtIndex(int32 Index) const;
 
 	// Removes an ability from a specific index in SelectedAbilities
 	UFUNCTION(BlueprintCallable, Category = "Ability")
@@ -77,8 +82,9 @@ protected:
 	FString UniquePlayerId;
 
 	UPROPERTY(ReplicatedUsing = OnRep_SelectedAbilities)
-	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
+	TArray<FGameplayAbilitySpecHandle> SelectedAbilities;
 
+private:
 	UFUNCTION()
 	void OnRep_SelectedAbilities();
 };
