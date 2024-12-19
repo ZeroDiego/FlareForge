@@ -87,6 +87,14 @@ void UAttributesWidget::NativeTick(const FGeometry& MyGeometry, const float Delt
 			const float DashCooldownTime = GetRemainingEffectTime(AbilitySystemComponent, Effect.Handle);
 			DashCooldownTimeText = FText::AsNumber(DashCooldownTime, &FormattingOptions);
 		}
+
+		if (Effect.Spec.Def->GetClass() == FightMeCooldown)
+		{
+			const float DashCooldownDuration = AbilitySystemComponent->GetGameplayEffectDuration(Effect.Handle);
+			FightMePercent = GetRemainingEffectTime(AbilitySystemComponent, Effect.Handle) / DashCooldownDuration;
+			const float DashCooldownTime = GetRemainingEffectTime(AbilitySystemComponent, Effect.Handle);
+			FightMeCooldownTimeText = FText::AsNumber(DashCooldownTime, &FormattingOptions);
+		}
 	}
 }
 
