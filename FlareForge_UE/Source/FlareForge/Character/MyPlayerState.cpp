@@ -41,76 +41,44 @@ void AMyPlayerState::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	
-	// Ensure Ability System is initialized after all components are ready
-	InitializeAbilities();
+	if (HasAuthority()) // Only initialize on the server
+	{
+		InitializeAbilities();
+	}
 }
 
-void AMyPlayerState::CopyProperties(APlayerState* PlayerState) {
-	Super::CopyProperties(PlayerState);
-	AMyPlayerState* MyPlayerState = Cast<AMyPlayerState>(PlayerState);
-	if (MyPlayerState) {
-		MyPlayerState->UniquePlayerId = UniquePlayerId;
-		MyPlayerState->SelectedAbilities = SelectedAbilities;
+void AMyPlayerState::CopyProperties(APlayerState* NewPlayerState)
+{
+	Super::CopyProperties(NewPlayerState);
+
+	AMyPlayerState* MyNewPlayerState = Cast<AMyPlayerState>(NewPlayerState);
+	if (MyNewPlayerState)
+	{
+		MyNewPlayerState->SelectedAbilities = SelectedAbilities;
+		MyNewPlayerState->UniquePlayerId = UniquePlayerId;
+
+		// Reinitialize abilities after seamless travel
+		MyNewPlayerState->InitializeAbilities();
 	}
 }
 
 void AMyPlayerState::InitializeAbilities()
 {
-	if (!AbilitySystemComponent)
-	{
-		UE_LOG(LogTemp, Error, TEXT("AbilitySystemComponent is null!"));
-		return;
-	}
+	if (!AbilitySystemComponent || !HasAuthority()) return;
 
-	if (!AbilitySystemComponent->IsOwnerActorAuthoritative())
-	{
-		UE_LOG(LogTemp, Error, TEXT("Owner is not authoritative!"));
-		return;
-	}
-
+	// Initialize ability actor info for the Ability System Component
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 
-
-	// Grant abilities
-	for (const TSubclassOf<UGameplayAbility>& Ability : SelectedAbilities)
+	for (const FGameplayAbilitySpec& Spec : SelectedAbilities)
 	{
-		if (Ability)
+		if (Spec.Ability) // Ensure ability is valid
 		{
-			FGameplayAbilitySpec Spec(Ability, 1);
-			AbilitySystemComponent->GiveAbility(Spec);
+			// Create a new AbilitySpec with level 1
+			FGameplayAbilitySpec NewSpec(Spec.Ability, 1); // Level 1 explicitly set
+			AbilitySystemComponent->GiveAbility(NewSpec); // Grant the ability
 		}
 	}
-	/*
-	if (const UWorld* World = GetWorld())
-	{
-		if (UGameInstance* GameInstance = World->GetGameInstance())
-		{
-			if (const UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
-			{
-				const TArray<FGameplayAbilitySpec>& AbilitySpecs = NetworkGI->GetGameplayAbilitySpec(GetUniquePlayerId());
-				if (AbilitySpecs.Num() == 0)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("No abilities found for Player ID: %s"), *GetUniquePlayerId());
-					return;
-				}
-
-				for (const FGameplayAbilitySpec& Spec : AbilitySpecs)
-				{
-					if (!Spec.Ability)
-					{
-						UE_LOG(LogTemp, Warning, TEXT("Invalid Ability Spec: Ability is null!"));
-						continue;
-					}
-
-					AbilitySystemComponent->GiveAbility(Spec);
-					UE_LOG(LogTemp, Log, TEXT("Assigned Ability: %s"), *Spec.Ability->GetName());
-				}
-
-				AbilitySystemComponent->InitAbilityActorInfo(this, this);
-			}
-		}
-	}*/
-} 
+}
 
 UAbilitySystemComponent* AMyPlayerState::GetAbilitySystemComponent() const
 {
@@ -122,56 +90,53 @@ UMyCharacterAttributeSet* AMyPlayerState::GetAttributeSet() const
 	return AttributeSet;
 }
 
-void AMyPlayerState::SetAbilityAtIndex_Implementation(const int32 Index, const TSubclassOf<UGameplayAbility> NewAbility)
+void AMyPlayerState::SetAbilityAtIndex_Implementation(int32 Index, TSubclassOf<UGameplayAbility> NewAbility)
 {
-	if (!HasAuthority() || !NewAbility)
-	{
-		return;
-	}
+	if (!HasAuthority() || !NewAbility) return;
 
-	// Ensure that the index is within bounds
+	FGameplayAbilitySpec NewSpec(NewAbility, 1); // Level 1 by default
 	if (SelectedAbilities.IsValidIndex(Index))
 	{
-		// Replace the existing ability at this index
-		SelectedAbilities[Index] = NewAbility;
+		SelectedAbilities[Index] = NewSpec;
 	}
-	else
+	else if (Index >= 0)
 	{
-		// Resize the array to accommodate new index
-		if (Index >= 0)
-		{
-			SelectedAbilities.SetNum(Index + 1);
-			SelectedAbilities[Index] = NewAbility;
-		}
+		SelectedAbilities.SetNum(Index + 1);
+		SelectedAbilities[Index] = NewSpec;
 	}
+
+	OnRep_SelectedAbilities();
 }
 
 TSubclassOf<UGameplayAbility> AMyPlayerState::GetAbilityAtIndex(int32 Index) const
 {
-	// Check if the index is valid
 	if (SelectedAbilities.IsValidIndex(Index))
 	{
-		// Return the ability at the specified index
-		return SelectedAbilities[Index];
+		return SelectedAbilities[Index].Ability->GetClass();
 	}
 
-	// Return nullptr or a default value if the index is invalid
+	return nullptr;
+}
+
+FGameplayAbilitySpec* AMyPlayerState::GetSpecAtIndex(int32 Index)
+{
+	if (SelectedAbilities.IsValidIndex(Index))
+	{
+		return &SelectedAbilities[Index];
+	}
+
 	return nullptr;
 }
 
 void AMyPlayerState::RemoveAbilityAtIndex(int32 Index)
 {
-	// Check if AbilitySystemComponent is valid and we have authority
-	if (!HasAuthority())
-	{
-		return;
-	}
+	if (!HasAuthority()) return; // Ensure this runs on the server
 
 	// Ensure that the index is within bounds
 	if (SelectedAbilities.IsValidIndex(Index))
 	{
-		// Remove the ability at the specified index
 		SelectedAbilities.RemoveAt(Index);
+		OnRep_SelectedAbilities(); // Notify clients of the change
 	}
 }
 
@@ -179,52 +144,20 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
 {
 	if (!HasAuthority()) return; // Ensure this runs on the server
 
-	/* Get all player states
-	TArray<AActor*> PlayerStates;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMyPlayerState::StaticClass(), PlayerStates);
-
-	for (AActor* Actor : PlayerStates)
-	{*/
-		AMyPlayerState* PlayerState = Cast<AMyPlayerState>(this);
-		if (PlayerState && PlayerState->AbilitySystemComponent)
+	if (AbilitySystemComponent)
+	{
+		for (const FGameplayAbilitySpec& Spec : SelectedAbilities)
 		{
-			for (int32 Index = 0; Index < PlayerState->SelectedAbilities.Num(); ++Index)
-			{
-				if (PlayerState->SelectedAbilities.IsValidIndex(Index))
-				{
-					if (const TSubclassOf<UGameplayAbility> AbilityClass = PlayerState->SelectedAbilities[Index])
-					{
-						const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
-						PlayerState->AbilitySystemComponent->GiveAbility(AbilitySpec);
-						GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::White,
-															FString::Printf(TEXT("Transferred Ability to ASC")));
-						if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
-						{
-							if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
-							{
-								NetworkGI->SetGameplayAbilitySpecAtIndex(PlayerState->GetUniquePlayerId(), AbilitySpec, Index);
-								GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::White,
-									FString::Printf(TEXT("Transferred Ability: %s"), *AbilityClass->GetName()));
-							}
-						}
-					}
-				}
-			}
+			AbilitySystemComponent->GiveAbility(Spec);
 
-			if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
-			{
-				if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
-				{
-					NetworkGI->SetSelectedAbilitiesForPlayer(PlayerState->GetUniquePlayerId(), PlayerState->GetSelectedAbilities());
-				}
-			}
+			// Debug message to confirm ability transfer
+			GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::White,
+				FString::Printf(TEXT("Transferred Ability: %s"), *Spec.Ability->GetName()));
 		}
-	}
-//}
 
-const TArray<TSubclassOf<UGameplayAbility>>& AMyPlayerState::GetSelectedAbilities() const
-{
-	return SelectedAbilities;
+		// Reinitialize the Ability System Component with updated abilities
+		AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	}
 }
 
 void AMyPlayerState::SetIsMeleeTrue()
@@ -273,6 +206,21 @@ void AMyPlayerState::SetUniquePlayerId_Implementation(const FString& NewId)
 FString AMyPlayerState::GetUniquePlayerId() const
 {
 	return UniquePlayerId;
+}
+
+void AMyPlayerState::OnRep_SelectedAbilities()
+{
+	if (AbilitySystemComponent)
+	{
+		AbilitySystemComponent->ClearAllAbilities(); // Clear existing abilities
+
+		for (const FGameplayAbilitySpec& Spec : SelectedAbilities)
+		{
+			AbilitySystemComponent->GiveAbility(Spec); // Re-grant replicated abilities
+		}
+        
+		AbilitySystemComponent->InitAbilityActorInfo(this, this); // Reinitialize ASC info
+	}
 }
 
 void AMyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

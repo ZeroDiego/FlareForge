@@ -30,8 +30,6 @@ public:
 	
 	virtual void PostInitializeComponents() override;
 
-	const TArray<TSubclassOf<UGameplayAbility>>& GetSelectedAbilities() const;
-
 	// Adds or sets an ability at a specific index in SelectedAbilities
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Ability")
 	void SetAbilityAtIndex(int32 Index, TSubclassOf<UGameplayAbility> NewAbility);
@@ -39,7 +37,9 @@ public:
 	// Gets an ability from a specific index in SelectedAbilities
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	TSubclassOf<UGameplayAbility> GetAbilityAtIndex(int32 Index) const;
-	
+
+	FGameplayAbilitySpec* GetSpecAtIndex(int32 Index);
+
 	// Removes an ability from a specific index in SelectedAbilities
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	void RemoveAbilityAtIndex(int32 Index);
@@ -76,13 +76,15 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UMyCharacterAttributeSet> AttributeSet;
 
-	// Replicated list of selected abilities
-	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Ability")
-	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
-
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	// Replicated unique player ID
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	FString UniquePlayerId;
+
+	UPROPERTY(ReplicatedUsing = OnRep_SelectedAbilities)
+	TArray<FGameplayAbilitySpec> SelectedAbilities;
+
+	UFUNCTION()
+	void OnRep_SelectedAbilities();
 };

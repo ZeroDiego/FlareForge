@@ -42,36 +42,21 @@ AFlareForgeGameMode::AFlareForgeGameMode()
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
 }
-/*
-void AFlareForgeGameMode::PostLogin(APlayerController* NewPlayer)
+
+void AFlareForgeGameMode::PostSeamlessTravel()
 {
-	Super::PostLogin(NewPlayer);
+	Super::PostSeamlessTravel();
 
-	// Cast to custom PlayerState
-	if (AMyPlayerState* PS = Cast<AMyPlayerState>(NewPlayer->PlayerState))
+	// Iterate through all controllers in the world
+	for (auto It = GetWorld()->GetControllerIterator(); It; ++It)
 	{
-		// Generate a unique ID and assign it to the PlayerState
-		FString PlayerID = GenerateUniquePlayerId();
-		PS->SetUniquePlayerId(PlayerID);
-
-		// Debug log and screen message for verification
-		UE_LOG(LogTemp, Log, TEXT("Assigned Unique ID: %s"), *PlayerID);
-		if (GEngine)
+		AController* Controller = It->Get(); // Dereference the iterator to get the controller
+		if (APlayerController* PC = Cast<APlayerController>(Controller))
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,
-				FString::Printf(TEXT("Assigned Unique ID: %s"), *PlayerID));
+			if (AMyPlayerState* PS = PC->GetPlayerState<AMyPlayerState>())
+			{
+				PS->InitializeAbilities();
+			}
 		}
 	}
 }
-
-FString AFlareForgeGameMode::GenerateUniquePlayerId()
-{
-	FString NewId;
-	do
-	{
-		NewId = FGuid::NewGuid().ToString(); // Generate a GUID
-	} while (UsedPlayerIds.Contains(NewId)); // Ensure it's unique
-
-	UsedPlayerIds.Add(NewId); // Track the generated ID
-	return NewId;
-}*/

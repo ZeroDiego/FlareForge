@@ -14,6 +14,7 @@ class AFlareForgeGameMode : public AGameModeBase
 
 public:
 	AFlareForgeGameMode();
+	virtual void PostSeamlessTravel() override;
 
 	/*// Override PostLogin to assign unique IDs
 	virtual void PostLogin(APlayerController* NewPlayer) override;
