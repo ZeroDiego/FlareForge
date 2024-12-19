@@ -25,12 +25,18 @@ public:
 	void FightMeAbility(const FVector SpawnLocation, const FRotator CurrentRotation);
 
 	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	AFightMeShield* FightMeShield;*/
+
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ActiveTime = 1.0f;*/
 	
 private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AFightMeShield> FightMeShieldBlueprint;
+
+	/*UPROPERTY(VisibleAnywhere)
+	AFightMeShield* FightMeShield;*/
 
 	UPROPERTY(VisibleAnywhere)
 	AFightMeShield* FightMeShield;
