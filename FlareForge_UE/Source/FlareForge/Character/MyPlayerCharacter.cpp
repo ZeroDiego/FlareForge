@@ -53,6 +53,7 @@ AMyPlayerCharacter::AMyPlayerCharacter()
 	PrimaryActorTick.bStartWithTickEnabled = true;
 
 	bReplicates = true;
+	bAlwaysRelevant = true;
 }
 
 void AMyPlayerCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const

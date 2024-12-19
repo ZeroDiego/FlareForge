@@ -23,11 +23,8 @@ public:
 	
 	virtual void BeginPlay() override;
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION()
 	void InitializeAbilities();
-
-	//UFUNCTION(NetMulticast, Reliable)
-	//void Multicast_TransferAbilitiesToClients();
 	
 	virtual void CopyProperties(APlayerState* PlayerState) override;
 	

@@ -40,9 +40,9 @@ void AMyPlayerState::BeginPlay()
 void AMyPlayerState::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
+	
 	// Ensure Ability System is initialized after all components are ready
-	//InitializeAbilities();
+	InitializeAbilities();
 }
 
 void AMyPlayerState::CopyProperties(APlayerState* PlayerState) {
@@ -54,7 +54,7 @@ void AMyPlayerState::CopyProperties(APlayerState* PlayerState) {
 	}
 }
 
-void AMyPlayerState::InitializeAbilities_Implementation()
+void AMyPlayerState::InitializeAbilities()
 {
 	if (!AbilitySystemComponent)
 	{
@@ -68,6 +68,19 @@ void AMyPlayerState::InitializeAbilities_Implementation()
 		return;
 	}
 
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+
+
+	// Grant abilities
+	for (const TSubclassOf<UGameplayAbility>& Ability : SelectedAbilities)
+	{
+		if (Ability)
+		{
+			FGameplayAbilitySpec Spec(Ability, 1);
+			AbilitySystemComponent->GiveAbility(Spec);
+		}
+	}
+	/*
 	if (const UWorld* World = GetWorld())
 	{
 		if (UGameInstance* GameInstance = World->GetGameInstance())
@@ -96,7 +109,7 @@ void AMyPlayerState::InitializeAbilities_Implementation()
 				AbilitySystemComponent->InitAbilityActorInfo(this, this);
 			}
 		}
-	}
+	}*/
 } 
 
 UAbilitySystemComponent* AMyPlayerState::GetAbilitySystemComponent() const
