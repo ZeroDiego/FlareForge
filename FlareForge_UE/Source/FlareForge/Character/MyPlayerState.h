@@ -38,8 +38,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	TSubclassOf<UGameplayAbility> GetAbilityAtIndex(int32 Index) const;
 
-	FGameplayAbilitySpec* GetSpecAtIndex(int32 Index);
-
 	// Removes an ability from a specific index in SelectedAbilities
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	void RemoveAbilityAtIndex(int32 Index);
@@ -83,7 +81,7 @@ protected:
 	FString UniquePlayerId;
 
 	UPROPERTY(ReplicatedUsing = OnRep_SelectedAbilities)
-	TArray<FGameplayAbilitySpec> SelectedAbilities;
+	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
 
 	UFUNCTION()
 	void OnRep_SelectedAbilities();

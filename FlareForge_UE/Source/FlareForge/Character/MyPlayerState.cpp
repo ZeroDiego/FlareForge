@@ -69,13 +69,12 @@ void AMyPlayerState::InitializeAbilities()
 	// Initialize ability actor info for the Ability System Component
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 
-	for (const FGameplayAbilitySpec& Spec : SelectedAbilities)
+	for (const TSubclassOf<UGameplayAbility>& AbilityClass : SelectedAbilities)
 	{
-		if (Spec.Ability) // Ensure ability is valid
+		if (IsValid(AbilityClass))
 		{
-			// Create a new AbilitySpec with level 1
-			FGameplayAbilitySpec NewSpec(Spec.Ability, 1); // Level 1 explicitly set
-			AbilitySystemComponent->GiveAbility(NewSpec); // Grant the ability
+				const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
+			AbilitySystemComponent->GiveAbility(AbilitySpec);
 		}
 	}
 }
@@ -94,15 +93,13 @@ void AMyPlayerState::SetAbilityAtIndex_Implementation(int32 Index, TSubclassOf<U
 {
 	if (!HasAuthority() || !NewAbility) return;
 
-	FGameplayAbilitySpec NewSpec(NewAbility, 1); // Level 1 by default
 	if (SelectedAbilities.IsValidIndex(Index))
 	{
-		SelectedAbilities[Index] = NewSpec;
+		SelectedAbilities[Index] = NewAbility;
 	}
-	else if (Index >= 0)
+	else
 	{
-		SelectedAbilities.SetNum(Index + 1);
-		SelectedAbilities[Index] = NewSpec;
+		SelectedAbilities.Add(NewAbility);
 	}
 
 	OnRep_SelectedAbilities();
@@ -110,21 +107,11 @@ void AMyPlayerState::SetAbilityAtIndex_Implementation(int32 Index, TSubclassOf<U
 
 TSubclassOf<UGameplayAbility> AMyPlayerState::GetAbilityAtIndex(int32 Index) const
 {
+	
 	if (SelectedAbilities.IsValidIndex(Index))
 	{
-		return SelectedAbilities[Index].Ability->GetClass();
+		return SelectedAbilities[Index];
 	}
-
-	return nullptr;
-}
-
-FGameplayAbilitySpec* AMyPlayerState::GetSpecAtIndex(int32 Index)
-{
-	if (SelectedAbilities.IsValidIndex(Index))
-	{
-		return &SelectedAbilities[Index];
-	}
-
 	return nullptr;
 }
 
@@ -146,13 +133,13 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
 
 	if (AbilitySystemComponent)
 	{
-		for (const FGameplayAbilitySpec& Spec : SelectedAbilities)
+		for (const TSubclassOf<UGameplayAbility>& AbilityClass : SelectedAbilities)
 		{
-			AbilitySystemComponent->GiveAbility(Spec);
-
-			// Debug message to confirm ability transfer
-			GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::White,
-				FString::Printf(TEXT("Transferred Ability: %s"), *Spec.Ability->GetName()));
+			if (IsValid(AbilityClass))
+			{
+				const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
+				AbilitySystemComponent->GiveAbility(AbilitySpec);
+			}
 		}
 
 		// Reinitialize the Ability System Component with updated abilities
@@ -214,9 +201,13 @@ void AMyPlayerState::OnRep_SelectedAbilities()
 	{
 		AbilitySystemComponent->ClearAllAbilities(); // Clear existing abilities
 
-		for (const FGameplayAbilitySpec& Spec : SelectedAbilities)
+		for (const TSubclassOf<UGameplayAbility>& AbilityClass : SelectedAbilities)
 		{
-			AbilitySystemComponent->GiveAbility(Spec); // Re-grant replicated abilities
+			if (IsValid(AbilityClass))
+			{
+				const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
+				AbilitySystemComponent->GiveAbility(AbilitySpec);
+			}
 		}
         
 		AbilitySystemComponent->InitAbilityActorInfo(this, this); // Reinitialize ASC info
