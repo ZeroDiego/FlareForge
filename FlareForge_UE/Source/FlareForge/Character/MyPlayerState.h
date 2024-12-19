@@ -25,6 +25,9 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void InitializeAbilities();
+
+	//UFUNCTION(NetMulticast, Reliable)
+	//void Multicast_TransferAbilitiesToClients();
 	
 	virtual void CopyProperties(APlayerState* PlayerState) override;
 	

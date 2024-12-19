@@ -42,7 +42,7 @@ void AMyPlayerState::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	// Ensure Ability System is initialized after all components are ready
-	InitializeAbilities();
+	//InitializeAbilities();
 }
 
 void AMyPlayerState::CopyProperties(APlayerState* PlayerState) {
@@ -50,55 +50,54 @@ void AMyPlayerState::CopyProperties(APlayerState* PlayerState) {
 	AMyPlayerState* MyPlayerState = Cast<AMyPlayerState>(PlayerState);
 	if (MyPlayerState) {
 		MyPlayerState->UniquePlayerId = UniquePlayerId;
+		MyPlayerState->SelectedAbilities = SelectedAbilities;
 	}
 }
 
-void AMyPlayerState::InitializeAbilities_Implementation() {
-    if (!AbilitySystemComponent) {
-        if (GEngine) {
-            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("AbilitySystemComponent is null!"));
-        }
-        return;
-    }
+void AMyPlayerState::InitializeAbilities_Implementation()
+{
+	if (!AbilitySystemComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AbilitySystemComponent is null!"));
+		return;
+	}
 
-    if (!AbilitySystemComponent->IsOwnerActorAuthoritative()) {
-        if (GEngine) {
-            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Owner is not authoritative!"));
-        }
-        return;
-    }
+	if (!AbilitySystemComponent->IsOwnerActorAuthoritative())
+	{
+		UE_LOG(LogTemp, Error, TEXT("Owner is not authoritative!"));
+		return;
+	}
 
-    if (const UWorld* World = GetWorld()) {
-        if (UGameInstance* GameInstance = World->GetGameInstance()) {
-            if (const UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance)) {
+	if (const UWorld* World = GetWorld())
+	{
+		if (UGameInstance* GameInstance = World->GetGameInstance())
+		{
+			if (const UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
+			{
+				const TArray<FGameplayAbilitySpec>& AbilitySpecs = NetworkGI->GetGameplayAbilitySpec(GetUniquePlayerId());
+				if (AbilitySpecs.Num() == 0)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("No abilities found for Player ID: %s"), *GetUniquePlayerId());
+					return;
+				}
 
-                const TArray<FGameplayAbilitySpec>& AbilitySpecs = NetworkGI->GetGameplayAbilitySpec(GetUniquePlayerId());
-                if (GEngine) {
-                    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Unique Player ID: %s"), *GetUniquePlayerId()));
-                }
+				for (const FGameplayAbilitySpec& Spec : AbilitySpecs)
+				{
+					if (!Spec.Ability)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Invalid Ability Spec: Ability is null!"));
+						continue;
+					}
 
-                for (const FGameplayAbilitySpec& GameplayAbilitySpec : AbilitySpecs) {
-                    if (!GameplayAbilitySpec.Ability) {
-                        if (GEngine) {
-                            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("Invalid Ability Spec: Ability is null!"));
-                        }
-                        continue;
-                    }
-                    // Assign the ability to the AbilitySystemComponent
-                    AbilitySystemComponent->GiveAbility(GameplayAbilitySpec);
+					AbilitySystemComponent->GiveAbility(Spec);
+					UE_LOG(LogTemp, Log, TEXT("Assigned Ability: %s"), *Spec.Ability->GetName());
+				}
 
-                    // Debug message for successful assignment
-                    if (GEngine) {
-                        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Assigned Ability: %s"), *GameplayAbilitySpec.Ability->GetName()));
-                    }
-                }
-
-                // Finalize initialization
-                AbilitySystemComponent->InitAbilityActorInfo(this, this);
-            }
-        }
-    }
-}
+				AbilitySystemComponent->InitAbilityActorInfo(this, this);
+			}
+		}
+	}
+} 
 
 UAbilitySystemComponent* AMyPlayerState::GetAbilitySystemComponent() const
 {
@@ -165,46 +164,50 @@ void AMyPlayerState::RemoveAbilityAtIndex(int32 Index)
 
 void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
 {
-    if (!HasAuthority()) return; // Ensure this runs on the server
-	
-        AMyPlayerState* PlayerState = Cast<AMyPlayerState>(this);
-        if (PlayerState && PlayerState->AbilitySystemComponent)
-        {
-            for (int32 Index = 0; Index < PlayerState->SelectedAbilities.Num(); ++Index)
-            {
-                if (PlayerState->SelectedAbilities.IsValidIndex(Index))
-                {
-                    if (const TSubclassOf<UGameplayAbility> AbilityClass = PlayerState->SelectedAbilities[Index])
-                    {
-                        const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
-                        PlayerState->AbilitySystemComponent->GiveAbility(AbilitySpec);
+	if (!HasAuthority()) return; // Ensure this runs on the server
 
-                        if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
-                        {
-                              if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
-                            {
-                              	//Add Player ID to GI
-                              	NetworkGI->AddReplicatedPlayerID(GetUniquePlayerId());
-                              	
-                                NetworkGI->SetGameplayAbilitySpecAtIndex(GetUniquePlayerId(), AbilitySpec, Index);
-                                GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Yellow,
-                                    FString::Printf(TEXT("Transferred Ability: %s"), *AbilityClass->GetName()));
-                            }
-                        }
-                    }
-                }
-            }
+	/* Get all player states
+	TArray<AActor*> PlayerStates;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMyPlayerState::StaticClass(), PlayerStates);
 
-            if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
-            {
-                if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
-                {
-                    NetworkGI->SetSelectedAbilitiesForPlayer(GetUniquePlayerId(), PlayerState->GetSelectedAbilities());
-                }
-            }
-        }
-    }
+	for (AActor* Actor : PlayerStates)
+	{*/
+		AMyPlayerState* PlayerState = Cast<AMyPlayerState>(this);
+		if (PlayerState && PlayerState->AbilitySystemComponent)
+		{
+			for (int32 Index = 0; Index < PlayerState->SelectedAbilities.Num(); ++Index)
+			{
+				if (PlayerState->SelectedAbilities.IsValidIndex(Index))
+				{
+					if (const TSubclassOf<UGameplayAbility> AbilityClass = PlayerState->SelectedAbilities[Index])
+					{
+						const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
+						PlayerState->AbilitySystemComponent->GiveAbility(AbilitySpec);
+						GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::White,
+															FString::Printf(TEXT("Transferred Ability to ASC")));
+						if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
+						{
+							if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
+							{
+								NetworkGI->SetGameplayAbilitySpecAtIndex(PlayerState->GetUniquePlayerId(), AbilitySpec, Index);
+								GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::White,
+									FString::Printf(TEXT("Transferred Ability: %s"), *AbilityClass->GetName()));
+							}
+						}
+					}
+				}
+			}
 
+			if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
+			{
+				if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
+				{
+					NetworkGI->SetSelectedAbilitiesForPlayer(PlayerState->GetUniquePlayerId(), PlayerState->GetSelectedAbilities());
+				}
+			}
+		}
+	}
+//}
 
 const TArray<TSubclassOf<UGameplayAbility>>& AMyPlayerState::GetSelectedAbilities() const
 {
