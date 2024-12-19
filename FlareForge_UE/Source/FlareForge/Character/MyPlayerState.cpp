@@ -48,14 +48,14 @@ void AMyPlayerState::PostInitializeComponents()
 void AMyPlayerState::InitializeAbilities_Implementation() {
     if (!AbilitySystemComponent) {
         if (GEngine) {
-            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("AbilitySystemComponent is null!"));
+            //GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("AbilitySystemComponent is null!"));
         }
         return;
     }
 
     if (!AbilitySystemComponent->IsOwnerActorAuthoritative()) {
         if (GEngine) {
-            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Owner is not authoritative!"));
+            //GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Owner is not authoritative!"));
         }
         return;
     }
@@ -68,13 +68,13 @@ void AMyPlayerState::InitializeAbilities_Implementation() {
 
                 const TArray<FGameplayAbilitySpec>& AbilitySpecs = NetworkGI->GetGameplayAbilitySpec(ThisUniquePlayerID);
                 if (GEngine) {
-                    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Unique Player ID: %s"), *GetCustomDisplayName()));
+                    //GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Unique Player ID: %s"), *GetCustomDisplayName()));
                 }
 
                 for (const FGameplayAbilitySpec& GameplayAbilitySpec : AbilitySpecs) {
                     if (!GameplayAbilitySpec.Ability) {
                         if (GEngine) {
-                            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("Invalid Ability Spec: Ability is null!"));
+                            //GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("Invalid Ability Spec: Ability is null!"));
                         }
                         continue;
                     }
