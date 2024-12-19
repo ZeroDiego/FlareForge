@@ -16,6 +16,7 @@ void UDeflectAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, c
 		{
 			const FVector SpawnDeflectShieldLocation = Character->GetComponentByClass<UReflectOffset>()->GetComponentLocation();
 			const FRotator CurrentRotation = Character->GetActorRotation();
+			//UE_LOG(LogTemp, Warning, TEXT("reference: %s"), *Character->GetRootComponent()->GetName());
 			DeflectAbility(SpawnDeflectShieldLocation, CurrentRotation);
 			Shield->GetDeflectPlayerReference(Character->GetRootComponent());
 		}
