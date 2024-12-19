@@ -2,8 +2,6 @@
 
 
 #include "FIghtMeAbility.h"
-
-#include "InterchangeResult.h"
 #include "GameFramework/Character.h"
 
 void UFIghtMeAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
