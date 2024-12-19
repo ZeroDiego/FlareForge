@@ -54,7 +54,7 @@ void AMyCharacterBase::InitAbilitySystemComponent()
 
 			if (GEngine)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Successfully initialized Ability System Component"));
+				//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Successfully initialized Ability System Component"));
 			}
 		}
 	}
