@@ -63,6 +63,9 @@ public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
 	bool bShouldRotateTowardsMouse = true;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bCanRemoveLoadingScreen = false;
+	
 	/** FX Class that we will spawn when clicking */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UNiagaraSystem* FXCursor;
