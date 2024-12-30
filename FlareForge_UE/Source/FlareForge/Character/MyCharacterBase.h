@@ -28,7 +28,7 @@ public:
 protected:
 
 	// Initialize ASC
-	virtual void InitAbilitySystemComponent();
+	//virtual void InitAbilitySystemComponent();
 	
 	void InitDefaultAttributes() const;
 

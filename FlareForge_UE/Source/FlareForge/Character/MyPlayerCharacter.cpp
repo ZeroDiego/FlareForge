@@ -68,15 +68,27 @@ void AMyPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	InitAbilitySystemComponent();
+	AMyPlayerState* PS = GetPlayerState<AMyPlayerState>();
+	if (PS)
+	{
+		AbilitySystemComponent = Cast<ULucasAbilitySystemComponent>(PS->GetAbilitySystemComponent());
+		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, this);
+	}
+	//InitAbilitySystemComponent();
 	InitDefaultAttributes();
 }
 
 void AMyPlayerCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
-	
-	InitAbilitySystemComponent();
+
+	AMyPlayerState* PS = GetPlayerState<AMyPlayerState>();
+	if (PS)
+	{
+		AbilitySystemComponent = Cast<ULucasAbilitySystemComponent>(PS->GetAbilitySystemComponent());
+		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, this);
+	}
+	//InitAbilitySystemComponent();
 	InitDefaultAttributes();
 }
 

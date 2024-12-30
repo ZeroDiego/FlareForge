@@ -31,7 +31,7 @@ UMyCharacterAttributeSet* AMyCharacterBase::GetAttributeSet() const
 	return AttributeSet;
 }
 
-void AMyCharacterBase::InitAbilitySystemComponent()
+/*void AMyCharacterBase::InitAbilitySystemComponent()
 {
 	if (AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>())
 	{
@@ -65,7 +65,7 @@ void AMyCharacterBase::InitAbilitySystemComponent()
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Failed to get PlayerState in InitAbilitySystemComponent"));
 		}
 	}
-}
+}*/
 
 void AMyCharacterBase::InitDefaultAttributes() const
 {
