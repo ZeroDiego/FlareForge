@@ -44,7 +44,7 @@ void UNetworkGameInstance::AddPlayerState_Implementation(const FString& UniquePl
     NewPair.PlayerState = PlayerState;
     PlayerStatesArray.Add(NewPair);
 
-    UE_LOG(LogTemp, Log, TEXT("Added Player %s with State %s to GameInstance"), *UniquePlayerID, *PlayerState);
+    //UE_LOG(LogTemp, Log, TEXT("Added Player %s with State %s to GameInstance"), *UniquePlayerID, *PlayerState);
 }
 
 void UNetworkGameInstance::SetSelectedAbilitiesForPlayer_Implementation(const FString& UniquePlayerID, const TArray<TSubclassOf<UGameplayAbility>>& NewSelectedAbilities)
