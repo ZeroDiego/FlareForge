@@ -104,6 +104,17 @@ UMyCharacterAttributeSet* AMyPlayerState::GetAttributeSet() const
 	return AttributeSet;
 }
 
+void AMyPlayerState::CopyProperties(APlayerState* NewPlayerState)
+{
+	Super::CopyProperties(NewPlayerState);
+    
+	AMyPlayerState* MyNewPlayerState = Cast<AMyPlayerState>(NewPlayerState);
+	if (MyNewPlayerState)
+	{
+		MyNewPlayerState->UniquePlayerId = UniquePlayerId;
+	}
+}
+
 void AMyPlayerState::SetAbilityAtIndex_Implementation(const int32 Index, const TSubclassOf<UGameplayAbility> NewAbility)
 {
 	if (!HasAuthority() || !NewAbility)
