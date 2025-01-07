@@ -83,6 +83,10 @@ protected:
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Ability")
 	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
 
+	// Replicated list of all abilities
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Ability")
+	TArray<TSubclassOf<UGameplayAbility>> AllAbilities;
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	// Replicated unique player ID
