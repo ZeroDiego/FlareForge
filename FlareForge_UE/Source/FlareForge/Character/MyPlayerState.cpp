@@ -112,6 +112,7 @@ void AMyPlayerState::CopyProperties(APlayerState* NewPlayerState)
 	if (MyNewPlayerState)
 	{
 		MyNewPlayerState->UniquePlayerId = UniquePlayerId;
+		MyNewPlayerState->SelectedAbilities = SelectedAbilities;
 	}
 }
 
