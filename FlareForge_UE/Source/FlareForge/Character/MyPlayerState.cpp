@@ -104,6 +104,18 @@ UMyCharacterAttributeSet* AMyPlayerState::GetAttributeSet() const
 	return AttributeSet;
 }
 
+void AMyPlayerState::CopyProperties(APlayerState* NewPlayerState)
+{
+	Super::CopyProperties(NewPlayerState);
+    
+	AMyPlayerState* MyNewPlayerState = Cast<AMyPlayerState>(NewPlayerState);
+	if (MyNewPlayerState)
+	{
+		MyNewPlayerState->UniquePlayerId = UniquePlayerId;
+		MyNewPlayerState->SelectedAbilities = SelectedAbilities;
+	}
+}
+
 void AMyPlayerState::SetAbilityAtIndex_Implementation(const int32 Index, const TSubclassOf<UGameplayAbility> NewAbility)
 {
 	if (!HasAuthority() || !NewAbility)
@@ -164,11 +176,11 @@ void AMyPlayerState::TransferAbilitiesToAbilitySystemComponent_Implementation()
         AMyPlayerState* PlayerState = Cast<AMyPlayerState>(this);
         if (PlayerState && PlayerState->AbilitySystemComponent)
         {
-            for (int32 Index = 0; Index < PlayerState->SelectedAbilities.Num(); ++Index)
+            for (int32 Index = 0; Index < PlayerState->AllAbilities.Num(); ++Index)
             {
-                if (PlayerState->SelectedAbilities.IsValidIndex(Index))
+                if (PlayerState->AllAbilities.IsValidIndex(Index))
                 {
-                    if (const TSubclassOf<UGameplayAbility> AbilityClass = PlayerState->SelectedAbilities[Index])
+                    if (const TSubclassOf<UGameplayAbility> AbilityClass = PlayerState->AllAbilities[Index])
                     {
                         const FGameplayAbilitySpec AbilitySpec(AbilityClass, 1);
                         PlayerState->AbilitySystemComponent->GiveAbility(AbilitySpec);
@@ -282,6 +294,9 @@ void AMyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 
 	// Replicate SelectedAbilities array
 	DOREPLIFETIME(AMyPlayerState, SelectedAbilities);
+
+	// Replicate SelectedAbilities array
+	DOREPLIFETIME(AMyPlayerState, AllAbilities);
 
 	// Replicate UniquePlayerId to all clients
 	DOREPLIFETIME(AMyPlayerState, UniquePlayerId);
