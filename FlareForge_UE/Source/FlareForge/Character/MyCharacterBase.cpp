@@ -84,7 +84,7 @@ void AMyCharacterBase::InitDefaultAttributes() const
 }
 
 // Check if the character has a specific gameplay tag
-bool AMyCharacterBase::HasMatchingGameplayTag(const FGameplayTag& TagToCheck) const
+bool AMyCharacterBase::HasMatchingGameplayTag(const FGameplayTag TagToCheck) const
 {
 	return AbilitySystemComponent->GetOwnedGameplayTags().HasTag(TagToCheck);
 }
