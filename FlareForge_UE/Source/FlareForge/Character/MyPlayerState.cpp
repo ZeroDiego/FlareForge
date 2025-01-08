@@ -164,8 +164,9 @@ void AMyPlayerState::RemoveAbilityAtIndex(int32 Index)
 	// Ensure that the index is within bounds
 	if (SelectedAbilities.IsValidIndex(Index))
 	{
+		TSubclassOf<UGameplayAbility> EmoteAbilityClass = LoadClass<UGameplayAbility>(nullptr, TEXT("/Game/Blueprints/Abilities/GA_EmoteAbility.GA_EmoteAbility_C"));
 		// Remove the ability at the specified index
-		SelectedAbilities.RemoveAt(Index);
+		SelectedAbilities[Index] = EmoteAbilityClass;
 	}
 }
 
