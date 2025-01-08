@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
 #include "TeleportAbility.h"
+#include "FlareForge/Character/MyPlayerCharacter.h"
 #include "FlareForge/UI/FlareForgeHUD.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -245,32 +246,40 @@ void AFlareForgePlayerController::GetLifetimeReplicatedProps(TArray<class FLifet
 
 void AFlareForgePlayerController::Dash()
 {
-	if(DashTimer < UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()))
+	if(DashTimer < UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()) && GetCharacter())
 	{
-		if (GetCharacter())
+		if (const AMyCharacterBase* MyCharacterBase = Cast<AMyCharacterBase>(GetCharacter()); MyCharacterBase->Implements<UGameplayTagAssetInterface>())
 		{
-			const FVector MoveDirection = GetCharacter()->GetCharacterMovement()->GetLastInputVector();
-		
-			//double MaxMoveSpeed = GetCharacter()->GetCharacterMovement()->MaxWalkSpeed;
-			FVector DashVector;
-		
-			if(MoveDirection.IsZero())
+			if (const IGameplayTagAssetInterface* TagAssetInterface = Cast<IGameplayTagAssetInterface>(MyCharacterBase); !TagAssetInterface->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("AnimDelay.Reflect"))))
 			{
-				DashVector = FVector(DashSpeed * GetCharacter()->GetActorForwardVector());
-			}
-			else
-			{
-				// GetSafeNormal makes diagonal movement the same as vertical and horizontal
-				DashVector = FVector(DashSpeed * MoveDirection.GetSafeNormal());
-			}
+				if (!TagAssetInterface->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("AnimDelay.FightMe"))))
+				{
+					if (const AMyPlayerCharacter* MyPlayerCharacter = Cast<AMyPlayerCharacter>(GetCharacter()); MyPlayerCharacter->CastTime == 0)
+					{
+						const FVector MoveDirection = GetCharacter()->GetCharacterMovement()->GetLastInputVector();
+		
+						//double MaxMoveSpeed = GetCharacter()->GetCharacterMovement()->MaxWalkSpeed;
+						FVector DashVector;
+		
+						if (MoveDirection.IsZero())
+						{
+							DashVector = FVector(DashSpeed * GetCharacter()->GetActorForwardVector());
+						}
+						else
+						{
+							// GetSafeNormal makes diagonal movement the same as vertical and horizontal
+							DashVector = FVector(DashSpeed * MoveDirection.GetSafeNormal());
+						}
 			
-			//GetCharacter()->LaunchCharacter(DashVector, false, false);
-			PlayDashAnimation();
-			DashOnServer(DashVector);
-			DashTimer = UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()) + DashCooldown;
+						//GetCharacter()->LaunchCharacter(DashVector, false, false);
+						PlayDashAnimation();
+						DashOnServer(DashVector);
+						DashTimer = UKismetSystemLibrary::GetGameTimeInSeconds(GetWorld()) + DashCooldown;
+					}
+				}
+			}
 		}
 	}
-	
 }
 
 void AFlareForgePlayerController::DashOnServer_Implementation(const FVector& DashVector) const

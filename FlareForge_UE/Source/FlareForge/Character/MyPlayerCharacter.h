@@ -31,6 +31,9 @@ public:
 	
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	bool bDead;
+
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	float CastTime;
 	
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	
