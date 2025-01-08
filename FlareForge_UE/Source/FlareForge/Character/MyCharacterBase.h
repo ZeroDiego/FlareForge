@@ -26,7 +26,7 @@ public:
 	
 	virtual UMyCharacterAttributeSet* GetAttributeSet() const;
 
-	virtual bool HasMatchingGameplayTag(const FGameplayTag& TagToCheck) const;
+	virtual bool HasMatchingGameplayTag(const FGameplayTag TagToCheck) const override;
 	virtual bool HasAnyMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const override;
 	virtual bool HasAllMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const override;
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
