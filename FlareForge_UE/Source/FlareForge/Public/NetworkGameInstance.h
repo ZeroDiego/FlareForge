@@ -72,7 +72,10 @@ public:
 	FString GetPlayerNameFromState(const FString& UniquePlayerID) const;
 
 	UPROPERTY(BlueprintReadWrite)
-	TMap<AMyPlayerCharacter*, int> PlayerScores;
+	TMap<FString, int> PlayerScores;
+
+	UFUNCTION(BlueprintCallable)
+	void PrintPlayerScores(FString UniquePlayerID);
 
 protected:
     // Replicated array of player states
