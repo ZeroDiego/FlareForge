@@ -26,6 +26,8 @@ void UAttributesWidget::BindToAttributes(const AMyPlayerState* MyPlayerState)
 	[this, FlareForgeAttributeSet](const FOnAttributeChangeData& Data)
 	{
 		HealthPercent = Data.NewValue / NUMERIC_VALUE(FlareForgeAttributeSet, MaxHealth);
+
+		OnHealthPercentChanged(); // Notify when health changes
 	});
 }
 
