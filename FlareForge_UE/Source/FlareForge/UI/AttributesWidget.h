@@ -21,6 +21,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void BindToAttributes(const AMyPlayerState* MyPlayerState);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHealthPercentChanged();
+
 	static float GetRemainingEffectTime(const UAbilitySystemComponent* AbilitySystemComponent, FActiveGameplayEffectHandle EffectHandle);
 	
 	// Called every frame.
