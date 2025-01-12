@@ -67,6 +67,7 @@ public:
 	void SetUniquePlayerId(const FString& NewId);
 
 	// Get the unique player ID
+	UFUNCTION(BlueprintCallable)
 	FString GetUniquePlayerId() const;
 	// Get the custom player state display name
 	UFUNCTION(BlueprintCallable, Category = "Player State")
