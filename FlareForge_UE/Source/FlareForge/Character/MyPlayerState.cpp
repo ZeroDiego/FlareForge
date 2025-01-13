@@ -113,6 +113,7 @@ void AMyPlayerState::CopyProperties(APlayerState* NewPlayerState)
 	{
 		MyNewPlayerState->UniquePlayerId = UniquePlayerId;
 		MyNewPlayerState->SelectedAbilities = SelectedAbilities;
+		MyNewPlayerState->SkinEquipped = SkinEquipped;
 	}
 }
 
@@ -301,4 +302,6 @@ void AMyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 
 	// Replicate UniquePlayerId to all clients
 	DOREPLIFETIME(AMyPlayerState, UniquePlayerId);
+
+	DOREPLIFETIME(AMyPlayerState, SkinEquipped);
 }
