@@ -72,6 +72,9 @@ public:
 	// Get the custom player state display name
 	UFUNCTION(BlueprintCallable, Category = "Player State")
 	FString GetCustomDisplayName() const;
+
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Customization")
+	FString SkinEquipped;
 	
 protected:	
 	UPROPERTY()
