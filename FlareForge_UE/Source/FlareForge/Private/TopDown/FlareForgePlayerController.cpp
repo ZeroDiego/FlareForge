@@ -62,6 +62,7 @@ void AFlareForgePlayerController::ClientRestart_Implementation(APawn* NewPawn)
 				ServerHandleClientRestart();
 			}*/
 			bCanRemoveLoadingScreen = true;
+			//GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Red, TEXT("clientrestart"));
 		}
 		else
 		{
