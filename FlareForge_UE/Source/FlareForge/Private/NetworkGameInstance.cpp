@@ -92,6 +92,12 @@ FString UNetworkGameInstance::GetPlayerNameFromState(const FString& UniquePlayer
     return FString("Unknown");
 }
 
+void UNetworkGameInstance::PrintPlayerScores(const FString UniquePlayerID)
+{
+    GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Yellow,
+                                    FString::Printf(TEXT("%s score: %d"), *UniquePlayerID, *PlayerScores.Find(UniquePlayerID)));
+}
+
 void UNetworkGameInstance::SetIsMelee(bool bNewIsMelee)
 {
    bIsMelee = bNewIsMelee;
