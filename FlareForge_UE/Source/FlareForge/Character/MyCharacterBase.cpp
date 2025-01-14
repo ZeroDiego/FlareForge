@@ -54,7 +54,7 @@ void AMyCharacterBase::InitAbilitySystemComponent()
 
 			if (GEngine)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Successfully initialized Ability System Component"));
+				//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Successfully initialized Ability System Component"));
 			}
 		}
 	}
@@ -81,4 +81,28 @@ void AMyCharacterBase::InitDefaultAttributes() const
 		AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());			
 	}
 	
+}
+
+// Check if the character has a specific gameplay tag
+bool AMyCharacterBase::HasMatchingGameplayTag(const FGameplayTag TagToCheck) const
+{
+	return AbilitySystemComponent->GetOwnedGameplayTags().HasTag(TagToCheck);
+}
+
+// Check if the character has any tags from the provided container
+bool AMyCharacterBase::HasAnyMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const
+{
+	return AbilitySystemComponent->GetOwnedGameplayTags().HasAny(TagContainer);
+}
+
+// Check if the character has all tags from the provided container
+bool AMyCharacterBase::HasAllMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const
+{
+	return AbilitySystemComponent->GetOwnedGameplayTags().HasAll(TagContainer);
+}
+
+// Get all owned gameplay tags
+void AMyCharacterBase::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
+{
+	TagContainer = AbilitySystemComponent->GetOwnedGameplayTags();
 }

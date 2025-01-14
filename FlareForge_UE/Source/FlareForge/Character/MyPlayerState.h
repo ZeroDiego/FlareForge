@@ -28,6 +28,8 @@ public:
 	
 	virtual void PostInitializeComponents() override;
 
+	virtual void CopyProperties(APlayerState* PlayerState) override;
+
 	const TArray<TSubclassOf<UGameplayAbility>>& GetSelectedAbilities() const;
 
 	// Adds or sets an ability at a specific index in SelectedAbilities
@@ -65,10 +67,14 @@ public:
 	void SetUniquePlayerId(const FString& NewId);
 
 	// Get the unique player ID
+	UFUNCTION(BlueprintCallable)
 	FString GetUniquePlayerId() const;
 	// Get the custom player state display name
 	UFUNCTION(BlueprintCallable, Category = "Player State")
 	FString GetCustomDisplayName() const;
+
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Customization")
+	FString SkinEquipped;
 	
 protected:	
 	UPROPERTY()
@@ -80,6 +86,10 @@ protected:
 	// Replicated list of selected abilities
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Ability")
 	TArray<TSubclassOf<UGameplayAbility>> SelectedAbilities;
+
+	// Replicated list of all abilities
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Ability")
+	TArray<TSubclassOf<UGameplayAbility>> AllAbilities;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

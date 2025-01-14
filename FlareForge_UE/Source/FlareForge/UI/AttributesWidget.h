@@ -21,6 +21,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void BindToAttributes(const AMyPlayerState* MyPlayerState);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHealthPercentChanged();
+
 	static float GetRemainingEffectTime(const UAbilitySystemComponent* AbilitySystemComponent, FActiveGameplayEffectHandle EffectHandle);
 	
 	// Called every frame.
@@ -53,6 +56,12 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	FText DashCooldownTimeText;
+	
+	UPROPERTY(BlueprintReadOnly)
+	float FightMePercent;
+
+	UPROPERTY(BlueprintReadOnly)
+	FText FightMeCooldownTimeText;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UGameplayEffect> BasicCooldown;
@@ -65,4 +74,7 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UGameplayEffect> DashCooldown;
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UGameplayEffect> FightMeCooldown;
 };

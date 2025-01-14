@@ -24,8 +24,8 @@ TArray<FGameplayAbilitySpec> UNetworkGameInstance::GetGameplayAbilitySpec(const 
     {
         if (GEngine)
         {
-            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green,
-                FString::Printf(TEXT("Found %d Abilities for Player ID: %s"), FoundAbilities->Num(), *UniquePlayerID));
+            /*GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green,
+                FString::Printf(TEXT("Found %d Abilities for Player ID: %s"), FoundAbilities->Num(), *UniquePlayerID));*/
         }
         return *FoundAbilities;
     }
@@ -44,7 +44,7 @@ void UNetworkGameInstance::AddPlayerState_Implementation(const FString& UniquePl
     NewPair.PlayerState = PlayerState;
     PlayerStatesArray.Add(NewPair);
 
-    UE_LOG(LogTemp, Log, TEXT("Added Player %s with State %s to GameInstance"), *UniquePlayerID, *PlayerState);
+    //UE_LOG(LogTemp, Log, TEXT("Added Player %s with State %s to GameInstance"), *UniquePlayerID, *PlayerState);
 }
 
 void UNetworkGameInstance::SetSelectedAbilitiesForPlayer_Implementation(const FString& UniquePlayerID, const TArray<TSubclassOf<UGameplayAbility>>& NewSelectedAbilities)
@@ -90,6 +90,12 @@ FString UNetworkGameInstance::GetPlayerNameFromState(const FString& UniquePlayer
         return *PlayerState; // Directly return the PlayerState string
     }
     return FString("Unknown");
+}
+
+void UNetworkGameInstance::PrintPlayerScores(const FString UniquePlayerID)
+{
+    GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Yellow,
+                                    FString::Printf(TEXT("%s score: %d"), *UniquePlayerID, *PlayerScores.Find(UniquePlayerID)));
 }
 
 void UNetworkGameInstance::SetIsMelee(bool bNewIsMelee)

@@ -9,11 +9,11 @@ void UAttributesWidget::BindToAttributes(const AMyPlayerState* MyPlayerState)
 {
 	if(!MyPlayerState)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("MyPlayerState: NULL")));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("MyPlayerState: NULL")));
 		return;
 	}
 	
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("MyPlayerState: Correct")));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("MyPlayerState: Correct")));
 	
 	UAbilitySystemComponent* AbilitySystemComponent = MyPlayerState->GetAbilitySystemComponent();
 	const UMyCharacterAttributeSet* FlareForgeAttributeSet = MyPlayerState->GetAttributeSet();
@@ -26,6 +26,8 @@ void UAttributesWidget::BindToAttributes(const AMyPlayerState* MyPlayerState)
 	[this, FlareForgeAttributeSet](const FOnAttributeChangeData& Data)
 	{
 		HealthPercent = Data.NewValue / NUMERIC_VALUE(FlareForgeAttributeSet, MaxHealth);
+
+		OnHealthPercentChanged(); // Notify when health changes
 	});
 }
 
@@ -86,6 +88,14 @@ void UAttributesWidget::NativeTick(const FGeometry& MyGeometry, const float Delt
 			DashPercent = GetRemainingEffectTime(AbilitySystemComponent, Effect.Handle) / DashCooldownDuration;
 			const float DashCooldownTime = GetRemainingEffectTime(AbilitySystemComponent, Effect.Handle);
 			DashCooldownTimeText = FText::AsNumber(DashCooldownTime, &FormattingOptions);
+		}
+
+		if (Effect.Spec.Def->GetClass() == FightMeCooldown)
+		{
+			const float DashCooldownDuration = AbilitySystemComponent->GetGameplayEffectDuration(Effect.Handle);
+			FightMePercent = GetRemainingEffectTime(AbilitySystemComponent, Effect.Handle) / DashCooldownDuration;
+			const float DashCooldownTime = GetRemainingEffectTime(AbilitySystemComponent, Effect.Handle);
+			FightMeCooldownTimeText = FText::AsNumber(DashCooldownTime, &FormattingOptions);
 		}
 	}
 }

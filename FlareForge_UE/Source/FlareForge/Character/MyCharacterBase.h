@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayTagAssetInterface.h"
 #include "MyCharacterBase.generated.h"
 
 class UGameplayAbility;
@@ -13,7 +14,7 @@ class UMyCharacterAttributeSet;
 class UGameplayEffect;
 
 UCLASS()
-class FLAREFORGE_API AMyCharacterBase : public ACharacter, public IAbilitySystemInterface
+class FLAREFORGE_API AMyCharacterBase : public ACharacter, public IAbilitySystemInterface, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
 
@@ -24,6 +25,11 @@ public:
 	//~End of IAbilitySystemInterface interface
 	
 	virtual UMyCharacterAttributeSet* GetAttributeSet() const;
+
+	virtual bool HasMatchingGameplayTag(const FGameplayTag TagToCheck) const override;
+	virtual bool HasAnyMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const override;
+	virtual bool HasAllMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const override;
+	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
 	
 protected:
 
