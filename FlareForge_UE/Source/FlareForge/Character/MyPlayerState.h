@@ -74,7 +74,7 @@ public:
 	FString GetCustomDisplayName() const;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Customization")
-	FString SkinEquipped;
+	int32 SkinEquipped;
 	
 protected:	
 	UPROPERTY()
