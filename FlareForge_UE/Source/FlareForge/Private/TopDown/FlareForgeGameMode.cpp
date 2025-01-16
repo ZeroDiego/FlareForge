@@ -42,36 +42,23 @@ AFlareForgeGameMode::AFlareForgeGameMode()
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
 }
-/*
-void AFlareForgeGameMode::PostLogin(APlayerController* NewPlayer)
+
+void AFlareForgeGameMode::NonSeamlessServerTravel(const FString& InURL)
 {
-	Super::PostLogin(NewPlayer);
+	// Temporarily disable seamless travel
+	bUseSeamlessTravel = false;
 
-	// Cast to custom PlayerState
-	if (AMyPlayerState* PS = Cast<AMyPlayerState>(NewPlayer->PlayerState))
+	// Perform the server travel
+	GetWorld()->ServerTravel(InURL);
+
+	if (UGameInstance* GameInstance = GetWorld()->GetGameInstance())
 	{
-		// Generate a unique ID and assign it to the PlayerState
-		FString PlayerID = GenerateUniquePlayerId();
-		PS->SetUniquePlayerId(PlayerID);
-
-		// Debug log and screen message for verification
-		UE_LOG(LogTemp, Log, TEXT("Assigned Unique ID: %s"), *PlayerID);
-		if (GEngine)
+		if (UNetworkGameInstance* NetworkGI = Cast<UNetworkGameInstance>(GameInstance))
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,
-				FString::Printf(TEXT("Assigned Unique ID: %s"), *PlayerID));
+			NetworkGI->PlayerScoresArray.Empty();
 		}
 	}
+	
+	// Re-enable seamless travel
+	bUseSeamlessTravel = true;
 }
-
-FString AFlareForgeGameMode::GenerateUniquePlayerId()
-{
-	FString NewId;
-	do
-	{
-		NewId = FGuid::NewGuid().ToString(); // Generate a GUID
-	} while (UsedPlayerIds.Contains(NewId)); // Ensure it's unique
-
-	UsedPlayerIds.Add(NewId); // Track the generated ID
-	return NewId;
-}*/
