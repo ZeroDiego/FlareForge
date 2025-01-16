@@ -27,7 +27,29 @@ void AAbilitySelectGamemode::PostLogin(APlayerController* NewPlayer)
 
 FString AAbilitySelectGamemode::GenerateUniquePlayerId()
 {
+	if (!UsedPlayerIds.Contains("Player 1"))
+	{
+		UsedPlayerIds.Add("Player 1"); 
+		return "Player 1";
+	}
+	if (!UsedPlayerIds.Contains("Player 2"))
+	{
+		UsedPlayerIds.Add("Player 2"); 
+		return "Player 2";
+	}
+	if (!UsedPlayerIds.Contains("Player 3"))
+	{
+		UsedPlayerIds.Add("Player 3"); 
+		return "Player 3";
+	}
+	if (!UsedPlayerIds.Contains("Player 4"))
+	{
+		UsedPlayerIds.Add("Player 4"); 
+		return "Player 4";
+	}
+	
 	FString NewId;
+	
 	do
 	{
 		NewId = FGuid::NewGuid().ToString(); // Generate a GUID

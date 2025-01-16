@@ -118,7 +118,8 @@ void UNetworkGameInstance::OnRep_PlayerStatesArray()
 
 void UNetworkGameInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-   Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-   DOREPLIFETIME(UNetworkGameInstance, PlayerStatesArray);
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+    
+    DOREPLIFETIME(UNetworkGameInstance, PlayerStatesArray);
+    DOREPLIFETIME(UNetworkGameInstance, PlayerScoresArray);
 }

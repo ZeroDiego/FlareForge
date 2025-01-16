@@ -24,6 +24,18 @@ struct FPlayerStatePair
 	FString PlayerState;
 };
 
+USTRUCT(BlueprintType)
+struct FPlayerScorePair
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	FString PlayerName;
+
+	UPROPERTY(BlueprintReadWrite)
+	int PlayerScore;
+};
+
 UCLASS()
 class FLAREFORGE_API UNetworkGameInstance : public UAdvancedFriendsGameInstance
 {
@@ -73,6 +85,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	TMap<FString, int> PlayerScores;
+
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	TArray<FPlayerScorePair> PlayerScoresArray;
 
 	UFUNCTION(BlueprintCallable)
 	void PrintPlayerScores(FString UniquePlayerID);
