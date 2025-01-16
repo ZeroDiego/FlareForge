@@ -288,6 +288,12 @@ void AFlareForgePlayerController::DashOnServer_Implementation(const FVector& Das
 
 void AFlareForgePlayerController::RotatePlayerTowardsMouse()
 {
+	if (GetWorld() && GetWorld()->IsInSeamlessTravel())
+	{
+		// Skip execution during seamless travel
+		return;
+	}
+	
     if (FVector MouseLocation, MouseDirection; this->DeprojectMousePositionToWorld(MouseLocation, MouseDirection))
     {
         // Get local reference to the controller's character
