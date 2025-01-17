@@ -18,10 +18,11 @@ public:
 	// Override PostLogin to assign unique IDs
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
+	// Track used player IDs to ensure uniqueness
+	UPROPERTY(BlueprintReadWrite)
+	TSet<FString> UsedPlayerIds;
+
 private:
 	// Generate a unique player ID
 	FString GenerateUniquePlayerId();
-
-	// Track used player IDs to ensure uniqueness
-	TSet<FString> UsedPlayerIds;
 };
