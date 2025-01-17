@@ -349,6 +349,12 @@ void AFlareForgePlayerController::RotatePlayerTowardsJoystick(const FInputAction
 
 void AFlareForgePlayerController::RotatePlayerOnServer_Implementation(const FRotator PlayerRotation)
 {
+	if (GetWorld() && GetWorld()->IsInSeamlessTravel())
+	{
+		// Skip execution during seamless travel
+		return;
+	}
+	
 	this->GetCharacter()->SetActorRotation(PlayerRotation);	
 }
 
