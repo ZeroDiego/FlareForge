@@ -16,12 +16,12 @@ void AAbilitySelectGamemode::PostLogin(APlayerController* NewPlayer)
 		PS->SetUniquePlayerId(PlayerID);
 
 		// Debug log and screen message for verification
-		UE_LOG(LogTemp, Log, TEXT("Assigned Unique ID: %s"), *PlayerID);
+		/*UE_LOG(LogTemp, Log, TEXT("Assigned Unique ID: %s"), *PlayerID);
 		if (GEngine)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green,
 				FString::Printf(TEXT("Assigned Unique ID: %s"), *PlayerID));
-		}
+		}*/
 	}
 }
 
