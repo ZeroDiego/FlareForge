@@ -75,6 +75,8 @@ public:
 
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Customization")
 	int32 SkinEquipped;
+
+	bool bPostInit;
 	
 protected:	
 	UPROPERTY()

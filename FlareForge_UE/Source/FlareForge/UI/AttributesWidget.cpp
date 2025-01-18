@@ -98,6 +98,28 @@ void UAttributesWidget::NativeTick(const FGeometry& MyGeometry, const float Delt
 			FightMeCooldownTimeText = FText::AsNumber(DashCooldownTime, &FormattingOptions);
 		}
 	}
+
+	if (MyPlayerState->bPostInit)
+	{
+		for (const TSubclassOf Ability : MyPlayerState->GetSelectedAbilities())
+		{
+			if (Ability)
+			{
+				if (Ability->GetName().Equals("GA_HomingStrikeAbility_C"))
+				{
+					HomingStrikeVisibility = ESlateVisibility::Visible;
+				}
+				if (Ability->GetName().Equals("GA_ReflectAbility_C"))
+				{
+					ReflectVisibility = ESlateVisibility::Visible;
+				}
+				if (Ability->GetName().Equals("GA_FightMeAbility_C"))
+				{
+					FightMeVisibility = ESlateVisibility::Visible;
+				}
+			}
+		}
+	}
 }
 
 float UAttributesWidget::GetRemainingEffectTime(const UAbilitySystemComponent* AbilitySystemComponent, const FActiveGameplayEffectHandle EffectHandle)

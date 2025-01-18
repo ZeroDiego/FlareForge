@@ -77,4 +77,13 @@ protected:
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UGameplayEffect> FightMeCooldown;
+
+	UPROPERTY(BlueprintReadOnly)
+	ESlateVisibility HomingStrikeVisibility = ESlateVisibility::Hidden;
+	
+	UPROPERTY(BlueprintReadOnly)
+	ESlateVisibility ReflectVisibility = ESlateVisibility::Hidden;
+
+	UPROPERTY(BlueprintReadOnly)
+	ESlateVisibility FightMeVisibility = ESlateVisibility::Hidden;
 };

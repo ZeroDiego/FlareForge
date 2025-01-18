@@ -43,6 +43,7 @@ void AMyPlayerState::PostInitializeComponents()
 
 	// Ensure Ability System is initialized after all components are ready
 	InitializeAbilities();
+	bPostInit = true;
 }
 
 void AMyPlayerState::InitializeAbilities_Implementation() {
